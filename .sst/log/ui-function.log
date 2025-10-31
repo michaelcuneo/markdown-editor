@@ -1,0 +1,6 @@
+time=2025-10-31T14:39:21.800+11:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
+time=2025-10-31T14:39:21.895+11:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="initializing ui" isTTY=true
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="initializing ui"time=2025-10-31T14:54:21.970+11:00 level=INFO msg=interrupted
+"initialized ui"
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg=interrupted

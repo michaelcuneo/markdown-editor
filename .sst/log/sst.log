@@ -1,0 +1,184 @@
+time=2025-10-31T14:39:21.553+11:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
+time=2025-10-31T14:39:21.648+11:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
+time=2025-10-31T14:39:21.650+11:00 level=INFO msg="initializing project" version=3.17.21
+time=2025-10-31T14:39:21.650+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1761881961650.mjs
+time=2025-10-31T14:39:21.652+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1761881961650.mjs
+time=2025-10-31T14:39:21.652+11:00 level=INFO msg="evaluating config"
+time=2025-10-31T14:39:21.670+11:00 level=INFO msg="config evaluated"
+time=2025-10-31T14:39:21.670+11:00 level=INFO msg="checking platform"
+time=2025-10-31T14:39:21.670+11:00 level=INFO msg="loading home"
+time=2025-10-31T14:39:21.671+11:00 level=INFO msg="aws credentials found" region=ap-southeast-2 profile=default
+time=2025-10-31T14:39:21.671+11:00 level=INFO msg="fetching bootstrap"
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg="found existing bootstrap" data="{\"version\":5,\"asset\":\"sst-asset-vbdurbzbbtdh\",\"assetEcrRegistryId\":\"481588845003\",\"assetEcrUrl\":\"481588845003.dkr.ecr.ap-southeast-2.amazonaws.com/sst-asset\",\"state\":\"sst-state-vbdurbzbbtdh\",\"appsyncHttp\":\"\",\"appsyncRealtime\":\"\"}"
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg="loaded config" app=chain-enhance stage=michael
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=mosaic project=/home/michael/markdown-editor
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg="starting watcher" service=watcher root=/home/michael/markdown-editor
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg="server port assigned" port=13557
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg="getting endpoint"
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=starting service=server
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=starting service=dev
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/lib
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/lib/editor
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/lib/editor/plugins
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/lib/types
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/lib/utils
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=server service=server addr=0.0.0.0:13557
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/src/routes
+time=2025-10-31T14:39:21.756+11:00 level=INFO msg=starting service=deployer
+time=2025-10-31T14:39:21.757+11:00 level=INFO msg=watching service=watcher path=/home/michael/markdown-editor/static
+time=2025-10-31T14:39:21.757+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:39:21.758+11:00 level=INFO msg=resize
+time=2025-10-31T14:39:21.892+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:51734
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:51736
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="deploy requested" service=dev
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg=deploying service=deployer
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="running stack command" service=project.run cmd=deploy
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="INFO locking app=chain-enhance stage=michael"
+time=2025-10-31T14:39:21.897+11:00 level=INFO msg="INFO getting data key=lock app=chain-enhance stage=michael"
+time=2025-10-31T14:39:21.983+11:00 level=INFO msg="found appsync" rest=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-api.ap-southeast-2.amazonaws.com realtime=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-realtime-api.ap-southeast-2.amazonaws.com
+time=2025-10-31T14:39:21.983+11:00 level=INFO msg="checking if appsync is ready"
+time=2025-10-31T14:39:22.061+11:00 level=INFO msg="INFO connecting service=appsync.connection"
+time=2025-10-31T14:39:22.145+11:00 level=INFO msg="INFO putting update app=chain-enhance stage=michael"
+time=2025-10-31T14:39:22.174+11:00 level=INFO msg="INFO connect message service=appsync.connection msg=\"map[connectionTimeoutMs:300000 type:connection_ack]\""
+time=2025-10-31T14:39:22.174+11:00 level=INFO msg="subscribing to" prefix=/sst/chain-enhance/michael/in
+time=2025-10-31T14:39:22.174+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:39:22.229+11:00 level=INFO msg="INFO getting passphrase app=chain-enhance stage=michael"
+time=2025-10-31T14:39:22.278+11:00 level=INFO msg="INFO msg service=appsync.connection type=subscribe_success id=019a385936bebbbaa3e4b996"
+time=2025-10-31T14:39:22.278+11:00 level=INFO msg="INFO subscribed service=appsync.connection channel=/sst/chain-enhance/michael/in id=019a385936bebbbaa3e4b996"
+time=2025-10-31T14:39:22.278+11:00 level=INFO msg=starting service=aws.task
+time=2025-10-31T14:39:22.322+11:00 level=INFO msg="INFO pulling state app=chain-enhance stage=michael out=/home/michael/markdown-editor/.sst/pulumi/fe65c7a6ca5601f8eb4a1ee0/.pulumi/stacks/chain-enhance/michael.json"
+time=2025-10-31T14:39:22.555+11:00 level=INFO msg="got previous deployment" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:22.555+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1761881962321.mjs
+time=2025-10-31T14:39:22.580+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1761881962321.mjs
+time=2025-10-31T14:39:22.584+11:00 level=INFO msg="built sst.config.ts" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 to=/home/michael/markdown-editor/.sst/platform/sst.config.1761881962321.mjs
+time=2025-10-31T14:39:22.586+11:00 level=INFO msg="tracked files" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:22.586+11:00 level=INFO msg="INFO getting data key=secret app=chain-enhance stage=michael"
+time=2025-10-31T14:39:22.586+11:00 level=INFO msg="INFO getting data key=secret app=chain-enhance stage=_fallback"
+time=2025-10-31T14:39:22.659+11:00 level=INFO msg="starting pulumi" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 args="[/home/michael/.config/sst/bin/pulumi up --yes -f --stack organization/chain-enhance/michael --non-interactive --event-log /home/michael/markdown-editor/.sst/pulumi/fe65c7a6ca5601f8eb4a1ee0/eventlog.json --config aws:region=ap-southeast-2 --config aws:defaultTags={\"tags\":{\"sst:app\":\"chain-enhance\",\"sst:stage\":\"michael\"}}]"
+time=2025-10-31T14:39:22.692+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:51756
+time=2025-10-31T14:39:22.692+11:00 level=INFO msg="matching dev" service=dev full=/home/michael/markdown-editor directory=""
+time=2025-10-31T14:39:22.692+11:00 level=INFO msg="loading aws credentials" service=project.env resource=MyWeb role=arn:aws:iam::481588845003:role/chain-enhance-michael-MyWebDevServerRole-hnmzxova
+time=2025-10-31T14:39:22.774+11:00 level=INFO msg=dev service=project.env resource=MyWeb links=[]
+time=2025-10-31T14:39:24.267+11:00 level=INFO msg="INFO pushing partial state updateID=fe65c7a6ca5601f8eb4a1ee0"
+time=2025-10-31T14:39:24.932+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-10-31T14:39:24.932+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-10-31T14:39:24.932+11:00 level=INFO msg="building function" runtime=nodejs20.x functionID=MyWebDevServer
+time=2025-10-31T14:39:24.933+11:00 level=INFO msg="function built" runtime=nodejs20.x functionID=MyWebDevServer
+time=2025-10-31T14:39:24.981+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="pulumi exited" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 err=<nil>
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 eofs=0
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="INFO pushing partial state updateID=fe65c7a6ca5601f8eb4a1ee0"
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 eofs=1
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="breaking out of tail loop" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:25.038+11:00 level=INFO msg="parsing state" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="generating types" root=/home/michael/markdown-editor
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/sst-env.d.ts op=WRITE
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/sst-env.d.ts
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="canceling partial" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="waiting for partial to exit" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="INFO pushing eventlog updateID=fe65c7a6ca5601f8eb4a1ee0"
+time=2025-10-31T14:39:25.180+11:00 level=INFO msg="INFO pushing snapshot updateID=fe65c7a6ca5601f8eb4a1ee0"
+time=2025-10-31T14:39:25.309+11:00 level=INFO msg="INFO putting update app=chain-enhance stage=michael"
+time=2025-10-31T14:39:25.399+11:00 level=INFO msg="done running stack command" service=project.run updateID=fe65c7a6ca5601f8eb4a1ee0 resources=11
+time=2025-10-31T14:39:25.400+11:00 level=INFO msg="matching dev" service=dev full=/home/michael/markdown-editor directory=""
+time=2025-10-31T14:39:25.400+11:00 level=INFO msg="loading aws credentials" service=project.env resource=MyWeb role=arn:aws:iam::481588845003:role/chain-enhance-michael-MyWebDevServerRole-hnmzxova
+time=2025-10-31T14:39:25.400+11:00 level=INFO msg="INFO unlocking app=chain-enhance stage=michael"
+time=2025-10-31T14:39:25.480+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:39:25.480+11:00 level=INFO msg="build hash" service=deployer hash=mR9CD90CwjI
+time=2025-10-31T14:39:25.480+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:39:25.480+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:39:25.482+11:00 level=INFO msg=dev service=project.env resource=MyWeb links=[]
+time=2025-10-31T14:40:20.237+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:40:20.237+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:40:20.237+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/routes/+page.svelte
+time=2025-10-31T14:40:20.237+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:40:21.078+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:40:21.078+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:40:21.078+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/routes/+page.svelte
+time=2025-10-31T14:40:21.078+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:40:22.165+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:40:25.760+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:40:25.760+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:40:25.760+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/routes/+page.svelte
+time=2025-10-31T14:40:25.760+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2025-10-31T14:41:14.951+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:41:14.951+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:41:14.951+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:41:14.951+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts
+time=2025-10-31T14:41:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:42:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:42:23.464+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:42:23.464+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:42:23.464+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:42:23.464+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts
+time=2025-10-31T14:43:21.871+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:43:21.871+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:43:21.871+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts
+time=2025-10-31T14:43:21.871+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:43:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:44:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:45:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:46:11.577+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/MarkdownEditorHybrid.svelte op=WRITE
+time=2025-10-31T14:46:11.577+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:46:11.577+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/MarkdownEditorHybrid.svelte
+time=2025-10-31T14:46:11.577+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/MarkdownEditorHybrid.svelte op=WRITE
+time=2025-10-31T14:46:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:47:22.165+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:48:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:49:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:50:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:50:38.965+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:50:38.965+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts op=WRITE
+time=2025-10-31T14:50:38.965+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:50:38.965+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/setupProseMirror.ts
+time=2025-10-31T14:50:55.865+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/commands.ts op=WRITE
+time=2025-10-31T14:50:55.865+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/commands.ts op=WRITE
+time=2025-10-31T14:50:55.865+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:50:55.865+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/commands.ts
+time=2025-10-31T14:51:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:52:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:53:20.039+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/plugins/taskListPlugin.ts op=RENAME
+time=2025-10-31T14:53:21.205+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/plugins/taskListPlugin.ts op=CREATE
+time=2025-10-31T14:53:21.205+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:53:21.205+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/plugins/taskListPlugin.ts
+time=2025-10-31T14:53:21.205+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/plugins/taskListPlugin.ts op=WRITE
+time=2025-10-31T14:53:22.164+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2025-10-31T14:53:22.314+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/schema.ts op=WRITE
+time=2025-10-31T14:53:22.314+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:53:22.314+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/schema.ts
+time=2025-10-31T14:53:22.314+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/schema.ts op=WRITE
+time=2025-10-31T14:53:27.622+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/MarkdownPreview.svelte op=RENAME
+time=2025-10-31T14:53:35.434+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils/useMarkdownRenderer.ts op=RENAME
+time=2025-10-31T14:53:38.256+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils/useImageSync.ts op=RENAME
+time=2025-10-31T14:53:40.606+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils/imageHelpers.ts op=RENAME
+time=2025-10-31T14:53:42.743+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils/debounce.ts op=RENAME
+time=2025-10-31T14:53:44.348+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils op=RENAME
+time=2025-10-31T14:53:44.349+11:00 level=INFO msg="ignoring file event" service=watcher path=/home/michael/markdown-editor/src/lib/utils op=RENAME
+time=2025-10-31T14:53:47.315+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/markdownPlugin.ts op=WRITE
+time=2025-10-31T14:53:47.315+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/markdownPlugin.ts op=WRITE
+time=2025-10-31T14:53:47.315+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:53:47.315+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/markdownPlugin.ts
+time=2025-10-31T14:53:50.853+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/keymap.ts op=WRITE
+time=2025-10-31T14:53:50.853+11:00 level=INFO msg="file event" service=watcher path=/home/michael/markdown-editor/src/lib/editor/keymap.ts op=WRITE
+time=2025-10-31T14:53:50.853+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2025-10-31T14:53:50.853+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/home/michael/markdown-editor/src/lib/editor/keymap.ts
+time=2025-10-31T14:54:21.969+11:00 level=INFO msg=interrupted
+time=2025-10-31T14:54:21.969+11:00 level=INFO msg=done service=aws.task
+time=2025-10-31T14:54:21.969+11:00 level=INFO msg=done service=dev
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg=done service=deployer
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg=done service=watcher
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="INFO connection closed service=appsync.connection"
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="shutting down server" service=server
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="server done" service=server
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="done mosaic" err=<nil>
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="killing process" pid=1590883
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="killing process" pid=1590965
+time=2025-10-31T14:54:21.970+11:00 level=INFO msg="killing process" pid=1590882
+time=2025-10-31T14:54:22.258+11:00 level=INFO msg="process killed with term" pid=1590965
+time=2025-10-31T14:54:22.258+11:00 level=INFO msg="untracked process" pid=1590965
+time=2025-10-31T14:54:22.274+11:00 level=INFO msg="process killed with term" pid=1590883
+time=2025-10-31T14:54:22.274+11:00 level=INFO msg="untracked process" pid=1590883
+time=2025-10-31T14:54:22.281+11:00 level=INFO msg="process killed with term" pid=1590882
+time=2025-10-31T14:54:22.281+11:00 level=INFO msg="untracked process" pid=1590882
