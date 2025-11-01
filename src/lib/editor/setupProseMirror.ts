@@ -1,55 +1,63 @@
-// src/lib/editor/setupProseMirror.ts
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import type { Schema } from 'prosemirror-model';
 import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
-import {
-	MarkdownParser,
-	MarkdownSerializer,
-	defaultMarkdownParser,
-	defaultMarkdownSerializer
-} from 'prosemirror-markdown';
-import MarkdownIt from 'markdown-it';
 
-const md = new MarkdownIt({ html: false, linkify: true });
-const schema = defaultMarkdownParser.schema;
-const parser = new MarkdownParser(schema, md, defaultMarkdownParser.tokens);
-const serializer = new MarkdownSerializer(
-	defaultMarkdownSerializer.nodes,
-	defaultMarkdownSerializer.marks
-);
+import { createTaskListSchema } from './schema/tasklistSchema.js';
+import { createMarkdownTaskSupport } from './tasks/markdownTaskSupport.js';
+import { taskTogglePlugin } from './plugins/taskTogglePlugin.js';
+import { markdownInputRules } from './rules/markdownInputRules.js';
+import { markdownKeymap } from './keymap/markdownKeymap.js';
+import { wysiwymPlugin } from './plugins/wysiwymPlugin.js';
+import { markdownEnterPlugin } from './plugins/markdownEnterPlugin.js';
+import { linkClickPlugin } from './plugins/linkClickPlugin.js';
 
-export function setupProseMirror(
-	target: HTMLElement,
-	initialMarkdown = '',
-	onChange?: (markdown: string) => void
-): EditorView {
-	const doc = parser.parse(initialMarkdown);
+export function setupProseMirror(element: HTMLElement, initialMarkdown = ''): EditorView {
+	const schema: Schema = createTaskListSchema();
+	const { parser, serializer } = createMarkdownTaskSupport(schema);
+
+	const doc = initialMarkdown.trim()
+		? parser.parse(initialMarkdown)
+		: schema.topNodeType.createAndFill() || undefined;
 
 	const state = EditorState.create({
 		doc,
 		schema,
 		plugins: [
 			history(),
-			keymap(baseKeymap),
-			new Plugin({
-				appendTransaction(_, __, ns) {
-					onChange?.(serializer.serialize(ns.doc).trim());
-					return null;
-				}
-			})
+			markdownInputRules(schema),
+			wysiwymPlugin(schema),
+			taskTogglePlugin(),
+			markdownEnterPlugin(schema),
+			markdownKeymap(schema),
+			linkClickPlugin(),
+			keymap(baseKeymap)
 		]
 	});
 
-	const view = new EditorView(target, {
+	const view = new EditorView(element, {
 		state,
-		dispatchTransaction(tr: Transaction) {
-			const ns = view.state.apply(tr);
-			view.updateState(ns);
-			onChange?.(serializer.serialize(ns.doc).trim());
+		dispatchTransaction(tr) {
+			const newState = view.state.apply(tr);
+			view.updateState(newState);
 		}
 	});
+
+	// --- Expose Markdown helpers ---
+	interface ExtendedView extends EditorView {
+		getMarkdown: () => string;
+		setMarkdown: (md: string) => void;
+	}
+	const extended = view as ExtendedView;
+
+	extended.getMarkdown = () => serializer.serialize(view.state.doc);
+	extended.setMarkdown = (md: string) => {
+		const newDoc = parser.parse(md);
+		const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, newDoc.content);
+		view.dispatch(tr);
+	};
 
 	return view;
 }

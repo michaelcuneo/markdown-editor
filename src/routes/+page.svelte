@@ -1,11 +1,17 @@
 <script lang="ts">
-  import MarkdownEditorHybrid from '$lib/MarkdownEditorHybrid.svelte';
+  import SvelteMarkdownEditor from '$lib/editor/SvelteMarkdownEditor.svelte';
   import { onMount } from 'svelte';
 
   let activeTab: 'editor' | 'docs' = $state('editor');
   let content = $state(`# Welcome to the Markdown Editor!
 
 This is a **fully featured Markdown editor** built with Svelte 5.
+[OpenAI](https://openai.com) is great!
+
+## Features
+
+- [ ] Task Lists
+- [x] Completed Item
 
 - 🖋️ Toolbar formatting
 - 🧩 Live preview (built-in)
@@ -55,18 +61,17 @@ Try editing this text to see changes instantly in the preview!
     <section class="demo-section">
       <h1>Markdown Editor Demo</h1>
       <p>
-        This demo showcases the <code>@yourname/markdown-editor</code> component.
+        This demo showcases the <code>@michaelcuneo/markdown-editor</code> component.
         Edit Markdown in the left pane and see live preview updates on the right.
       </p>
 
-    <MarkdownEditorHybrid bind:value={content} />
-    <pre>{content}</pre>
+    <SvelteMarkdownEditor bind:markdown={content} />
     </section>
   {:else}
     <section class="docs-section">
-      <h1>📘 Documentation</h1>
+      <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <MarkdownEditorHybrid bind:value={readmeHtml} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} />
     </section>
   {/if}
 </main>
