@@ -7,7 +7,7 @@
   <span>Built with love by &nbsp;<a href="https://michaelcuneo.com" target="_blank" rel="noopener">Michael Cuneo</a></span>
   <span> | </span>
   <span class="icon"><a href="https://www.typescriptlang.org/"><SiTypescript /></a></span>
-  <span class="icon"><SiSST /></span>
+  <span class="icon"><a href="https://sst.dev"><SiSST /></a></span>
 </footer>
 
 <style>

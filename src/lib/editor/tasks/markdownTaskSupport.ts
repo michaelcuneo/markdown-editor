@@ -8,18 +8,16 @@ import type { Schema, Node as PMNode } from 'prosemirror-model';
 import { Fragment } from 'prosemirror-model';
 import MarkdownIt from 'markdown-it';
 
+/**
+ * Recursively normalize GFM-style task lists like `- [x]` or `- [ ]`.
+ */
 function normalizeTasks(node: PMNode): PMNode {
-	// 🧩 Text nodes are leaves — return directly
 	if (node.isText) return node;
 
-	// 🧩 Normalize all children recursively
 	const normalizedChildren: PMNode[] = [];
-	node.forEach((child) => {
-		normalizedChildren.push(child.isText ? child : normalizeTasks(child));
-	});
+	node.forEach((child) => normalizedChildren.push(child.isText ? child : normalizeTasks(child)));
 	const content = Fragment.fromArray(normalizedChildren);
 
-	// 🧩 Only transform list_item nodes
 	if (node.type.name !== 'list_item') return node.copy(content);
 
 	const firstChild = node.firstChild;
@@ -35,30 +33,13 @@ function normalizeTasks(node: PMNode): PMNode {
 	const isChecked = match[1].toLowerCase() === 'x';
 	const trimmedText = text.slice(match[0].length);
 
-	// 🧩 Build new inline nodes
 	const newInlineNodes: PMNode[] = [];
-	if (trimmedText.length > 0) {
-		// ✅ Use schema.text() — not .create()
-		const newText = node.type.schema.text(trimmedText, firstInline.marks);
-		newInlineNodes.push(newText);
-	}
+	if (trimmedText.length > 0)
+		newInlineNodes.push(node.type.schema.text(trimmedText, firstInline.marks));
+	for (let i = 1; i < firstChild.childCount; i++) newInlineNodes.push(firstChild.child(i));
 
-	// Add any remaining inline nodes
-	for (let i = 1; i < firstChild.childCount; i++) {
-		newInlineNodes.push(firstChild.child(i));
-	}
-
-	const newParagraph = firstChild.type.create(
-		firstChild.attrs,
-		Fragment.fromArray(newInlineNodes),
-		firstChild.marks
-	);
-
-	// 🧩 Build final list_item
-	const rebuiltChildren: PMNode[] = [newParagraph];
-	for (let i = 1; i < node.childCount; i++) {
-		rebuiltChildren.push(node.child(i));
-	}
+	const newParagraph = firstChild.type.create(firstChild.attrs, Fragment.fromArray(newInlineNodes));
+	const rebuiltChildren = [newParagraph, ...node.content.content.slice(1)];
 
 	return node.type.create(
 		{ ...node.attrs, checked: isChecked },
@@ -68,33 +49,25 @@ function normalizeTasks(node: PMNode): PMNode {
 }
 
 /**
- * Proper GFM task-list aware parser + serializer pair.
+ * Create Markdown parser + serializer using default ProseMirror GFM behavior.
  */
 export function createMarkdownTaskSupport(schema: Schema) {
-	const md = MarkdownIt('commonmark', { html: false, linkify: true });
-	const tokens = { ...(defaultMarkdownParser as MarkdownParser).tokens };
-	tokens.html_inline = { ignore: true };
-	tokens.html_block = { ignore: true };
+	// ✅ Use the "gfm" preset — enables autolinks, strikethrough, breaks, etc.
+	const md = MarkdownIt('commonmark', { html: false, linkify: true, breaks: true });
 
-	const parser = new MarkdownParser(schema, md, tokens);
-	const origParse = parser.parse.bind(parser);
-
-	parser.parse = (src: string) => {
-		const baseDoc = origParse(src);
-		console.log(
-			'%c🔍 Parsed document JSON:',
-			'color:#4f83ff;font-weight:bold;',
-			JSON.stringify(baseDoc.toJSON(), null, 2)
-		);
-		const normalized = normalizeTasks(baseDoc);
-		console.log(
-			'%c🔍 Normalized document JSON:',
-			'color:#00bfff;font-weight:bold;',
-			JSON.stringify(normalized.toJSON(), null, 2)
-		);
-		return normalized;
+	// ✅ Start from the built-in token map
+	const tokens = {
+		...defaultMarkdownParser.tokens,
+		html_inline: { ignore: true },
+		html_block: { ignore: true }
 	};
 
+	// --- Build parser
+	const parser = new MarkdownParser(schema, md, tokens);
+	const origParse = parser.parse.bind(parser);
+	parser.parse = (src: string) => normalizeTasks(origParse(src));
+
+	// --- Build serializer
 	const serializer = new MarkdownSerializer(
 		{
 			...defaultMarkdownSerializer.nodes,

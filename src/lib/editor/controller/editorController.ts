@@ -85,7 +85,7 @@ export function handleAction(action: ToolbarAction): void {
 		case 'codeblock':
 			if (schema.nodes.code_block) safeRun(setBlockType(schema.nodes.code_block));
 			break;
-		
+
 		case 'hr': {
 			const { schema } = state;
 			if (schema.nodes.horizontal_rule) {

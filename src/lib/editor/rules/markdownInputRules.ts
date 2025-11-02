@@ -103,10 +103,5 @@ export function markdownInputRules(schema: Schema): Plugin {
 		);
 	}
 
-	if (schema.nodes.code_block) {
-		// ``` or ```lang
-		rules.push(textblockTypeInputRule(/^```$/, schema.nodes.code_block));
-	}
-
 	return inputRules({ rules });
 }

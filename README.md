@@ -1,58 +1,207 @@
-# Svelte library
+# 🪶 @michaelcuneo/markdown-editor
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+> **A modern WYSIWYM Markdown editor for [Svelte 5](https://svelte.dev)**  
+> Powered by ProseMirror and CodeMirror, featuring task lists, fenced code blocks,  
+> keyboard shortcuts, and a responsive light/dark theme out of the box.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+---
 
-## Creating a project
+## 🌐 Live Demo
 
-If you're seeing this, you've probably already done this step. Congrats!
+**See it in action:**  
+🔗 https://markdown-editor.michaelcuneo.com.au
 
-```sh
-# create a new project in the current directory
-npx sv create
+The demo includes headings, inline formatting, fenced code blocks with syntax highlighting,  
+lists, and interactive task items — all rendered live as you type.
 
-# create a new project in my-app
-npx sv create my-app
+> Built with **Svelte 5**, **ProseMirror**, **CodeMirror 6**, and **TypeScript**.
+
+---
+
+## 🚀 Installation
+
+```bash
+npm i @michaelcuneo/markdown-editor
+# or
+pnpm add @michaelcuneo/markdown-editor
+# or
+yarn add @michaelcuneo/markdown-editor
 ```
 
-## Developing
+---
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## ⚙️ Basic Usage
 
-```sh
-npm run dev
+```svelte
+<script lang="ts">
+	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
+	// Optional default styles (toolbar, dark/light theme, tasks, codemirror)
+	import '@michaelcuneo/markdown-editor/styles.css';
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+	let content = `# Welcome to the Markdown Editor!
+
+This is a **fully featured Markdown editor** built with Svelte 5.
+[OpenAI](https://openai.com) is great!
+
+\`\`\`ts
+function greet(name: string): string {
+  return \`Hello, \${name}!\`;
+}
+\`\`\`
+
+- [x] Task Lists
+- [ ] Live Preview
+- [ ] Syntax Highlighting
+`;
+</script>
+
+<SvelteMarkdownEditor bind:value={content} />
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+---
 
-## Building
+## 🧠 Two-Way Binding
 
-To build your library:
+The editor is fully reactive — content updates instantly via `bind:value`.
 
-```sh
-npm pack
+```svelte
+<p>Characters: {value.length}</p>
 ```
 
-To create a production version of your showcase app:
+---
 
-```sh
-npm run build
+## 🧩 Props
+
+**Available component props:**
+
+- `value` → _string_ — The markdown content (bindable).
+- `readonly` → _boolean_ — Enables read-only viewer mode.
+- `sanitizeHtml` → _boolean_ — Sanitizes exported HTML (via DOMPurify).
+- `onUpdate` → _(value: string) => void_ — Fired when content changes.
+- `onImageUpload` → _(file: File) => Promise<string>_ — Optional async image upload hook (return a URL).
+
+---
+
+## 🎨 Toolbar & Shortcuts
+
+**Common actions and shortcuts:**
+
+- **Bold:** `Ctrl/Cmd + B`
+- _Italic:_ `Ctrl/Cmd + I`
+- ~~Strikethrough:~~ _(optional if schema enabled)_
+- Headings: toggle H1/H2 from toolbar
+- Blockquote: type `>` then space
+- Unordered List: type `-`, `*`, or `+` then space
+- Ordered List: type `1.` then space
+- Task Item: `- [ ]` or `- [x]`
+- Code Block: type ````` + lang + Enter
+- Link: `Ctrl/Cmd + K`
+- Undo / Redo: `Ctrl/Cmd + Z`, `Ctrl/Cmd + Shift + Z`
+
+> Tip: Type `````ts` and press Enter to insert a TypeScript code block — a CodeMirror editor will appear inline with syntax highlighting and a language label.
+
+---
+
+## 💡 Markdown Features
+
+This editor supports:
+
+- Headings (`#`, `##`, `###`)
+- Bold / Italic (`**text**`, `*text*`)
+- Inline code (`` `code` ``)
+- Blockquotes (`>`)
+- Code blocks (` ```lang `)
+- Lists (`-`, `1.`)
+- Task lists (`- [ ]`, `- [x]`)
+- Links (`[text](url)`)
+- Horizontal rules (`---`)
+
+---
+
+## 🧱 Styling
+
+A complete stylesheet is included covering:
+
+- ProseMirror editor base styles
+- Toolbar layout
+- Task list checkboxes
+- CodeMirror blocks
+- Automatic light/dark theme
+
+Import it directly:
+
+```ts
+import '@michaelcuneo/markdown-editor/styles.css';
 ```
 
-You can preview the production build with `npm run preview`.
+Prefer your own theme?  
+Skip the import and override the CSS hooks:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```sh
-npm publish
+```css
+.ProseMirror {
+	background: #fff;
+	border-radius: 8px;
+}
+.toolbar button {
+	color: #111;
+}
+.pm-task-checkbox {
+	accent-color: #0b57d0;
+}
+.pm-codemirror-wrapper {
+	border: 1px solid #e5e7eb;
+}
 ```
+
+---
+
+## 🧩 Architecture Overview
+
+**Core layers:**
+
+- **ProseMirror:** document model, schema, input rules, and history.
+- **CodeMirror 6:** embedded code editor for fenced blocks.
+- **Highlight.js:** language syntax highlighting.
+- **DOMPurify:** optional HTML sanitization.
+- **Svelte 5:** reactive UI shell and bindings.
+
+---
+
+## 🧰 Development
+
+```bash
+git clone https://github.com/michaelcuneo/markdown-editor.git
+cd markdown-editor
+pnpm install
+pnpm dev
+```
+
+Project structure:
+
+- Demo page → `src/routes/demo/+page.svelte`
+- Editor component → `src/lib/editor/SvelteMarkdownEditor.svelte`
+- Plugins → `src/lib/editor/plugins/*`
+
+---
+
+## ✅ Compatibility
+
+- Svelte 5 (runes) — ✅
+- TypeScript — ✅
+- SSR + SPA — ✅
+- Light/Dark theme — ✅
+- Task lists — ✅
+- CodeMirror fenced blocks — ✅
+
+---
+
+## 🧾 License
+
+MIT © Michael Cuneo (2025)
+
+---
+
+### TL;DR
+
+`@michaelcuneo/markdown-editor` — **type, edit, and preview Markdown with zero fuss.**  
+Beautiful code blocks, interactive tasks, and WYSIWYM inline formatting for modern Svelte apps.

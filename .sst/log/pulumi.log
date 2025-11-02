@@ -2,7 +2,7 @@ Updating (michael):
     pulumi:pulumi:Stack chain-enhance-michael  warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
 
     pulumi:pulumi:Stack chain-enhance-michael running warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
-@ updating.....
+@ updating....
     pulumi:pulumi:Stack chain-enhance-michael  1 warning
 Diagnostics:
   pulumi:pulumi:Stack (chain-enhance-michael):

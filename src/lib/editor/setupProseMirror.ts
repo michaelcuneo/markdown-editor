@@ -1,11 +1,10 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import type { Schema } from 'prosemirror-model';
 import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 
-import { createTaskListSchema } from './schema/tasklistSchema.js';
+import { createMarkdownSchema } from './schema/markdownSchema.js';
 import { createMarkdownTaskSupport } from './tasks/markdownTaskSupport.js';
 import { taskTogglePlugin } from './plugins/taskTogglePlugin.js';
 import { markdownInputRules } from './rules/markdownInputRules.js';
@@ -13,9 +12,14 @@ import { markdownKeymap } from './keymap/markdownKeymap.js';
 import { wysiwymPlugin } from './plugins/wysiwymPlugin.js';
 import { markdownEnterPlugin } from './plugins/markdownEnterPlugin.js';
 import { linkClickPlugin } from './plugins/linkClickPlugin.js';
+import { codeMirrorBlockPlugin } from './plugins/codemirrorBlockPlugin.js';
+import { markdownBackspacePlugin } from './plugins/markdownBackspacePlugin.js';
+import { markdownTabPlugin } from './plugins/markdownTabPlugin.js';
+import { markdownDeletePlugin } from './plugins/markdownDeletePlugin.js';
+import { markdownArrowPlugin } from './plugins/markdownArrowPlugin.js';
 
 export function setupProseMirror(element: HTMLElement, initialMarkdown = ''): EditorView {
-	const schema: Schema = createTaskListSchema();
+	const schema = createMarkdownSchema();
 	const { parser, serializer } = createMarkdownTaskSupport(schema);
 
 	const doc = initialMarkdown.trim()
@@ -31,8 +35,13 @@ export function setupProseMirror(element: HTMLElement, initialMarkdown = ''): Ed
 			wysiwymPlugin(schema),
 			taskTogglePlugin(),
 			markdownEnterPlugin(schema),
+			markdownBackspacePlugin(schema),
+			markdownTabPlugin(schema),
+			markdownArrowPlugin(schema),
+			markdownDeletePlugin(schema),
 			markdownKeymap(schema),
 			linkClickPlugin(),
+			codeMirrorBlockPlugin(),
 			keymap(baseKeymap)
 		]
 	});
@@ -43,17 +52,13 @@ export function setupProseMirror(element: HTMLElement, initialMarkdown = ''): Ed
 			const newState = view.state.apply(tr);
 			view.updateState(newState);
 		}
-	});
-
-	// --- Expose Markdown helpers ---
-	interface ExtendedView extends EditorView {
+	}) as EditorView & {
 		getMarkdown: () => string;
 		setMarkdown: (md: string) => void;
-	}
-	const extended = view as ExtendedView;
+	};
 
-	extended.getMarkdown = () => serializer.serialize(view.state.doc);
-	extended.setMarkdown = (md: string) => {
+	view.getMarkdown = () => serializer.serialize(view.state.doc);
+	view.setMarkdown = (md: string) => {
 		const newDoc = parser.parse(md);
 		const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, newDoc.content);
 		view.dispatch(tr);

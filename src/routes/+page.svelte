@@ -3,26 +3,91 @@
   import { onMount } from 'svelte';
 
   let activeTab: 'editor' | 'docs' = $state('editor');
-  let content = $state(`# Welcome to the Markdown Editor!
+let content = $state(`# Welcome to the Markdown Editor!
 
-This is a **fully featured Markdown editor** built with Svelte 5.
-[OpenAI](https://openai.com) is great!
-
-## Features
-
-- [ ] Task Lists
-- [x] Completed Item
-
-- 🖋️ Toolbar formatting
-- 🧩 Live preview (built-in)
-- 🖼️ Drag & drop image support
-- 💾 Import & export as Markdown or HTML
-- 🔒 Optional HTML sanitization toggle
+This is a **fully featured WYSIWYM Markdown editor** built with [Svelte&nbsp;5](https://svelte.dev) ✨  
+It supports _rich formatting_, **live preview**, \`inline code\`, and even syntax-highlighted code blocks.
 
 ---
 
-Try editing this text to see changes instantly in the preview!
+## 🎨 Typography & Formatting
+
+You can use **bold**, _italic_, **_both_**, or \`inline code\`.  
+Links like [OpenAI](https://openai.com) are automatically styled and clickable.  
+
+> “Markdown is not about syntax — it’s about expression.”  
+> — _Anonymous Developer_
+
+---
+
+## 🧮 Code Blocks with Syntax Highlighting
+
+\`\`\`ts
+// TypeScript Example
+interface User {
+  id: number;
+  name: string;
+  isAdmin?: boolean;
+}
+
+function greet(user: User): string {
+  return user.isAdmin
+    ? \`Welcome, Admin \${user.name}!\`
+    : \`Hello, \${user.name}!\`;
+}
+
+console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
+\`\`\`
+
+---
+
+## ✅ Task Lists
+
+- [x] Build Markdown Schema
+- [x] Add WYSIWYM Formatting
+- [ ] Implement Image Uploads
+- [ ] Add Slash Command Menu (\`/\`)
+- [ ] Polish Dark & Light Theme
+
+---
+
+## 🧾 Lists & Nesting
+
+- Features:
+  - Toolbar Formatting
+  - Live Preview
+  - Task Lists
+  - Syntax Highlighting
+- Supported:
+  1. Ordered Lists
+  2. Nested Lists
+     1. Like this
+     2. And this
+  3. Works Great!
+
+---
+
+## 💬 Blockquotes & Rules
+
+> “The best way to predict the future is to implement it.”  
+> — Alan Kay
+
+---
+
+## 💡 Try It Out
+
+Type some Markdown below to see real-time updates.  
+Experiment with:
+- Pressing **Ctrl+B** or **Ctrl+I**
+- Inserting \`code blocks\`
+- Creating [links](https://example.com)
+- Using the toolbar for formatting
+
+---
+
+That’s it! You’re editing with a fully interactive Markdown editor built with ❤️ and Svelte.
 `);
+
   let readmeHtml = $state<string>('');
   let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
 
@@ -65,20 +130,20 @@ Try editing this text to see changes instantly in the preview!
         Edit Markdown in the left pane and see live preview updates on the right.
       </p>
 
-    <SvelteMarkdownEditor bind:markdown={content} />
+    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} />
     </section>
   {:else}
     <section class="docs-section">
       <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <SvelteMarkdownEditor bind:markdown={readmeHtml} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} />
     </section>
   {/if}
 </main>
 
 <style>
   main {
-    max-width: 1020px;
+    max-width: 1200px;
     margin: 4rem auto;
     padding: 2rem;
   }
