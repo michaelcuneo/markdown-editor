@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1762083585568.mjs ────────────────────────────────────── 714.1kb ─ 100.0%
+  .sst/platform/sst.config.1762125797753.mjs ────────────────────────────────────── 714.1kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.9%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -593,7 +593,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ sst.config.ts ────────────────────────────────────────────────────────────────── 654b ──── 0.1%
+   ├ sst.config.ts ────────────────────────────────────────────────────────────────── 656b ──── 0.1%
    │  └ eval.ts
    ├ .sst/platform/src/components/aws/bus-base-subscriber.ts ──────────────────────── 652b ──── 0.1%
    │  └ .sst/platform/src/components/aws/bus-queue-subscriber.ts

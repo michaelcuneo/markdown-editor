@@ -4,17 +4,20 @@
   import { handleAction, setEditorView, getCommandState } from './controller/editorController.js';
   import type { EditorView } from 'prosemirror-view';
   import EditorToolbar from './EditorToolbar.svelte';
-  import type { ToolbarAction } from '$lib/types/index.js';
+  import type { ToolbarAction } from '../types/index.js';
+  import { syncImageLinesToQueue } from './utils/useImageSync.js';
 
   let {
     markdown = $bindable(''),
     toolbar = true,
+    imageQueue = $bindable([]),
     editable = true
   }: {
     markdown: string;
-    toolbar?: boolean
+    toolbar?: boolean;
+    imageQueue?: { id: string; file: File; previewUrl?: string }[];
     editable?: boolean;
-   } = $props();
+  } = $props();
 
   let editorRef: HTMLDivElement | null = $state(null);
   let editorView: EditorView | null = null;
@@ -23,25 +26,40 @@
   let activeMarks = $state<Record<string, boolean>>({});
   let activeBlocks = $state<Record<string, boolean>>({});
 
-  // 🔁 Keep ProseMirror -> Svelte synced
+  // 🔁 Keep ProseMirror → Svelte synced
   function updateMarkdownFromEditor() {
     if (!editorView) return;
-    const md =
-      (editorView as any).getMarkdown?.() ??
-      markdown;
-
+    const md = (editorView as any).getMarkdown?.() ?? markdown;
     if (md !== markdown) markdown = md;
   }
 
-  // 🔁 Keep Svelte -> ProseMirror synced
+  // 🔁 Keep Svelte → ProseMirror synced
   function updateEditorFromMarkdown(md: string) {
     if (!editorView) return;
     (editorView as any).setMarkdown?.(md);
   }
 
+  // ✅ keep global preview map in sync
+  $effect(() => {
+    (window as any).__imagePreviewMap = Object.fromEntries(
+      imageQueue.map(i => [i.id, i.previewUrl])
+    );
+
+    // Force ProseMirror to refresh DOM nodes to reflect previews
+    if (editorView?.state) {
+      const tr = editorView.state.tr.setMeta('forceUpdate', true);
+      editorView.updateState(editorView.state.apply(tr));
+    }
+  });
+
+  // ✅ keep markdown lines synced with image queue
+  $effect(() => {
+    markdown = syncImageLinesToQueue(markdown, imageQueue);
+    updateEditorFromMarkdown(markdown);
+  });
+
   function updateToolbarState() {
     if (!editorView) return;
-
     const { state } = editorView;
     const { from, to } = state.selection;
     const selFrom = state.selection.$from;
@@ -64,7 +82,6 @@
     if (parent?.attrs?.checked !== undefined) blockActive.task = true;
     activeBlocks = blockActive;
 
-    // ✅ compute disabled state for each toolbar button
     commandStates = {
       bold: getCommandState('bold', state),
       italic: getCommandState('italic', state),
@@ -78,11 +95,10 @@
       undo: getCommandState('undo', state),
       redo: getCommandState('redo', state),
       link: getCommandState('link', state),
-      task: getCommandState('task', state),
+      task: getCommandState('task', state)
     };
   }
 
-  // 🧠 Sync external markdown when props change (after init)
   $effect(() => {
     if (!editorView || initializing) return;
     updateEditorFromMarkdown(markdown);
@@ -91,7 +107,7 @@
   onMount(() => {
     if (!editorRef) return;
     editorRef.innerHTML = '';
-    editorView = setupProseMirror(editorRef);
+    editorView = setupProseMirror(editorRef, markdown, imageQueue);
     setEditorView(editorView);
 
     if (markdown && markdown.trim().length > 0) {
@@ -105,10 +121,9 @@
         editorView.updateState(newState);
         updateMarkdownFromEditor();
         updateToolbarState();
-      },
+      }
     });
 
-    // 🧠 Listen for our custom toggle event
     editorRef.addEventListener('pm-updated', () => {
       updateMarkdownFromEditor();
       updateToolbarState();
@@ -130,10 +145,8 @@
   });
 </script>
 
-<!-- Toolbar -->
 {#if toolbar}
   <EditorToolbar onAction={onAction} {activeMarks} {activeBlocks} {commandStates} />
 {/if}
 
-<!-- Editable area -->
 <div bind:this={editorRef} class="ProseMirror"></div>

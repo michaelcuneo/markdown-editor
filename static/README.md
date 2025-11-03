@@ -1,4 +1,4 @@
-# 🪶 @michaelcuneo/markdown-editor
+# 🪶 @michaelcuneo/svelte-markdown
 
 > **A modern WYSIWYM Markdown editor for [Svelte 5](https://svelte.dev)**  
 > Powered by ProseMirror and CodeMirror, featuring task lists, fenced code blocks,  
@@ -9,7 +9,7 @@
 ## 🌐 Live Demo
 
 **See it in action:**  
-🔗 https://markdown-editor.michaelcuneo.com.au
+🔗 https://svelte-markdown.michaelcuneo.com.au
 
 The demo includes headings, inline formatting, fenced code blocks with syntax highlighting,  
 lists, and interactive task items — all rendered live as you type.
@@ -21,11 +21,11 @@ lists, and interactive task items — all rendered live as you type.
 ## 🚀 Installation
 
 ```bash
-npm i @michaelcuneo/markdown-editor
+npm i @michaelcuneo/svelte-markdown
 # or
-pnpm add @michaelcuneo/markdown-editor
+pnpm add @michaelcuneo/svelte-markdown
 # or
-yarn add @michaelcuneo/markdown-editor
+yarn add @michaelcuneo/svelte-markdown
 ```
 
 ---
@@ -34,9 +34,9 @@ yarn add @michaelcuneo/markdown-editor
 
 ```svelte
 <script lang="ts">
-	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
+	import { SvelteMarkdownEditor } from '@michaelcuneo/svelte-markdown';
 	// Optional default styles (toolbar, dark/light theme, tasks, codemirror)
-	import '@michaelcuneo/markdown-editor/styles.css';
+	import '@michaelcuneo/svelte-markdown/styles.css';
 
 	let content = `# Welcome to the Markdown Editor!
 
@@ -130,7 +130,7 @@ A complete stylesheet is included covering:
 Import it directly:
 
 ```ts
-import '@michaelcuneo/markdown-editor/styles.css';
+import '@michaelcuneo/svelte-markdown/styles.css';
 ```
 
 Prefer your own theme?  
@@ -169,8 +169,8 @@ Skip the import and override the CSS hooks:
 ## 🧰 Development
 
 ```bash
-git clone https://github.com/michaelcuneo/markdown-editor.git
-cd markdown-editor
+git clone https://github.com/michaelcuneo/svelte-markdown.git
+cd svelte-markdown
 pnpm install
 pnpm dev
 ```
@@ -201,5 +201,5 @@ MIT © Michael Cuneo (2025)
 
 ### TL;DR
 
-`@michaelcuneo/markdown-editor` — **type, edit, and preview Markdown with zero fuss.**  
+`@michaelcuneo/svelte-markdown` — **type, edit, and preview Markdown with zero fuss.**  
 Beautiful code blocks, interactive tasks, and WYSIWYM inline formatting for modern Svelte apps.

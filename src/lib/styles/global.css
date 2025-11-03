@@ -243,6 +243,11 @@
 	background: #cce0ff;
 }
 
+/* ensure PM images participate in DnD */
+.ProseMirror img.pm-image {
+	-webkit-user-drag: element;
+}
+
 /* ========================================================================
    🌑 Dark Mode Overrides
    ======================================================================== */
