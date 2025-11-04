@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1762125797753.mjs ────────────────────────────────────── 714.1kb ─ 100.0%
+  .sst/platform/sst.config.1762148049247.mjs ────────────────────────────────────── 714.0kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.9%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -682,8 +682,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 315b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/distribution-invalidation.ts ──────── 307b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -702,14 +700,14 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$app> ────────────────────────────────────────────────────────────────── 296b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/origin-access-control.ts ──────────── 292b ──── 0.0%
    │  └ .sst/platform/src/components/aws/router.ts
    │     └ .sst/platform/src/components/aws/index.ts
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$app> ────────────────────────────────────────────────────────────────── 292b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/kv-routes-update.ts ───────────────── 277b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -734,6 +732,8 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 269b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/bucket-files.ts ───────────────────── 268b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts

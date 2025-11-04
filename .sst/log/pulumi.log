@@ -1,11 +1,28 @@
+Created stack 'michael'
 Updating (michael):
-    pulumi:pulumi:Stack chain-enhance-michael  warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
+    pulumi:pulumi:Stack svelte-markdown-michael  warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
 
-    pulumi:pulumi:Stack chain-enhance-michael running warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
+ +  pulumi:pulumi:Stack svelte-markdown-michael creating (0s) warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
 @ updating....
-    pulumi:pulumi:Stack chain-enhance-michael  1 warning
+ +  sst:sst:LinkRef MyWebLinkRef creating (0s) 
+ +  sst:aws:SvelteKit MyWeb creating (0s) 
+ +  sst:aws:Function MyWebDevServer creating (0s) 
+ +  aws:cloudwatch:LogGroup MyWebDevServerLogGroup creating (0s) 
+ +  random:index:RandomBytes LambdaEncryptionKey creating (0s) 
+ +  random:index:RandomBytes LambdaEncryptionKey created (0.00s) 
+ +  aws:iam:Role MyWebDevServerRole creating (0s) 
+@ updating....
+ +  aws:cloudwatch:LogGroup MyWebDevServerLogGroup created (0.20s) 
+ +  aws:s3:BucketObjectv2 MyWebDevServerCode creating (0s) 
+ +  aws:s3:BucketObjectv2 MyWebDevServerCode created (0.15s) 
+@ updating....
+ +  aws:iam:Role MyWebDevServerRole created (2s) 
+ +  aws:lambda:Function MyWebDevServerFunction creating (0s) 
+@ updating..................
+ +  aws:lambda:Function MyWebDevServerFunction created (14s) 
+ +  pulumi:pulumi:Stack svelte-markdown-michael created (17s) 1 warning
 Diagnostics:
-  pulumi:pulumi:Stack (chain-enhance-michael):
+  pulumi:pulumi:Stack (svelte-markdown-michael):
     warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
 
 Outputs:
@@ -13,7 +30,7 @@ Outputs:
     web     : "http://url-unavailable-in-dev.mode"
 
 Resources:
-    9 unchanged
+    + 9 created
 
-Duration: 2s
+Duration: 19s
 

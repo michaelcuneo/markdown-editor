@@ -246,6 +246,36 @@
 /* ensure PM images participate in DnD */
 .ProseMirror img.pm-image {
 	-webkit-user-drag: element;
+	max-width: 100%;
+}
+
+img.pm-image.pm-img-dragging {
+	opacity: 0.5;
+	transform: scale(0.97);
+	outline: 2px dashed #4f83ff;
+	outline-offset: 2px;
+}
+
+.ProseMirror.pm-dragging-image {
+	outline: 2px dashed var(--accent, #3b82f6);
+	outline-offset: 4px;
+}
+
+.pm-drop-caret {
+	position: fixed;
+	width: 2px;
+	background: var(--accent, #3b82f6);
+	pointer-events: none;
+	z-index: 9999;
+	opacity: 0;
+	transition: opacity 0.1s ease;
+	animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+	50% {
+		opacity: 0;
+	}
 }
 
 /* ========================================================================
