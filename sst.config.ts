@@ -4,7 +4,7 @@
 export default $config({
 	app(input) {
 		return {
-			name: 'svelte-markdown',
+			name: 'markdown-editor',
 			removal: input?.stage === 'production' ? 'retain' : 'remove',
 			protect: ['production'].includes(input?.stage),
 			home: 'aws',
@@ -20,7 +20,7 @@ export default $config({
 		const web = new sst.aws.SvelteKit('MyWeb', {
 			path: '.',
 			domain: {
-				name: 'svelte-markdown.michaelcuneo.com.au'
+				name: 'markdown-editor.michaelcuneo.com.au'
 			},
 			invalidation: {
 				paths: ['/*']
