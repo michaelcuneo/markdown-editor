@@ -1,12 +1,110 @@
 /* ========================================================================
-   Markdown Editor Core Styles
+   🎨 Markdown Editor Core Styles with Theming (md-* variables)
    ======================================================================== */
 
 @import 'prosemirror-view/style/prosemirror.css';
-@import 'highlight.js/styles/github.css';
-@import 'highlight.js/styles/github-dark.css';
 
-/* Toolbar styling — scoped to markdown editor */
+/* ========================================================================
+   ✅ Theme Variables
+   ======================================================================== */
+
+:root {
+	/* Base */
+	--md-bg: #ffffff;
+	--md-fg: #1a1b1e;
+	--md-border: #e0e0e0;
+	--md-border-subtle: #f3f3f3;
+	--md-muted: #999;
+	--md-strong: #000;
+
+	/* Toolbar */
+	--md-toolbar-bg: #f8f9fb;
+	--md-toolbar-border: #dcdcdc;
+	--md-toolbar-fg: #444;
+
+	/* Accent */
+	--md-accent: #4f83ff;
+	--md-accent-hover: #1a73e8;
+	--md-accent-bg: rgba(79, 131, 255, 0.1);
+	--md-accent-bg-strong: rgba(79, 131, 255, 0.2);
+	--md-accent-outline: #4f83ff33;
+
+	/* Code & Highlight */
+	--md-code-bg: #f5f5f5;
+	--md-code-fg: #0056b3;
+
+	/* Blockquote */
+	--md-blockquote-bg: #f7f9ff;
+	--md-blockquote-border: #4f83ff;
+	--md-blockquote-fg: #4d4d4d;
+
+	/* Checkbox */
+	--md-checkbox-bg: #ffffff;
+	--md-checkbox-border: #bdbdbd;
+	--md-checkbox-checked: #4f83ff;
+	--md-checkbox-shadow: #4f83ff33;
+
+	/* Checkbox alignment tuning */
+	--md-checkbox-size: 1em; /* size tied to font for baseline match */
+	--md-checkbox-nudge: -1px; /* lift slightly to align with text x-height */
+
+	/* Selection */
+	--md-selection-bg: #cce0ff;
+
+	/* Headings */
+	--md-h1: #1a1b1e;
+	--md-h2: #333;
+	--md-h3: #444;
+	--md-em: #d28b00;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--md-bg: #1a1b1e;
+		--md-fg: #e8eaed;
+		--md-border: #2c2d30;
+		--md-border-subtle: #2a2b2f;
+		--md-muted: #9aa0a6;
+		--md-strong: #ffffff;
+
+		--md-toolbar-bg: #0f1012;
+		--md-toolbar-border: #2a2d33;
+		--md-toolbar-fg: #ddd;
+
+		--md-accent: #4f83ff;
+		--md-accent-hover: #aecbfa;
+		--md-accent-bg: rgba(79, 131, 255, 0.1);
+		--md-accent-bg-strong: rgba(79, 131, 255, 0.2);
+		--md-accent-outline: #4f83ff44;
+
+		--md-code-bg: #2d2f33;
+		--md-code-fg: #8ab4f8;
+
+		--md-blockquote-bg: #232429;
+		--md-blockquote-border: #4f83ff;
+		--md-blockquote-fg: #9aa0a6;
+
+		--md-checkbox-bg: #1f2023;
+		--md-checkbox-border: #3b3d42;
+		--md-checkbox-checked: #4f83ff;
+		--md-checkbox-shadow: #4f83ff44;
+
+		/* dark mode keeps same size; nudge usually identical */
+		--md-checkbox-size: 1em;
+		--md-checkbox-nudge: -1px;
+
+		--md-selection-bg: #3b4b6d;
+
+		--md-h1: #fafafa;
+		--md-h2: #e0e0e0;
+		--md-h3: #cfd2d8;
+		--md-em: #f0c674;
+	}
+}
+
+/* ========================================================================
+   Toolbar
+   ======================================================================== */
 .toolbar {
 	display: flex;
 	flex-wrap: wrap;
@@ -14,116 +112,151 @@
 	gap: 0.4rem;
 	padding: 0.5rem;
 	border-radius: 8px;
-	border: 1px solid var(--border, #2c2d30);
-	background: var(--toolbar-bg, #0f1012);
+	border: 1px solid var(--md-toolbar-border);
+	background: var(--md-toolbar-bg);
+	color: var(--md-toolbar-fg);
 }
 
 .toolbar button {
 	border: 1px solid transparent;
 	background: none;
-	color: #ddd;
+	color: var(--md-toolbar-fg);
 	font-size: 0.9rem;
 	padding: 0.35rem 0.55rem;
 	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
-
 .toolbar button:hover {
-	background: rgba(79, 131, 255, 0.1);
-	border-color: rgba(79, 131, 255, 0.2);
-	color: #4f83ff;
+	background: var(--md-accent-bg);
+	border-color: var(--md-accent-bg-strong);
+	color: var(--md-accent);
 }
-
 .toolbar button.active {
-	background: rgba(79, 131, 255, 0.2);
-	border-color: #4f83ff;
-	color: #4f83ff;
+	background: var(--md-accent-bg-strong);
+	border-color: var(--md-accent);
+	color: var(--md-accent);
 }
-
 .toolbar button:disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
 	filter: grayscale(0.4);
 }
-
 .spacer {
 	flex: 1 1 auto;
 }
 
 /* ========================================================================
-   ✅ Task Lists
+   ✅ Task Lists — perfectly aligned & theme-correct
    ======================================================================== */
 .ProseMirror li[data-checked] {
 	list-style: none;
-	position: relative;
-	margin: 0.25em 0;
-	padding-left: 1.6em; /* room for checkbox */
-	min-height: 1.4em;
+	margin: 0.4em 0;
+	padding: 0;
 }
 
-.pm-task {
+.ProseMirror .pm-task {
 	display: flex;
-	align-items: flex-start;
-	gap: 0.5rem;
+	align-items: center; /* center-align for single-line; multiline still wraps nicely */
+	gap: 0.55rem;
 	line-height: 1.5;
+	user-select: none;
 }
 
-.pm-task-checkbox {
-	position: absolute;
-	left: 0;
-	top: 0.25em;
-	width: 1em;
-	height: 1em;
-	cursor: pointer;
-	accent-color: #4f83ff;
-	background-color: #ffffff;
-	border: 1px solid #bdbdbd;
+/* Checkbox */
+.ProseMirror .pm-task-checkbox {
+	width: var(--md-checkbox-size);
+	height: var(--md-checkbox-size);
+	flex-shrink: 0;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background-color: var(--md-checkbox-bg);
+	border: 1px solid var(--md-checkbox-border);
 	border-radius: 4px;
-	transform: scale(1.05);
-	transition: all 0.15s ease;
-}
-
-.ProseMirror li[data-checked='true'] .pm-task-checkbox {
-	background-color: #4f83ff;
-	border-color: #4f83ff;
-	box-shadow: 0 0 0 1px #4f83ff33;
-}
-
-.pm-task-checkbox:hover {
-	border-color: #4f83ff;
-	box-shadow: 0 0 0 1px #4f83ff33;
-}
-
-.pm-task-content {
+	cursor: pointer;
+	box-sizing: border-box;
+	position: relative;
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: middle;
+	transform: translateY(var(--md-checkbox-nudge)); /* fine-tune baseline */
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
-.ProseMirror li[data-checked='true'] .pm-task-content {
+/* hover & focus */
+.ProseMirror:not(.readonly) .pm-task-checkbox:hover {
+	border-color: var(--md-accent);
+	box-shadow: 0 0 0 2px var(--md-accent-outline);
+}
+.ProseMirror:not(.readonly) .pm-task-checkbox:focus-visible {
+	outline: 2px solid var(--md-accent);
+	outline-offset: 1px;
+}
+
+/* ✅ checked state (theme-correct) */
+.ProseMirror .pm-task-checkbox:checked {
+	background-color: var(--md-checkbox-checked);
+	border-color: var(--md-checkbox-checked);
+	box-shadow: 0 0 0 2px var(--md-checkbox-shadow);
+}
+
+/* crisp checkmark via inline SVG */
+.ProseMirror .pm-task-checkbox:checked::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="white" d="M6.1 11.3 3.1 8.3l1.4-1.4 1.6 1.6 5.4-5.4 1.4 1.4z"/></svg>')
+		center/70% no-repeat;
+}
+
+/* Text */
+.ProseMirror .pm-task-content {
+	color: var(--md-fg);
+	flex: 1;
+}
+
+/* Strike-through when checked (via attr or actual input) */
+.ProseMirror li[data-checked='true'] .pm-task-content,
+.ProseMirror .pm-task-checkbox:checked ~ .pm-task-content {
 	text-decoration: line-through;
-	color: #999;
+	color: var(--md-muted);
+}
+
+/* Readonly */
+.ProseMirror.readonly .pm-task-checkbox {
+	cursor: default;
+	opacity: 0.6;
+}
+
+/* Dark mode (colors already come from variables) */
+@media (prefers-color-scheme: dark) {
+	.ProseMirror .pm-task-checkbox {
+		background-color: var(--md-checkbox-bg);
+		border-color: var(--md-checkbox-border);
+	}
 }
 
 /* ========================================================================
-   ✅ CodeMirror Blocks
+   CodeMirror Blocks
    ======================================================================== */
 .pm-codemirror-wrapper {
 	position: relative;
-	background: #f7f9ff;
+	background: var(--md-blockquote-bg);
 	border-radius: 6px;
 	margin: 1rem 0;
 	overflow: hidden;
-	border: 1px solid #e0e0e0;
+	border: 1px solid var(--md-border);
 }
-
 .pm-code-lang {
 	position: absolute;
 	top: 6px;
 	right: 8px;
 	z-index: 5;
 	background: rgba(0, 0, 0, 0.06);
-	color: #555;
+	color: var(--md-muted);
 	font-size: 0.7rem;
 	padding: 2px 6px;
 	border-radius: 4px;
@@ -134,255 +267,84 @@
 }
 
 /* ========================================================================
-   ✅ ProseMirror Base Styles
+   ProseMirror Base Styles
    ======================================================================== */
 .ProseMirror {
-	background: #ffffff;
-	color: #1a1b1e;
+	background: var(--md-bg);
+	color: var(--md-fg);
 	font-family: 'Inter', system-ui, sans-serif;
 	font-size: 15px;
 	line-height: 1.6;
 	padding: 1rem;
 	border-radius: 8px;
-	border: 1px solid #e0e0e0;
-	box-shadow: inset 0 0 0 1px #f3f3f3;
+	border: 1px solid var(--md-border);
+	box-shadow: inset 0 0 0 1px var(--md-border-subtle);
 	min-height: 240px;
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease;
 }
-
 .ProseMirror:focus {
 	outline: none;
-	border-color: #4f83ff;
-	box-shadow: 0 0 0 1px #4f83ff33;
+	border-color: var(--md-accent);
+	box-shadow: 0 0 0 1px var(--md-accent-outline);
 }
 
-.ProseMirror p {
-	margin: 0.4em 0;
+.ProseMirror.readonly {
+	user-select: text;
+	caret-color: transparent;
+	background: var(--md-bg);
+}
+.ProseMirror.readonly * {
+	pointer-events: none;
 }
 
-/* Unified list spacing */
-.ProseMirror ul,
-.ProseMirror ol {
-	margin: 0.4em 0 0.4em 1.4em;
-	padding: 0;
-	list-style-position: outside;
-}
-
-.ProseMirror li {
-	margin: 0.2em 0;
-}
-
-/* Text formatting */
 .ProseMirror h1,
 .ProseMirror h2,
 .ProseMirror h3 {
-	color: #1a1b1e;
+	color: var(--md-h1);
 	font-weight: 600;
 	line-height: 1.3;
 	margin: 0.8em 0 0.4em;
 }
-
-.ProseMirror h1 {
-	font-size: 1.6rem;
-	padding-bottom: 0.3rem;
-}
-
 .ProseMirror h2 {
-	font-size: 1.3rem;
-	color: #333;
+	color: var(--md-h2);
 }
-
 .ProseMirror h3 {
-	font-size: 1.15rem;
-	color: #444;
+	color: var(--md-h3);
 }
 
 .ProseMirror strong {
-	color: #000;
+	color: var(--md-strong);
 	font-weight: 600;
 }
-
 .ProseMirror em {
-	color: #d28b00;
+	color: var(--md-em);
 	font-style: italic;
 }
 
 .ProseMirror code {
 	font-family: 'JetBrains Mono', monospace;
-	background: #f5f5f5;
-	color: #0056b3;
+	background: var(--md-code-bg);
+	color: var(--md-code-fg);
 	border-radius: 4px;
 	padding: 0.1em 0.3em;
 }
-
 .ProseMirror blockquote {
-	border-left: 3px solid #4f83ff;
-	color: #4d4d4d;
-	background: #f7f9ff;
+	border-left: 3px solid var(--md-blockquote-border);
+	color: var(--md-blockquote-fg);
+	background: var(--md-blockquote-bg);
 	padding-left: 1rem;
 	margin: 0.8em 0;
 	font-style: italic;
 }
-
-.ProseMirror li::marker {
-	color: #4f83ff;
-}
-
 .ProseMirror a {
-	color: #0056b3;
+	color: var(--md-code-fg);
 	text-decoration: underline;
 }
-
 .ProseMirror a:hover {
-	color: #1a73e8;
+	color: var(--md-accent-hover);
 }
-
 .ProseMirror ::selection {
-	background: #cce0ff;
-}
-
-/* ensure PM images participate in DnD */
-.ProseMirror img.pm-image {
-	-webkit-user-drag: element;
-	max-width: 100%;
-}
-
-img.pm-image.pm-img-dragging {
-	opacity: 0.5;
-	transform: scale(0.97);
-	outline: 2px dashed #4f83ff;
-	outline-offset: 2px;
-}
-
-.ProseMirror.pm-dragging-image {
-	outline: 2px dashed var(--accent, #3b82f6);
-	outline-offset: 4px;
-}
-
-.pm-drop-caret {
-	position: fixed;
-	width: 2px;
-	background: var(--accent, #3b82f6);
-	pointer-events: none;
-	z-index: 9999;
-	opacity: 0;
-	transition: opacity 0.1s ease;
-	animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-	50% {
-		opacity: 0;
-	}
-}
-
-/* ========================================================================
-   🌑 Dark Mode Overrides
-   ======================================================================== */
-@media (prefers-color-scheme: dark) {
-	.toolbar {
-		background: #0f1012;
-		border-color: #2a2d33;
-	}
-
-	.toolbar button {
-		color: #ddd;
-	}
-
-	.toolbar button:hover {
-		background: rgba(79, 131, 255, 0.1);
-		border-color: rgba(79, 131, 255, 0.2);
-		color: #4f83ff;
-	}
-
-	.ProseMirror {
-		background: #1a1b1e;
-		color: #e8eaed;
-		border: 1px solid #2c2d30;
-		box-shadow: inset 0 0 0 1px #2a2b2f;
-	}
-
-	.ProseMirror code {
-		background: #2d2f33;
-		color: #8ab4f8;
-	}
-
-	.ProseMirror blockquote {
-		border-left: 3px solid #4f83ff;
-		color: #9aa0a6;
-		background: #232429;
-	}
-
-	.ProseMirror a {
-		color: #8ab4f8;
-	}
-
-	.ProseMirror a:hover {
-		color: #aecbfa;
-	}
-
-	.ProseMirror ::selection {
-		background: #3b4b6d;
-	}
-
-	.pm-codemirror-wrapper {
-		background: #0f1117;
-		border-color: #2a2d33;
-	}
-
-	.pm-code-lang {
-		background: rgba(255, 255, 255, 0.1);
-		color: #aab4c0;
-	}
-
-	.pm-task-checkbox {
-		background-color: #1f2023;
-		border: 1px solid #3b3d42;
-	}
-
-	.ProseMirror li[data-checked='true'] .pm-task-checkbox {
-		background-color: #4f83ff;
-		border-color: #4f83ff;
-		box-shadow: 0 0 0 1px #4f83ff44;
-	}
-
-	.ProseMirror li[data-checked='true'] .pm-task-content {
-		color: #9aa0a6;
-		text-decoration: line-through;
-	}
-
-	.ProseMirror h1,
-	.ProseMirror h2,
-	.ProseMirror h3 {
-		color: #fafafa;
-		font-weight: 600;
-		line-height: 1.3;
-	}
-
-	.ProseMirror h1 {
-		font-size: 1.6rem;
-		padding-bottom: 0.3rem;
-	}
-
-	.ProseMirror h2 {
-		font-size: 1.3rem;
-		color: #e0e0e0;
-	}
-
-	.ProseMirror h3 {
-		font-size: 1.15rem;
-		color: #cfd2d8;
-	}
-
-	.ProseMirror strong {
-		color: #ffffff;
-		font-weight: 600;
-	}
-
-	.ProseMirror em {
-		color: #f0c674;
-		font-style: italic;
-	}
+	background: var(--md-selection-bg);
 }

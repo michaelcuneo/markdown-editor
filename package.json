@@ -30,7 +30,14 @@
 		}
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0"
+		"svelte": "^5.0.0",
+		"prosemirror-state": "^1.4.3",
+		"prosemirror-view": "^1.33.9",
+		"prosemirror-model": "^1.22.1",
+		"prosemirror-markdown": "^1.13.0",
+		"prosemirror-history": "^1.4.0",
+		"prosemirror-schema-list": "^1.4.0",
+		"codemirror": "^6.0.0"
 	},
 	"devDependencies": {
 		"@codemirror/lang-javascript": "^6.2.4",

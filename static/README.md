@@ -1,31 +1,30 @@
-# 🪶 @michaelcuneo/svelte-markdown
+# 🪶 @michaelcuneo/markdown-editor
 
 > **A modern WYSIWYM Markdown editor for [Svelte 5](https://svelte.dev)**  
-> Powered by ProseMirror and CodeMirror, featuring task lists, fenced code blocks,  
-> keyboard shortcuts, and a responsive light/dark theme out of the box.
+> Powered by **ProseMirror** and **CodeMirror 6**, featuring task lists, fenced code blocks,  
+> keyboard shortcuts, and a **fully themeable light/dark system** built with CSS variables.
 
 ---
 
 ## 🌐 Live Demo
 
-**See it in action:**  
-🔗 https://svelte-markdown.michaelcuneo.com.au
+🔗 https://markdown-editor.michaelcuneo.com.au
 
-The demo includes headings, inline formatting, fenced code blocks with syntax highlighting,  
+See headings, inline formatting, fenced code blocks with syntax highlighting,  
 lists, and interactive task items — all rendered live as you type.
 
-> Built with **Svelte 5**, **ProseMirror**, **CodeMirror 6**, and **TypeScript**.
+> Built with **Svelte 5 (runes)**, **ProseMirror**, **CodeMirror 6**, and **TypeScript**.
 
 ---
 
 ## 🚀 Installation
 
 ```bash
-npm i @michaelcuneo/svelte-markdown
+npm i @michaelcuneo/markdown-editor
 # or
-pnpm add @michaelcuneo/svelte-markdown
+pnpm add @michaelcuneo/markdown-editor
 # or
-yarn add @michaelcuneo/svelte-markdown
+yarn add @michaelcuneo/markdown-editor
 ```
 
 ---
@@ -34,9 +33,8 @@ yarn add @michaelcuneo/svelte-markdown
 
 ```svelte
 <script lang="ts">
-	import { SvelteMarkdownEditor } from '@michaelcuneo/svelte-markdown';
-	// Optional default styles (toolbar, dark/light theme, tasks, codemirror)
-	import '@michaelcuneo/svelte-markdown/styles.css';
+	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
+	import '@michaelcuneo/markdown-editor/styles.css';
 
 	let content = `# Welcome to the Markdown Editor!
 
@@ -62,7 +60,7 @@ function greet(name: string): string {
 
 ## 🧠 Two-Way Binding
 
-The editor is fully reactive — content updates instantly via `bind:value`.
+Reactive by design — content updates instantly through `bind:value`.
 
 ```svelte
 <p>Characters: {value.length}</p>
@@ -72,124 +70,188 @@ The editor is fully reactive — content updates instantly via `bind:value`.
 
 ## 🧩 Props
 
-**Available component props:**
+| Prop            | Type                              | Default     | Description                                                                                   |
+| --------------- | --------------------------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| `value`         | `string`                          | `''`        | The markdown content (bindable).                                                              |
+| `readonly`      | `boolean`                         | `false`     | Enables read-only viewer mode (no toolbar, static content).                                   |
+| `editable`      | `boolean`                         | `true`      | Toggles whether the editor is editable at runtime — useful for view-only states.              |
+| `docId`         | `string`                          | `undefined` | Unique document ID — changing it clears and reloads content (useful for switching documents). |
+| `sanitizeHtml`  | `boolean`                         | `true`      | Sanitizes exported HTML using DOMPurify.                                                      |
+| `onUpdate`      | `(value: string) => void`         | —           | Fired whenever content changes.                                                               |
+| `onImageUpload` | `(file: File) => Promise<string>` | —           | Optional async image upload hook — return a hosted URL.                                       |
 
-- `value` → *string* — The markdown content (bindable).  
-- `readonly` → *boolean* — Enables read-only viewer mode.  
-- `sanitizeHtml` → *boolean* — Sanitizes exported HTML (via DOMPurify).  
-- `onUpdate` → *(value: string) => void* — Fired when content changes.  
-- `onImageUpload` → *(file: File) => Promise<string>* — Optional async image upload hook (return a URL).
+---
+
+### 💡 `docId` example — clear content on change
+
+```svelte
+<script lang="ts">
+	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
+
+	let docId = 'intro';
+	let value = '# Welcome!';
+
+	function loadNewDoc() {
+		docId = 'notes';
+		value = '## Empty new document';
+	}
+</script>
+
+<button onclick={loadNewDoc}>New Document</button>
+
+<SvelteMarkdownEditor bind:value {docId} />
+```
+
+> Changing the `docId` resets the editor instance — great for multi-document editors or dashboard UIs.
+
+---
+
+### 🔒 `editable` example — toggle live edit mode
+
+```svelte
+<script lang="ts">
+	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
+
+	let editable = true;
+</script>
+
+<button onclick={() => (editable = !editable)}>
+	{editable ? 'Lock Editing' : 'Enable Editing'}
+</button>
+
+<SvelteMarkdownEditor bind:value readonly={!editable} {editable} />
+```
+
+> You can use `editable={false}` to switch to a live preview mode without tearing down the editor.
 
 ---
 
 ## 🎨 Toolbar & Shortcuts
 
-**Common actions and shortcuts:**
+| Action      | Shortcut                               |
+| ----------- | -------------------------------------- |
+| **Bold**    | `Ctrl/Cmd + B`                         |
+| _Italic_    | `Ctrl/Cmd + I`                         |
+| Headings    | Toolbar or `#`, `##`, `###`            |
+| Blockquote  | `>` then space                         |
+| Lists       | `-`, `*`, `1.` then space              |
+| Task item   | `- [ ]` or `- [x]`                     |
+| Code block  | ````` + language + Enter               |
+| Link        | `Ctrl/Cmd + K`                         |
+| Undo / Redo | `Ctrl/Cmd + Z`, `Ctrl/Cmd + Shift + Z` |
 
-- **Bold:** `Ctrl/Cmd + B`
-- *Italic:* `Ctrl/Cmd + I`
-- ~~Strikethrough:~~ *(optional if schema enabled)*
-- Headings: toggle H1/H2 from toolbar
-- Blockquote: type `>` then space
-- Unordered List: type `-`, `*`, or `+` then space
-- Ordered List: type `1.` then space
-- Task Item: `- [ ]` or `- [x]`
-- Code Block: type ````` + lang + Enter
-- Link: `Ctrl/Cmd + K`
-- Undo / Redo: `Ctrl/Cmd + Z`, `Ctrl/Cmd + Shift + Z`
-
-> Tip: Type `````ts` and press Enter to insert a TypeScript code block — a CodeMirror editor will appear inline with syntax highlighting and a language label.
+> 💡 Tip: Type `````ts` and press Enter to open an inline CodeMirror editor  
+> with syntax highlighting and language label.
 
 ---
 
 ## 💡 Markdown Features
 
-This editor supports:
-
 - Headings (`#`, `##`, `###`)
-- Bold / Italic (`**text**`, `*text*`)
-- Inline code (`` `code` ``)
-- Blockquotes (`>`)
-- Code blocks (`` ```lang ``)
-- Lists (`-`, `1.`)
-- Task lists (`- [ ]`, `- [x]`)
-- Links (`[text](url)`)
-- Horizontal rules (`---`)
+- Bold / Italic / Strikethrough
+- Inline code and fenced blocks
+- Blockquotes
+- Lists and task lists
+- Links and horizontal rules
+- CodeMirror fenced code blocks with syntax highlighting
 
 ---
 
-## 🧱 Styling
+## 🧱 Styling & Theming
 
-A complete stylesheet is included covering:
-- ProseMirror editor base styles  
-- Toolbar layout  
-- Task list checkboxes  
-- CodeMirror blocks  
-- Automatic light/dark theme
+### 🪶 Built-in Theme System
 
-Import it directly:
+The editor’s entire UI runs on **CSS custom properties** using the `--md-*` namespace.  
+Light and dark modes are handled automatically with `prefers-color-scheme`,  
+and every color is user-overridable for branding or theming.
 
-```ts
-import '@michaelcuneo/svelte-markdown/styles.css';
-```
-
-Prefer your own theme?  
-Skip the import and override the CSS hooks:
+Example overrides:
 
 ```css
-.ProseMirror {
-	background: #fff;
-	border-radius: 8px;
-}
-.toolbar button {
-	color: #111;
-}
-.pm-task-checkbox {
-	accent-color: #0b57d0;
-}
-.pm-codemirror-wrapper {
-	border: 1px solid #e5e7eb;
+:root {
+	--md-bg: #fdfdfd;
+	--md-fg: #222;
+	--md-accent: #0b57d0;
+	--md-code-bg: #f9fafb;
+	--md-code-fg: #0056b3;
 }
 ```
+
+To theme per instance:
+
+```html
+<div class="markdown-theme-ocean">
+	<SvelteMarkdownEditor />
+</div>
+```
+
+```css
+.markdown-theme-ocean {
+	--md-bg: #001a26;
+	--md-fg: #cde9ff;
+	--md-accent: #00b7ff;
+	--md-code-bg: #011e2a;
+	--md-selection-bg: #00384d;
+}
+```
+
+---
+
+### 🌑 CodeMirror 6 — True One Dark Integration
+
+- The built-in **One Dark** palette is used automatically in dark mode.
+- Full syntax colors from CodeMirror’s official theme (`#282c34`, `#c678dd`, `#61afef`, `#98c379`, etc.).
+- Light mode uses a GitHub-inspired palette driven by your `--md-*` variables.
+- You can override or extend the CodeMirror theme via  
+  `src/lib/editor/theme/codeMirrorTheme.ts`.
+
+---
+
+### 🧩 Included Style Coverage
+
+- Toolbar layout & actions
+- Task lists & checkboxes
+- CodeMirror fenced code blocks
+- ProseMirror document base
+- Light/dark theme support
+- CSS variable token system
+
+To use defaults:
+
+```ts
+import '@michaelcuneo/markdown-editor/styles.css';
+```
+
+Or override via CSS variables to match your design system.
 
 ---
 
 ## 🧩 Architecture Overview
 
-**Core layers:**
-
-- **ProseMirror:** document model, schema, input rules, and history.
-- **CodeMirror 6:** embedded code editor for fenced blocks.
-- **Highlight.js:** language syntax highlighting.
-- **DOMPurify:** optional HTML sanitization.
-- **Svelte 5:** reactive UI shell and bindings.
-
----
-
-## 🧰 Development
-
-```bash
-git clone https://github.com/michaelcuneo/svelte-markdown.git
-cd svelte-markdown
-pnpm install
-pnpm dev
-```
-
-Project structure:
-- Demo page → `src/routes/demo/+page.svelte`
-- Editor component → `src/lib/editor/SvelteMarkdownEditor.svelte`
-- Plugins → `src/lib/editor/plugins/*`
+| Layer                | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| **ProseMirror**      | Core document model, schema, input rules, and history |
+| **CodeMirror 6**     | Inline fenced code block editor                       |
+| **Custom Plugins**   | Handle task lists, fenced blocks, and synchronization |
+| **DOMPurify**        | Optional HTML sanitization                            |
+| **Svelte 5 (runes)** | Reactive shell, SSR-ready, fully bindable props       |
 
 ---
 
 ## ✅ Compatibility
 
-- Svelte 5 (runes) — ✅  
-- TypeScript — ✅  
-- SSR + SPA — ✅  
-- Light/Dark theme — ✅  
-- Task lists — ✅  
-- CodeMirror fenced blocks — ✅  
+| Feature                    | Status |
+| -------------------------- | ------ |
+| Svelte 5 (runes)           | ✅     |
+| TypeScript                 | ✅     |
+| SSR + SPA                  | ✅     |
+| Light/Dark themes          | ✅     |
+| CSS variables (`--md-*`)   | ✅     |
+| User theme overrides       | ✅     |
+| Task lists                 | ✅     |
+| CodeMirror fenced blocks   | ✅     |
+| True One Dark support      | ✅     |
+| `docId` + `editable` props | ✅     |
 
 ---
 
@@ -201,5 +263,6 @@ MIT © Michael Cuneo (2025)
 
 ### TL;DR
 
-`@michaelcuneo/svelte-markdown` — **type, edit, and preview Markdown with zero fuss.**  
-Beautiful code blocks, interactive tasks, and WYSIWYM inline formatting for modern Svelte apps.
+`@michaelcuneo/markdown-editor` — **type, edit, and preview Markdown with zero fuss.**  
+Now featuring full theming via CSS variables, CodeMirror One Dark integration,  
+and runtime control via `docId` and `editable` props for multi-document and readonly workflows.

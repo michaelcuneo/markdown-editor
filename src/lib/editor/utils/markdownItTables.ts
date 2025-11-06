@@ -6,7 +6,7 @@ import type MarkdownIt from 'markdown-it';
  */
 export default function markdownItTables(md: MarkdownIt) {
 	md.block.ruler.before('paragraph', 'table', (state, startLine, endLine, silent) => {
-		const start = state.bMarks[startLine] + state.tShift[startLine];
+		const start = (state.bMarks?.[startLine] ?? 0) + (state.tShift?.[startLine] ?? 0);
 		const end = state.eMarks[startLine];
 		const line = state.src.slice(start, end).trim();
 
@@ -16,7 +16,7 @@ export default function markdownItTables(md: MarkdownIt) {
 		let next = startLine + 1;
 		const lines: string[] = [line];
 		while (next < endLine) {
-			const s = state.bMarks[next] + state.tShift[next];
+			const s = (state.bMarks?.[next] ?? 0) + (state.tShift?.[next] ?? 0);
 			const e = state.eMarks[next];
 			const l = state.src.slice(s, e).trim();
 			if (!l.startsWith('|')) break;
@@ -30,7 +30,7 @@ export default function markdownItTables(md: MarkdownIt) {
 		tokens.push(state.push('table_open', 'table', 1));
 		tokens.push(state.push('thead_open', 'thead', 1));
 
-		const header = lines[0]
+		const header = (lines[0] ?? '')
 			.split('|')
 			.slice(1, -1)
 			.map((x) => x.trim());
@@ -47,7 +47,9 @@ export default function markdownItTables(md: MarkdownIt) {
 
 		tokens.push(state.push('tbody_open', 'tbody', 1));
 		for (let i = 2; i < lines.length; i++) {
-			const cols = lines[i]
+			const lineContent = lines[i];
+			if (!lineContent) continue;
+			const cols = lineContent
 				.split('|')
 				.slice(1, -1)
 				.map((x) => x.trim());

@@ -23,15 +23,15 @@ function markRule(regexp: RegExp, markType: MarkType): InputRule {
 			const text = match[1];
 
 			// Boundaries for inner text
-			const from = start + full.indexOf(text);
-			const to = from + text.length;
+			const from = start + full.indexOf(text ?? '');
+			const to = from + (text?.length ?? 0);
 
 			const tr = state.tr;
 			// Remove delimiters
 			tr.delete(to, end);
 			tr.delete(start, from);
 			// Apply mark to inner text
-			tr.addMark(start, start + text.length, markType.create());
+			tr.addMark(start, start + (text?.length ?? 0), markType.create());
 			tr.removeStoredMark(markType);
 			return tr;
 		}
@@ -67,8 +67,11 @@ export function markdownInputRules(schema: Schema): Plugin {
 			new InputRule(
 				/^(?:\*{3,}|-{3,}|_{3,})\s*$/, // matches ***, ---, ___, with optional spaces
 				(state, _match, start, end) => {
-					const tr = state.tr.replaceRangeWith(start, end, schema.nodes.horizontal_rule.create());
-					return tr;
+					if (schema.nodes.horizontal_rule) {
+						const tr = state.tr.replaceRangeWith(start, end, schema.nodes.horizontal_rule.create());
+						return tr;
+					}
+					return null;
 				}
 			)
 		);
@@ -79,7 +82,7 @@ export function markdownInputRules(schema: Schema): Plugin {
 		// #, ##, ### ...
 		rules.push(
 			textblockTypeInputRule(/^(#{1,6})\s$/, schema.nodes.heading, (m) => ({
-				level: m[1].length
+				level: m[1] ? m[1].length : 0
 			}))
 		);
 	}
@@ -98,7 +101,7 @@ export function markdownInputRules(schema: Schema): Plugin {
 		// 1. space
 		rules.push(
 			wrappingInputRule(/^(\d+)\.\s$/, schema.nodes.ordered_list, (m) => ({
-				order: +m[1]
+				order: +(m[1] ?? 1)
 			}))
 		);
 	}

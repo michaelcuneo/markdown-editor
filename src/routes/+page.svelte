@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SvelteMarkdownEditor from '$lib/editor/SvelteMarkdownEditor.svelte';
+  import SvelteMarkdownEditor from '$lib/editor/MarkdownEditor.svelte';
   import { onMount } from 'svelte';
 
   let activeTab: 'editor' | 'docs' = $state('editor');

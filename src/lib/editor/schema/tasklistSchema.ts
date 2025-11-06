@@ -1,3 +1,4 @@
+// src/lib/editor/schema/taskListSchema.ts
 import { schema as baseMarkdownSchema } from 'prosemirror-markdown';
 import { Schema, Node as PMNode } from 'prosemirror-model';
 
@@ -25,16 +26,25 @@ export function createTaskListSchema(): Schema {
 			],
 			toDOM(node: PMNode) {
 				const { checked } = node.attrs;
+
+				// Regular list item
 				if (checked === null) return ['li', 0];
+
+				// Task item with interactive checkbox
 				return [
 					'li',
 					{ 'data-checked': String(checked) },
 					[
 						'label',
-						{ class: 'pm-task' },
+						{ class: 'pm-task', 'data-role': 'task-label' },
 						[
 							'input',
-							{ type: 'checkbox', disabled: true, checked: !!checked, class: 'pm-task-checkbox' }
+							{
+								type: 'checkbox',
+								class: 'pm-task-checkbox',
+								'data-role': 'task-toggle',
+								checked: checked ? 'checked' : undefined
+							}
 						],
 						['span', { class: 'pm-task-content' }, 0]
 					]

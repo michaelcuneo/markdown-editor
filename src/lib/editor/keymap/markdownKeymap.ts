@@ -51,7 +51,8 @@ export function markdownKeymap(schema: Schema): Plugin {
 		bindings['Mod-k'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
 			const url = prompt('Enter link URL:');
 			if (!url) return false;
-			const mark = schema.marks.link.create({ href: url });
+			const mark = schema.marks.link?.create({ href: url });
+			if (!mark) return false;
 			const { from, to } = state.selection;
 			if (from === to) return false;
 			dispatch?.(state.tr.addMark(from, to, mark).scrollIntoView());

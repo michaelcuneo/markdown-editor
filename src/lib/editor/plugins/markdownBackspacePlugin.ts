@@ -2,12 +2,6 @@ import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 import type { Schema } from 'prosemirror-model';
 
-/**
- * Smart backspace for Markdown task & bullet lists:
- * - Backspace at start of list items unwraps cleanly
- * - Never creates nested lists accidentally
- * - Keeps indentation / structure correct
- */
 export function markdownBackspacePlugin(schema: Schema) {
 	const key = new PluginKey('markdown-backspace');
 	const { list_item, bullet_list, ordered_list, paragraph } = schema.nodes;
@@ -42,41 +36,39 @@ export function markdownBackspacePlugin(schema: Schema) {
 				event.preventDefault();
 				const tr = state.tr;
 
-				// 🧠 CASE 1: Item is empty → remove it, move cursor up
+				// 🧠 CASE 1: Empty item → remove it
 				if (itemNode.textContent.trim() === '') {
 					tr.delete(itemPos, itemPos + itemNode.nodeSize);
 
-					// If list is empty after deletion → remove it entirely
+					// Remove the list if empty
 					const listAfter = tr.doc.nodeAt(listPos);
 					if (listAfter && listAfter.childCount === 0) {
 						tr.delete(listPos, listPos + listAfter.nodeSize);
 					}
 
-					// Move cursor to previous item or before the list
-					const prevPos =
-						prevItem != null
-							? itemPos - prevItem.nodeSize + prevItem.nodeSize - 1
-							: Math.max(0, listPos - 1);
+					// Move cursor before list or to previous item
+					const cursorPos = prevItem ? Math.max(0, itemPos - 2) : Math.max(0, listPos - 1);
 
-					tr.setSelection(TextSelection.near(tr.doc.resolve(prevPos), -1));
+					tr.setSelection(TextSelection.near(tr.doc.resolve(cursorPos), -1));
 					dispatch(tr.scrollIntoView());
 					return true;
 				}
 
-				// 🧠 CASE 2: Nested lists — prevent accidental double lifting
+				// 🧠 CASE 2: Nested lists — only lift paragraph
 				const hasNestedList = itemNode.content.content.some(
 					(child) => child.type === bullet_list || child.type === ordered_list
 				);
 
-				// If nested, only lift the paragraph, not the entire list_item
 				if (hasNestedList && $from.parent.type === paragraph) {
 					const paraStart = $from.start();
 					const paraEnd = $from.end();
 					const range = tr.doc.resolve(paraStart).blockRange(tr.doc.resolve(paraEnd));
 					if (range) {
-						const target = range ? liftTarget(range) : null;
+						const target = liftTarget(range);
 						if (target != null) {
 							tr.lift(range, target);
+							const liftedPos = tr.mapping.map($from.pos, -1);
+							tr.setSelection(TextSelection.near(tr.doc.resolve(liftedPos), -1));
 							dispatch(tr.scrollIntoView());
 							return true;
 						}
@@ -91,19 +83,15 @@ export function markdownBackspacePlugin(schema: Schema) {
 				const target = range ? liftTarget(range) : null;
 
 				if (target != null) {
-					// 🚫 Prevent lifting list_item into same list type (which causes nested bullet bug)
 					const targetNode = $from.node(target);
 					if (targetNode.type === parentList.type) return false;
 
-					if (range) tr.lift(range, target);
+					tr.lift(range!, target);
 
-					// Replace lifted node with paragraph
-					const newPos = tr.selection.$from.before();
-					const nodeAt = tr.doc.nodeAt(newPos);
-					if (nodeAt && nodeAt.type !== paragraph) {
-						const para = paragraph.create(null, nodeAt.content);
-						tr.replaceWith(newPos, newPos + nodeAt.nodeSize, para);
-					}
+					// ✅ Re-map selection safely after lift
+					const liftedPos = tr.mapping.map($from.pos, -1);
+					const $lifted = tr.doc.resolve(Math.max(0, liftedPos));
+					tr.setSelection(TextSelection.near($lifted, -1));
 
 					dispatch(tr.scrollIntoView());
 					return true;

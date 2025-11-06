@@ -17,13 +17,13 @@ export function markdownTabPlugin(schema: Schema) {
 
 				if (event.key === 'Tab') {
 					event.preventDefault();
-					sinkListItem(list_item)(state, dispatch);
+					if (list_item) sinkListItem(list_item)(state, dispatch);
 					return true;
 				}
 
 				if (event.key === 'Tab' && event.shiftKey) {
 					event.preventDefault();
-					liftListItem(list_item)(state, dispatch);
+					if (list_item) liftListItem(list_item)(state, dispatch);
 					return true;
 				}
 

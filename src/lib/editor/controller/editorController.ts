@@ -47,11 +47,11 @@ export function handleAction(action: ToolbarAction): void {
 	switch (action) {
 		// --- Inline marks ---
 		case 'bold':
-			safeRun(toggleMark(schema.marks.strong));
+			if (schema.marks.strong) safeRun(toggleMark(schema.marks.strong));
 			break;
 
 		case 'italic':
-			safeRun(toggleMark(schema.marks.em));
+			if (schema.marks.em) safeRun(toggleMark(schema.marks.em));
 			break;
 
 		case 'strike':
@@ -71,20 +71,31 @@ export function handleAction(action: ToolbarAction): void {
 
 		// --- Block types ---
 		case 'h1':
-			safeRun(setBlockType(schema.nodes.heading, { level: 1 }));
+			if (schema.nodes.heading) safeRun(setBlockType(schema.nodes.heading, { level: 1 }));
 			break;
 
 		case 'h2':
-			safeRun(setBlockType(schema.nodes.heading, { level: 2 }));
+			if (schema.nodes.heading) safeRun(setBlockType(schema.nodes.heading, { level: 2 }));
 			break;
 
 		case 'quote':
 			if (schema.nodes.blockquote) safeRun(wrapIn(schema.nodes.blockquote));
 			break;
 
-		case 'codeblock':
-			if (schema.nodes.code_block) safeRun(setBlockType(schema.nodes.code_block));
+		case 'codeblock': {
+			const { code_block, paragraph } = schema.nodes;
+			if (!code_block || !paragraph) break;
+
+			const isCode = state.selection.$from.parent.type === code_block;
+
+			// toggle on/off
+			if (isCode) {
+				safeRun(setBlockType(paragraph)); // unmake
+			} else {
+				safeRun(setBlockType(code_block)); // make
+			}
 			break;
+		}
 
 		case 'hr': {
 			const { schema } = state;
@@ -190,15 +201,23 @@ export function getCommandState(
 					? { enabled: true }
 					: { enabled: false, reason: 'Cannot strike through here' };
 
-			case 'h1':
-				return setBlockType(schema.nodes.heading, { level: 1 })(state)
-					? { enabled: true }
-					: { enabled: false, reason: 'Not inside a text block' };
+			case 'h1': {
+				const heading = schema.nodes.heading;
+				if (!heading) return { enabled: false, reason: 'Heading not supported' };
 
-			case 'h2':
-				return setBlockType(schema.nodes.heading, { level: 2 })(state)
+				return setBlockType(heading, { level: 1 })(state)
 					? { enabled: true }
 					: { enabled: false, reason: 'Not inside a text block' };
+			}
+
+			case 'h2': {
+				const heading = schema.nodes.heading;
+				if (!heading) return { enabled: false, reason: 'Heading not supported' };
+
+				return setBlockType(heading, { level: 2 })(state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Not inside a text block' };
+			}
 
 			case 'quote':
 				return schema.nodes.blockquote
@@ -221,12 +240,12 @@ export function getCommandState(
 						: { enabled: false, reason: 'Cannot start ordered list here' }
 					: { enabled: false, reason: 'Lists not supported' };
 
-			case 'codeblock':
-				return schema.nodes.code_block
-					? setBlockType(schema.nodes.code_block)(state)
-						? { enabled: true }
-						: { enabled: false, reason: 'Not a valid block context' }
-					: { enabled: false, reason: 'Code blocks not supported' };
+			case 'codeblock': {
+				const { code_block } = schema.nodes;
+				if (!code_block) return { enabled: false, reason: 'Code blocks not supported' };
+				const isActive = state.selection.$from.parent.type === code_block;
+				return { enabled: true, reason: isActive ? 'active' : undefined };
+			}
 
 			case 'undo':
 				return undo(state)

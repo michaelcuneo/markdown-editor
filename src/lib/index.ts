@@ -3,5 +3,5 @@
 // ======================================================
 import './styles/global.css';
 
-export { default as SvelteMarkdownEditor } from './editor/SvelteMarkdownEditor.svelte';
+export { default as MarkdownEditor } from './editor/MarkdownEditor.svelte';
 export type { MarkdownImage, MarkdownEditorProps } from './types/index.js';

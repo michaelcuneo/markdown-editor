@@ -14,67 +14,90 @@ import MarkdownIt from 'markdown-it';
 function normalizeTasks(node: PMNode): PMNode {
 	if (node.isText) return node;
 
-	const normalizedChildren: PMNode[] = [];
-	node.forEach((child) => normalizedChildren.push(child.isText ? child : normalizeTasks(child)));
-	const content = Fragment.fromArray(normalizedChildren);
+	const content: PMNode[] = [];
+	let changed = false;
 
-	if (node.type.name !== 'list_item') return node.copy(content);
+	node.forEach((child) => {
+		const normalized = normalizeTasks(child);
+		if (normalized !== child) changed = true;
+		content.push(normalized);
+	});
+
+	const newContent: Fragment = changed ? Fragment.fromArray(content) : node.content;
+
+	if (node.type.name !== 'list_item') {
+		return changed ? node.copy(newContent) : node;
+	}
 
 	const firstChild = node.firstChild;
-	if (!firstChild || firstChild.type.name !== 'paragraph') return node.copy(content);
+	if (!firstChild || firstChild.type.name !== 'paragraph') {
+		return changed ? node.copy(newContent) : node;
+	}
 
 	const firstInline = firstChild.firstChild;
-	if (!firstInline || !firstInline.isText) return node.copy(content);
+	if (!firstInline || !firstInline.isText) {
+		return changed ? node.copy(newContent) : node;
+	}
 
 	const text = firstInline.text ?? '';
 	const match = text.match(/^\s*\[( |x|X)\]\s+/);
-	if (!match) return node.copy(content);
+	if (!match) return changed ? node.copy(newContent) : node;
 
-	const isChecked = match[1].toLowerCase() === 'x';
+	const isChecked = (match[1] ?? '').toLowerCase() === 'x';
 	const trimmedText = text.slice(match[0].length);
 
-	const newInlineNodes: PMNode[] = [];
-	if (trimmedText.length > 0)
-		newInlineNodes.push(node.type.schema.text(trimmedText, firstInline.marks));
-	for (let i = 1; i < firstChild.childCount; i++) newInlineNodes.push(firstChild.child(i));
+	// ✅ Preserve marks and rebuild only this paragraph node
+	const newInlines: PMNode[] = [];
+	if (trimmedText.length > 0) {
+		newInlines.push(node.type.schema.text(trimmedText, firstInline.marks));
+	}
+	for (let i = 1; i < firstChild.childCount; i++) {
+		newInlines.push(firstChild.child(i));
+	}
 
-	const newParagraph = firstChild.type.create(firstChild.attrs, Fragment.fromArray(newInlineNodes));
+	const newParagraph =
+		trimmedText.length > 0 || firstChild.childCount > 1
+			? firstChild.type.create(firstChild.attrs, Fragment.fromArray(newInlines))
+			: firstChild;
+
 	const rebuiltChildren = [newParagraph, ...node.content.content.slice(1)];
+	const rebuiltContent = Fragment.fromArray(rebuiltChildren);
 
-	return node.type.create(
-		{ ...node.attrs, checked: isChecked },
-		Fragment.fromArray(rebuiltChildren),
-		node.marks
-	);
+	// ✅ Only rebuild the node if the 'checked' state actually differs
+	if (node.attrs.checked !== isChecked || changed) {
+		return node.type.create({ ...node.attrs, checked: isChecked }, rebuiltContent, node.marks);
+	}
+
+	return node.copy(rebuiltContent);
 }
 
 /**
- * Create Markdown parser + serializer using default ProseMirror GFM behavior.
+ * Create Markdown parser + serializer with GFM-style tasks.
  */
 export function createMarkdownTaskSupport(schema: Schema) {
-	// ✅ Use the "gfm" preset — enables autolinks, strikethrough, breaks, etc.
 	const md = MarkdownIt('commonmark', { html: false, linkify: true, breaks: true });
 
-	// ✅ Start from the built-in token map
 	const tokens = {
 		...defaultMarkdownParser.tokens,
 		html_inline: { ignore: true },
 		html_block: { ignore: true }
 	};
 
-	// --- Build parser
 	const parser = new MarkdownParser(schema, md, tokens);
 	const origParse = parser.parse.bind(parser);
-	parser.parse = (src: string) => normalizeTasks(origParse(src));
+	parser.parse = (src: string) => {
+		const doc = origParse(src);
+		return normalizeTasks(doc);
+	};
 
-	// --- Build serializer
 	const serializer = new MarkdownSerializer(
 		{
 			...defaultMarkdownSerializer.nodes,
 			list_item(state, node) {
 				const checked = node.attrs.checked;
-				if (checked === true) state.write('[x] ');
-				else if (checked === false) state.write('[ ] ');
+				if (typeof checked === 'boolean') {
+					state.write(checked ? '[x] ' : '[ ] ');
+				}
 				state.renderContent(node);
 			}
 		},

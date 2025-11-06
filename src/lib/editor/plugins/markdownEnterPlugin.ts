@@ -41,8 +41,10 @@ export function markdownEnterPlugin(schema: Schema) {
 						const to = $from.end();
 
 						let tr = state.tr.delete(from, to);
-						const code = schema.nodes.code_block.create({ params: lang });
-						tr = tr.insert(from, code);
+						const code = schema.nodes.code_block?.create({ params: lang });
+						if (code) {
+							tr = tr.insert(from, code);
+						}
 						dispatch(tr.scrollIntoView());
 						return true;
 					}
@@ -58,9 +60,11 @@ export function markdownEnterPlugin(schema: Schema) {
 						(nodeBefore.type.name === 'horizontal_rule' || nodeBefore.type.name === 'code_block')
 					) {
 						event.preventDefault();
-						const tr = state.tr.insert($from.pos, paragraph.create());
-						dispatch(tr.scrollIntoView());
-						return true;
+						if (paragraph) {
+							const tr = state.tr.insert($from.pos, paragraph.create());
+							dispatch(tr.scrollIntoView());
+							return true;
+						}
 					}
 					return false;
 				}
@@ -70,12 +74,12 @@ export function markdownEnterPlugin(schema: Schema) {
 				// 🧩 Empty list item → exit list
 				if (item.textContent.trim() === '') {
 					event.preventDefault();
-					liftListItem(list_item)(state, dispatch);
+					if (list_item) liftListItem(list_item)(state, dispatch);
 					return true;
 				}
 
 				// 🧩 Otherwise split list item
-				if (!splitListItem(list_item)(state, dispatch)) return false;
+				if (list_item && !splitListItem(list_item)(state, dispatch)) return false;
 
 				event.preventDefault();
 

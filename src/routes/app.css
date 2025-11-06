@@ -4,8 +4,6 @@
 
 /* ===== CSS VARIABLES (LIGHT DEFAULT) ===== */
 :root {
-	color-scheme: light dark;
-
 	/* Layout */
 	--font-family: system-ui, sans-serif;
 	--radius: 10px;

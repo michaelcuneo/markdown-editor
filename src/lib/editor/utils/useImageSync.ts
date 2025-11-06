@@ -13,8 +13,9 @@ export function reorderInlineImages(
 	const matches = [...markdown.matchAll(regex)];
 	if (matches.length < 2) return markdown;
 
-	const first = matches[0][0];
-	const second = matches[1][0];
+	const first = matches[0]?.[0];
+	const second = matches[1]?.[0];
+	if (!first || !second) return markdown;
 
 	return markdown.replace(first, '__TMP__').replace(second, first).replace('__TMP__', second);
 }
@@ -29,7 +30,7 @@ export function syncImageLinesToQueue(
 
 	lines.forEach((line, i) => {
 		const m = line.match(imgLineRegex);
-		if (m) imageOnlyLines.push({ lineIndex: i, alt: m[1], id: m[2] });
+		if (m && m[1] && m[2]) imageOnlyLines.push({ lineIndex: i, alt: m[1], id: m[2] });
 	});
 
 	if (imageOnlyLines.length === 0) return value;
@@ -46,7 +47,7 @@ export function syncImageLinesToQueue(
 	for (let i = 0; i < replacements.length; i++) {
 		const target = imageOnlyLines[i];
 		const src = replacements[i];
-		if (target) lines[target.lineIndex] = `![${src.alt}](${src.id})`;
+		if (target && src) lines[target.lineIndex] = `![${src.alt}](${src.id})`;
 	}
 
 	return lines.join('\n');
