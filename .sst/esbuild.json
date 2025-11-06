@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1762389506003.mjs ────────────────────────────────────── 714.1kb ─ 100.0%
+  .sst/platform/sst.config.1762404881662.mjs ────────────────────────────────────── 713.8kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.9%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -48,7 +48,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/aurora.ts ──────────────────────────────────── 18.1kb ─── 2.5%
+   ├ .sst/platform/src/components/aws/aurora.ts ──────────────────────────────────── 18.0kb ─── 2.5%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -84,7 +84,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/mysql.ts ───────────────────────────────────── 14.6kb ─── 2.1%
+   ├ .sst/platform/src/components/aws/mysql.ts ───────────────────────────────────── 14.6kb ─── 2.0%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -682,8 +682,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 315b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/distribution-invalidation.ts ──────── 307b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -696,14 +694,14 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$app> ────────────────────────────────────────────────────────────────── 301b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/function-environment-update.ts ────── 297b ──── 0.0%
    │  └ .sst/platform/src/components/aws/function.ts
    │     └ .sst/platform/src/components/aws/index.ts
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$app> ────────────────────────────────────────────────────────────────── 296b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/origin-access-control.ts ──────────── 292b ──── 0.0%
    │  └ .sst/platform/src/components/aws/router.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -734,6 +732,8 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 270b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/bucket-files.ts ───────────────────── 268b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts

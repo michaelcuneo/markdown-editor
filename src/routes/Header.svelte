@@ -9,10 +9,10 @@
   <h1 class="site-title">@michaelcuneo/markdown-editor</h1>
   <!-- link to github and slack -->
   <nav class="site-nav">
-    <a href="https://github.com/michaelcuneo/chain-enhance" target="_blank" rel="noopener" class="icon-link"><SiGithub />Github</a>
+    <a href="https://github.com/michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiGithub />Github</a>
     <a href="https://svelte.dev/chat" target="_blank" rel="noopener" class="icon-link"><SiSvelte />Svelte</a>
     <a href="https://join.slack.com/t/michaelcuneo/shared_invite/zt-2ewl9vs81-QWUZBWzHqkGiaN4XpqLXjg" target="_blank" rel="noopener" class="icon-link"><SiSlack />Slack</a>
-    <a href="https://www.npmjs.com/package/@michaelcuneo/chain-enhance" target="_blank" rel="noopener" class="icon-link"><SiNpm />NPM</a>
+    <a href="https://www.npmjs.com/package/@michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiNpm />NPM</a>
   </nav>
 </header>
 
