@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1762405185505.mjs ────────────────────────────────────── 713.8kb ─ 100.0%
+  .sst/platform/sst.config.1762813919479.mjs ────────────────────────────────────── 713.9kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.9%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -670,6 +670,8 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
+   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 370b ──── 0.1%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/step-functions/fail.ts ──────────────────────── 326b ──── 0.0%
    │  └ .sst/platform/src/components/aws/step-functions.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -732,8 +734,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 270b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/bucket-files.ts ───────────────────── 268b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts

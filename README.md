@@ -19,19 +19,41 @@ lists, and interactive task items — all rendered live as you type.
 
 ## 🚀 Installation
 
+### 🧩 One-line install (recommended)
+
+Install the editor and **all required peer dependencies** at once.
+
+#### **pnpm**
+
 ```bash
-npm i @michaelcuneo/markdown-editor
-# or
-pnpm add @michaelcuneo/markdown-editor
-# or
-yarn add @michaelcuneo/markdown-editor
+npm i @michaelcuneo/markdown-editor \
+  prosemirror-state \
+  prosemirror-view \
+  prosemirror-model \
+  prosemirror-commands \
+  prosemirror-markdown \
+  prosemirror-history \
+  prosemirror-keymap \
+  prosemirror-inputrules \
+  prosemirror-schema-list \
+  codemirror \
+  @codemirror/state \
+  @codemirror/view \
+  @codemirror/language \
+  @codemirror/theme-one-dark \
+  @codemirror/lang-javascript \
+  @codemirror/lang-markdown \
+  @codemirror/lang-python
 ```
+
+These are declared as peerDependencies, so they’re not auto-installed.
+This prevents version conflicts and allows your app to manage its own ProseMirror / CodeMirror versions.
 
 ---
 
 ## ⚙️ Basic Usage
 
-```svelte
+```ts
 <script lang="ts">
 	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
 	import '@michaelcuneo/markdown-editor/styles.css';
@@ -84,7 +106,7 @@ Reactive by design — content updates instantly through `bind:value`.
 
 ### 💡 `docId` example — clear content on change
 
-```svelte
+```ts
 <script lang="ts">
 	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
 
@@ -108,7 +130,7 @@ Reactive by design — content updates instantly through `bind:value`.
 
 ### 🔒 `editable` example — toggle live edit mode
 
-```svelte
+```ts
 <script lang="ts">
 	import { SvelteMarkdownEditor } from '@michaelcuneo/markdown-editor';
 

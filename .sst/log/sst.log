@@ -1,95 +1,73 @@
-time=2025-11-06T15:59:44.854+11:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
-time=2025-11-06T15:59:44.950+11:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
-time=2025-11-06T15:59:44.951+11:00 level=INFO msg="initializing project" version=3.17.22
-time=2025-11-06T15:59:44.952+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1762405184952.mjs
-time=2025-11-06T15:59:44.953+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1762405184952.mjs
-time=2025-11-06T15:59:44.954+11:00 level=INFO msg="evaluating config"
-time=2025-11-06T15:59:44.973+11:00 level=INFO msg="config evaluated"
-time=2025-11-06T15:59:44.974+11:00 level=INFO msg="checking platform"
-time=2025-11-06T15:59:44.974+11:00 level=INFO msg="loading home"
-time=2025-11-06T15:59:44.974+11:00 level=INFO msg="aws credentials found" region=ap-southeast-2 profile=default
-time=2025-11-06T15:59:44.974+11:00 level=INFO msg="fetching bootstrap"
-time=2025-11-06T15:59:45.057+11:00 level=INFO msg="found existing bootstrap" data="{\"version\":5,\"asset\":\"sst-asset-vbdurbzbbtdh\",\"assetEcrRegistryId\":\"481588845003\",\"assetEcrUrl\":\"481588845003.dkr.ecr.ap-southeast-2.amazonaws.com/sst-asset\",\"state\":\"sst-state-vbdurbzbbtdh\",\"appsyncHttp\":\"\",\"appsyncRealtime\":\"\"}"
-time=2025-11-06T15:59:45.057+11:00 level=INFO msg="loaded config" app=markdown-editor stage=production
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg="initializing ui" isTTY=true
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg="server port assigned" port=13557
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg="running stack command" service=project.run cmd=deploy
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg="INFO locking app=markdown-editor stage=production"
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg="INFO getting data key=lock app=markdown-editor stage=production"
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg=starting service=server
-time=2025-11-06T15:59:45.058+11:00 level=INFO msg=server service=server addr=0.0.0.0:13557
-time=2025-11-06T15:59:45.223+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=production"
-time=2025-11-06T15:59:45.315+11:00 level=INFO msg="INFO getting passphrase app=markdown-editor stage=production"
-time=2025-11-06T15:59:45.393+11:00 level=INFO msg="INFO passphrase not found, setting passphrase app=markdown-editor stage=production"
-time=2025-11-06T15:59:45.505+11:00 level=INFO msg="INFO pulling state app=markdown-editor stage=production out=/home/michael/markdown-editor/.sst/pulumi/fe65a87709ddc91bbd96b901/.pulumi/stacks/markdown-editor/production.json"
-time=2025-11-06T15:59:45.911+11:00 level=INFO msg="got previous deployment" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T15:59:45.911+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1762405185505.mjs
-time=2025-11-06T15:59:45.936+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1762405185505.mjs
-time=2025-11-06T15:59:45.940+11:00 level=INFO msg="built sst.config.ts" service=project.run updateID=fe65a87709ddc91bbd96b901 to=/home/michael/markdown-editor/.sst/platform/sst.config.1762405185505.mjs
-time=2025-11-06T15:59:45.942+11:00 level=INFO msg="tracked files" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T15:59:45.942+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=_fallback"
-time=2025-11-06T15:59:45.942+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=production"
-time=2025-11-06T15:59:46.021+11:00 level=INFO msg="starting pulumi" service=project.run updateID=fe65a87709ddc91bbd96b901 args="[/home/michael/.config/sst/bin/pulumi up --yes -f --stack organization/markdown-editor/production --non-interactive --event-log /home/michael/markdown-editor/.sst/pulumi/fe65a87709ddc91bbd96b901/eventlog.json --config aws:region=ap-southeast-2 --config aws:defaultTags={\"tags\":{\"sst:app\":\"markdown-editor\",\"sst:stage\":\"production\"}}]"
-time=2025-11-06T15:59:49.038+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:49.742+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:49.842+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:49.943+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:50.948+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:51.955+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:52.156+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:52.457+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:52.569+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:55.175+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:55.677+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:55.878+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:55.923+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T15:59:56.003+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:56.010+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T15:59:56.016+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T15:59:56.118+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:56.209+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T15:59:56.209+11:00 level=INFO msg="building function" runtime=nodejs20.x functionID=MyWebServerApsoutheast2
-time=2025-11-06T15:59:56.210+11:00 level=INFO msg="loader info" service=runtime.node functionID=MyWebServerApsoutheast2 loader=map[]
-time=2025-11-06T15:59:56.210+11:00 level=INFO msg="running esbuild" service=runtime.node functionID=MyWebServerApsoutheast2
-time=2025-11-06T15:59:56.224+11:00 level=INFO msg="esbuild finished" service=runtime.node functionID=MyWebServerApsoutheast2
-time=2025-11-06T15:59:56.224+11:00 level=ERROR msg="esbuild error" service=runtime.node functionID=MyWebServerApsoutheast2 error="{ID:ignored-bare-import PluginName: Text:Ignoring this import because \".svelte-kit/svelte-kit-sst/server/chunks/utils.js\" was marked as having no side effects Location:0xc0000cd4a0 Notes:[{Text:It was excluded from the \"sideEffects\" array in the enclosing \"package.json\" file: Location:0xc0000cd380}] Detail:<nil>}"
-time=2025-11-06T15:59:56.225+11:00 level=INFO msg="function built" runtime=nodejs20.x functionID=MyWebServerApsoutheast2
-time=2025-11-06T15:59:56.240+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:56.276+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T15:59:56.369+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:56.514+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:56.685+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:58.595+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T15:59:59.200+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:06.947+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:10.568+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:21.133+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:21.490+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T16:00:21.536+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:22.946+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:23.117+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:24.253+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:28.069+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T16:00:28.074+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T16:00:28.075+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:28.080+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T16:00:28.086+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2025-11-06T16:00:29.081+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:55.933+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:00:57.341+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:03:25.097+11:00 level=INFO msg="pulumi exited" service=project.run updateID=fe65a87709ddc91bbd96b901 err=<nil>
-time=2025-11-06T16:03:25.097+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65a87709ddc91bbd96b901 eofs=0
-time=2025-11-06T16:03:25.098+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65a87709ddc91bbd96b901 eofs=1
-time=2025-11-06T16:03:25.098+11:00 level=INFO msg="breaking out of tail loop" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T16:03:25.098+11:00 level=INFO msg="parsing state" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T16:03:25.098+11:00 level=INFO msg="INFO pushing partial state updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:03:25.101+11:00 level=INFO msg="generating types" root=/home/michael/markdown-editor
-time=2025-11-06T16:03:25.102+11:00 level=INFO msg="canceling partial" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T16:03:25.102+11:00 level=INFO msg="waiting for partial to exit" service=project.run updateID=fe65a87709ddc91bbd96b901
-time=2025-11-06T16:03:25.303+11:00 level=INFO msg="INFO pushing eventlog updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:03:25.303+11:00 level=INFO msg="INFO pushing snapshot updateID=fe65a87709ddc91bbd96b901"
-time=2025-11-06T16:03:25.558+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=production"
-time=2025-11-06T16:03:25.650+11:00 level=INFO msg="done running stack command" service=project.run updateID=fe65a87709ddc91bbd96b901 resources=41
-time=2025-11-06T16:03:25.651+11:00 level=INFO msg="INFO unlocking app=markdown-editor stage=production"
-time=2025-11-06T16:03:25.734+11:00 level=INFO msg="shutting down server" service=server
-time=2025-11-06T16:03:25.734+11:00 level=INFO msg="server done" service=server
+time=2025-11-11T09:31:58.932+11:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
+time=2025-11-11T09:31:59.023+11:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
+time=2025-11-11T09:31:59.025+11:00 level=INFO msg="initializing project" version=3.17.23
+time=2025-11-11T09:31:59.025+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1762813919025.mjs
+time=2025-11-11T09:31:59.026+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1762813919025.mjs
+time=2025-11-11T09:31:59.026+11:00 level=INFO msg="evaluating config"
+time=2025-11-11T09:31:59.043+11:00 level=INFO msg="config evaluated"
+time=2025-11-11T09:31:59.043+11:00 level=INFO msg="checking platform"
+time=2025-11-11T09:31:59.043+11:00 level=INFO msg="loading home"
+time=2025-11-11T09:31:59.044+11:00 level=INFO msg="aws credentials found" region=ap-southeast-2 profile=default
+time=2025-11-11T09:31:59.044+11:00 level=INFO msg="fetching bootstrap"
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="found existing bootstrap" data="{\"version\":5,\"asset\":\"sst-asset-vbdurbzbbtdh\",\"assetEcrRegistryId\":\"481588845003\",\"assetEcrUrl\":\"481588845003.dkr.ecr.ap-southeast-2.amazonaws.com/sst-asset\",\"state\":\"sst-state-vbdurbzbbtdh\",\"appsyncHttp\":\"\",\"appsyncRealtime\":\"\"}"
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="loaded config" app=markdown-editor stage=production
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="initializing ui" isTTY=true
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="server port assigned" port=13558
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="running stack command" service=project.run cmd=deploy
+time=2025-11-11T09:31:59.126+11:00 level=INFO msg="INFO locking app=markdown-editor stage=production"
+time=2025-11-11T09:31:59.127+11:00 level=INFO msg="INFO getting data key=lock app=markdown-editor stage=production"
+time=2025-11-11T09:31:59.127+11:00 level=INFO msg=starting service=server
+time=2025-11-11T09:31:59.127+11:00 level=INFO msg=server service=server addr=0.0.0.0:13558
+time=2025-11-11T09:31:59.298+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=production"
+time=2025-11-11T09:31:59.383+11:00 level=INFO msg="INFO getting passphrase app=markdown-editor stage=production"
+time=2025-11-11T09:31:59.479+11:00 level=INFO msg="INFO pulling state app=markdown-editor stage=production out=/home/michael/markdown-editor/.sst/pulumi/fe65901a40695f2d1cec0a1b/.pulumi/stacks/markdown-editor/production.json"
+time=2025-11-11T09:31:59.736+11:00 level=INFO msg="got previous deployment" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:31:59.736+11:00 level=INFO msg="esbuild building" out=/home/michael/markdown-editor/.sst/platform/sst.config.1762813919479.mjs
+time=2025-11-11T09:31:59.767+11:00 level=INFO msg="esbuild built" outfile=/home/michael/markdown-editor/.sst/platform/sst.config.1762813919479.mjs
+time=2025-11-11T09:31:59.771+11:00 level=INFO msg="built sst.config.ts" service=project.run updateID=fe65901a40695f2d1cec0a1b to=/home/michael/markdown-editor/.sst/platform/sst.config.1762813919479.mjs
+time=2025-11-11T09:31:59.773+11:00 level=INFO msg="tracked files" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:31:59.773+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=_fallback"
+time=2025-11-11T09:31:59.773+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=production"
+time=2025-11-11T09:31:59.857+11:00 level=INFO msg="starting pulumi" service=project.run updateID=fe65901a40695f2d1cec0a1b args="[/home/michael/.config/sst/bin/pulumi up --yes -f --stack organization/markdown-editor/production --non-interactive --event-log /home/michael/markdown-editor/.sst/pulumi/fe65901a40695f2d1cec0a1b/eventlog.json --config aws:region=ap-southeast-2 --config aws:defaultTags={\"tags\":{\"sst:app\":\"markdown-editor\",\"sst:stage\":\"production\"}}]"
+time=2025-11-11T09:32:02.170+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:03.779+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:04.722+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:04.825+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:04.832+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:04.835+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:08.908+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:09.689+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:09.690+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:09.691+11:00 level=INFO msg="building function" runtime=nodejs20.x functionID=MyWebServerApsoutheast2
+time=2025-11-11T09:32:09.691+11:00 level=INFO msg="loader info" service=runtime.node functionID=MyWebServerApsoutheast2 loader=map[]
+time=2025-11-11T09:32:09.691+11:00 level=INFO msg="running esbuild" service=runtime.node functionID=MyWebServerApsoutheast2
+time=2025-11-11T09:32:09.695+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:09.709+11:00 level=INFO msg="esbuild finished" service=runtime.node functionID=MyWebServerApsoutheast2
+time=2025-11-11T09:32:09.709+11:00 level=ERROR msg="esbuild error" service=runtime.node functionID=MyWebServerApsoutheast2 error="{ID:ignored-bare-import PluginName: Text:Ignoring this import because \".svelte-kit/svelte-kit-sst/server/chunks/utils.js\" was marked as having no side effects Location:0xc001b3e480 Notes:[{Text:It was excluded from the \"sideEffects\" array in the enclosing \"package.json\" file: Location:0xc001b3e420}] Detail:<nil>}"
+time=2025-11-11T09:32:09.709+11:00 level=INFO msg="function built" runtime=nodejs20.x functionID=MyWebServerApsoutheast2
+time=2025-11-11T09:32:09.711+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:09.714+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:09.781+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:10.239+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:10.416+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:15.808+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:15.813+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:15.821+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2025-11-11T09:32:15.849+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:16.854+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:17.014+11:00 level=INFO msg="pulumi exited" service=project.run updateID=fe65901a40695f2d1cec0a1b err=<nil>
+time=2025-11-11T09:32:17.014+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65901a40695f2d1cec0a1b eofs=0
+time=2025-11-11T09:32:17.014+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe65901a40695f2d1cec0a1b eofs=1
+time=2025-11-11T09:32:17.014+11:00 level=INFO msg="breaking out of tail loop" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:32:17.014+11:00 level=INFO msg="parsing state" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:32:17.046+11:00 level=INFO msg="INFO pushing partial state updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:17.143+11:00 level=INFO msg="generating types" root=/home/michael/markdown-editor
+time=2025-11-11T09:32:17.144+11:00 level=INFO msg="canceling partial" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:32:17.144+11:00 level=INFO msg="waiting for partial to exit" service=project.run updateID=fe65901a40695f2d1cec0a1b
+time=2025-11-11T09:32:17.219+11:00 level=INFO msg="INFO pushing eventlog updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:17.219+11:00 level=INFO msg="INFO pushing snapshot updateID=fe65901a40695f2d1cec0a1b"
+time=2025-11-11T09:32:17.621+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=production"
+time=2025-11-11T09:32:17.711+11:00 level=INFO msg="done running stack command" service=project.run updateID=fe65901a40695f2d1cec0a1b resources=41
+time=2025-11-11T09:32:17.712+11:00 level=INFO msg="INFO unlocking app=markdown-editor stage=production"
+time=2025-11-11T09:32:17.797+11:00 level=INFO msg="shutting down server" service=server
+time=2025-11-11T09:32:17.797+11:00 level=INFO msg="server done" service=server
