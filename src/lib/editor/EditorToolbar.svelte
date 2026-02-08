@@ -119,11 +119,11 @@
   <div class="spacer"></div>
 
   <!-- Undo/Redo -->
-  <button onclick={() => handleClick('undo')} title="Undo (Ctrl/Cmd+Z)">
+  <button disabled={!commandStates['undo']?.enabled} onclick={() => handleClick('undo')} title={commandStates.undo?.enabled ? 'Undo (Ctrl/Cmd+Z)' : commandStates.undo?.reason}>
     ⎌
   </button>
 
-  <button onclick={() => handleClick('redo')} title="Redo (Ctrl/Cmd+Shift+Z)">
+  <button disabled={!commandStates['redo']?.enabled} onclick={() => handleClick('redo')} title={commandStates.redo?.enabled ? 'Redo (Ctrl/Cmd+Shift+Z)' : commandStates.redo?.reason}>
     ↻
   </button>
 </div>

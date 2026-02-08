@@ -199,7 +199,7 @@
 <section class="markdown-editor" data-svelte-nonreactive>
 	{#if toolbar}
 		<EditorToolbar
-			onAction={onAction}
+			{onAction}
 			{activeMarks}
 			{activeBlocks}
 			{commandStates}
