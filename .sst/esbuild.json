@@ -1,22 +1,22 @@
 
-  .sst/platform/sst.config.1770523638217.mjs ────────────────────────────────────── 726.7kb ─ 100.0%
-   ├ .sst/platform/src/components/aws/ssr-site.ts ────────────────────────────────── 38.0kb ─── 5.2%
+  .sst/platform/sst.config.1771379464858.mjs ────────────────────────────────────── 731.5kb ─ 100.0%
+   ├ .sst/platform/src/components/aws/ssr-site.ts ────────────────────────────────── 38.8kb ─── 5.3%
    │  └ .sst/platform/src/components/aws/svelte-kit.ts
    │     └ .sst/platform/src/components/aws/index.ts
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 35.1kb ─── 4.8%
+   ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 35.2kb ─── 4.8%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/function.ts ────────────────────────────────── 31.9kb ─── 4.4%
+   ├ .sst/platform/src/components/aws/function.ts ────────────────────────────────── 32.2kb ─── 4.4%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/vpc.ts ─────────────────────────────────────── 29.5kb ─── 4.1%
+   ├ .sst/platform/src/components/aws/vpc.ts ─────────────────────────────────────── 32.0kb ─── 4.4%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -26,7 +26,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/bucket.ts ──────────────────────────────────── 25.8kb ─── 3.6%
+   ├ .sst/platform/src/components/aws/bucket.ts ──────────────────────────────────── 25.8kb ─── 3.5%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -36,14 +36,14 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/service-v1.ts ──────────────────────────────── 22.9kb ─── 3.2%
+   ├ .sst/platform/src/components/aws/service-v1.ts ──────────────────────────────── 22.9kb ─── 3.1%
    │  └ .sst/platform/src/components/aws/cluster-v1.ts
    │     └ .sst/platform/src/components/aws/cluster.ts
    │        └ .sst/platform/src/components/aws/index.ts
    │           └ .sst/platform/src/components/index.ts
    │              └ sst.config.ts
    │                 └ eval.ts
-   ├ .sst/platform/src/components/aws/apigatewayv2.ts ────────────────────────────── 19.3kb ─── 2.7%
+   ├ .sst/platform/src/components/aws/apigatewayv2.ts ────────────────────────────── 19.3kb ─── 2.6%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -54,6 +54,11 @@
    │        └ sst.config.ts
    │           └ eval.ts
    ├ .sst/platform/src/components/aws/step-functions.ts ──────────────────────────── 15.6kb ─── 2.1%
+   │  └ .sst/platform/src/components/aws/index.ts
+   │     └ .sst/platform/src/components/index.ts
+   │        └ sst.config.ts
+   │           └ eval.ts
+   ├ .sst/platform/src/components/aws/nextjs.ts ──────────────────────────────────── 15.6kb ─── 2.1%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -76,11 +81,6 @@
    │           └ eval.ts
    ├ .sst/platform/src/components/component.ts ───────────────────────────────────── 14.8kb ─── 2.0%
    │  └ .sst/platform/src/components/linkable.ts
-   │     └ .sst/platform/src/components/index.ts
-   │        └ sst.config.ts
-   │           └ eval.ts
-   ├ .sst/platform/src/components/aws/nextjs.ts ──────────────────────────────────── 14.6kb ─── 2.0%
-   │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
@@ -120,7 +120,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/open-search.ts ──────────────────────────────── 8.4kb ─── 1.2%
+   ├ .sst/platform/src/components/aws/open-search.ts ──────────────────────────────── 8.4kb ─── 1.1%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -162,7 +162,7 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ .sst/platform/src/components/aws/email.ts ────────────────────────────────────── 6.9kb ─── 1.0%
+   ├ .sst/platform/src/components/aws/email.ts ────────────────────────────────────── 6.9kb ─── 0.9%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -258,7 +258,7 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ .sst/platform/src/components/aws/apigatewayv1-authorizer.ts ──────────────────── 3.3kb ─── 0.5%
+   ├ .sst/platform/src/components/aws/apigatewayv1-authorizer.ts ──────────────────── 3.3kb ─── 0.4%
    │  └ .sst/platform/src/components/aws/apigatewayv1.ts
    │     └ .sst/platform/src/components/aws/index.ts
    │        └ .sst/platform/src/components/index.ts
@@ -414,6 +414,11 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
+   ├ .sst/platform/src/components/aws/tan-stack-start.ts ──────────────────────────── 2.0kb ─── 0.3%
+   │  └ .sst/platform/src/components/aws/index.ts
+   │     └ .sst/platform/src/components/index.ts
+   │        └ sst.config.ts
+   │           └ eval.ts
    ├ .sst/platform/src/components/aws/cognito-user-pool-client.ts ─────────────────── 2.0kb ─── 0.3%
    │  └ .sst/platform/src/components/aws/cognito-user-pool.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -440,11 +445,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ .sst/platform/src/components/aws/tan-stack-start.ts ──────────────────────────── 1.8kb ─── 0.2%
-   │  └ .sst/platform/src/components/aws/index.ts
-   │     └ .sst/platform/src/components/index.ts
-   │        └ sst.config.ts
-   │           └ eval.ts
    ├ .sst/platform/src/components/aws/cognito-identity-provider.ts ────────────────── 1.7kb ─── 0.2%
    │  └ .sst/platform/src/components/aws/cognito-user-pool.ts
    │     └ .sst/platform/src/components/aws/index.ts

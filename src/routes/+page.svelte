@@ -15,7 +15,7 @@ It supports _rich formatting_, **live preview**, \`inline code\`, and even synta
 You can use **bold**, _italic_, **_both_**, or \`inline code\`.  
 Links like [OpenAI](https://openai.com) are automatically styled and clickable.  
 
-> “Markdown is not about syntax — it’s about expression.”  
+> "Markdown is not about syntax — it's about expression."  
 > — _Anonymous Developer_
 
 ---
@@ -69,7 +69,7 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ## 💬 Blockquotes & Rules
 
-> “The best way to predict the future is to implement it.”  
+> "The best way to predict the future is to implement it."  
 > — Alan Kay
 
 ---
@@ -85,7 +85,7 @@ Experiment with:
 
 ---
 
-That’s it! You’re editing with a fully interactive Markdown editor built with ❤️ and Svelte.
+That's it! You're editing with a fully interactive Markdown editor built with ❤️ and Svelte.
 `);
 
   let readmeHtml = $state<string>('');

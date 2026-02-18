@@ -1,239 +1,201 @@
-time=2026-02-08T15:07:16.123+11:00 level=INFO msg="checking for pulumi" path="/Users/michaelcuneo/Library/Application Support/sst/bin/pulumi"
-time=2026-02-08T15:07:16.759+11:00 level=INFO msg="checking for bun" path="/Users/michaelcuneo/Library/Application Support/sst/bin/bun"
-time=2026-02-08T15:07:16.763+11:00 level=INFO msg="initializing project" version=3.17.38
-time=2026-02-08T15:07:16.763+11:00 level=INFO msg="esbuild building" out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1770523636763.mjs
-time=2026-02-08T15:07:16.765+11:00 level=INFO msg="esbuild built" outfile=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1770523636763.mjs
-time=2026-02-08T15:07:16.765+11:00 level=INFO msg="evaluating config"
-time=2026-02-08T15:07:16.785+11:00 level=INFO msg="config evaluated"
-time=2026-02-08T15:07:16.785+11:00 level=INFO msg="checking platform"
-time=2026-02-08T15:07:16.785+11:00 level=INFO msg="loading home"
-time=2026-02-08T15:07:16.785+11:00 level=INFO msg="aws credentials found" region=ap-southeast-2 profile=default
-time=2026-02-08T15:07:16.785+11:00 level=INFO msg="fetching bootstrap"
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg="found existing bootstrap" data="{\"version\":5,\"asset\":\"sst-asset-khcxzaurubuc\",\"assetEcrRegistryId\":\"481588845003\",\"assetEcrUrl\":\"481588845003.dkr.ecr.ap-southeast-2.amazonaws.com/sst-asset\",\"state\":\"sst-state-khcxzaurubuc\",\"appsyncHttp\":\"\",\"appsyncRealtime\":\"\"}"
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg="loaded config" app=markdown-editor stage=michael
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg=mosaic project=/Users/michaelcuneo/Desktop/markdown-editor
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg="starting watcher" service=watcher root=/Users/michaelcuneo/Desktop/markdown-editor
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg="server port assigned" port=13557
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg=starting service=dev
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg="getting endpoint"
-time=2026-02-08T15:07:16.963+11:00 level=INFO msg=starting service=deployer
-time=2026-02-08T15:07:16.964+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:16.964+11:00 level=INFO msg=starting service=server
-time=2026-02-08T15:07:16.965+11:00 level=INFO msg=server service=server addr=0.0.0.0:13557
-time=2026-02-08T15:07:16.965+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor
-time=2026-02-08T15:07:16.965+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/scripts
-time=2026-02-08T15:07:16.965+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=resize
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/controller
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/keymap
-time=2026-02-08T15:07:16.966+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins
-time=2026-02-08T15:07:16.967+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules
-time=2026-02-08T15:07:16.967+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/tasks
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/theme
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/styles
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/types
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes
-time=2026-02-08T15:07:16.968+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static
-time=2026-02-08T15:07:17.224+11:00 level=INFO msg="found appsync" rest=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-api.ap-southeast-2.amazonaws.com realtime=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-realtime-api.ap-southeast-2.amazonaws.com
-time=2026-02-08T15:07:17.224+11:00 level=INFO msg="checking if appsync is ready"
-time=2026-02-08T15:07:17.319+11:00 level=INFO msg="INFO connecting service=appsync.connection"
-time=2026-02-08T15:07:17.519+11:00 level=INFO msg="INFO connect message service=appsync.connection msg=\"map[connectionTimeoutMs:300000 type:connection_ack]\""
-time=2026-02-08T15:07:17.519+11:00 level=INFO msg="subscribing to" prefix=/sst/markdown-editor/michael/in
-time=2026-02-08T15:07:17.520+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:07:17.626+11:00 level=INFO msg="INFO msg service=appsync.connection type=subscribe_success id=019c3b6eb70f249d8eb804c0"
-time=2026-02-08T15:07:17.626+11:00 level=INFO msg="INFO subscribed service=appsync.connection channel=/sst/markdown-editor/michael/in id=019c3b6eb70f249d8eb804c0"
-time=2026-02-08T15:07:17.627+11:00 level=INFO msg=starting service=aws.task
-time=2026-02-08T15:07:17.703+11:00 level=INFO msg=subscribed service=dev addr=[::1]:50924
-time=2026-02-08T15:07:17.703+11:00 level=INFO msg=subscribed service=dev addr=[::1]:50923
-time=2026-02-08T15:07:17.704+11:00 level=INFO msg="deploy requested" service=dev
-time=2026-02-08T15:07:17.704+11:00 level=INFO msg=deploying service=deployer
-time=2026-02-08T15:07:17.704+11:00 level=INFO msg="running stack command" service=project.run cmd=deploy
-time=2026-02-08T15:07:17.704+11:00 level=INFO msg="INFO locking app=markdown-editor stage=michael"
-time=2026-02-08T15:07:17.704+11:00 level=INFO msg="INFO getting data key=lock app=markdown-editor stage=michael"
-time=2026-02-08T15:07:17.941+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=michael"
-time=2026-02-08T15:07:18.079+11:00 level=INFO msg="INFO getting passphrase app=markdown-editor stage=michael"
-time=2026-02-08T15:07:18.218+11:00 level=INFO msg="INFO pulling state app=markdown-editor stage=michael out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/pulumi/fe63c49148377813c3a7f7c0/.pulumi/stacks/markdown-editor/michael.json"
-time=2026-02-08T15:07:18.554+11:00 level=INFO msg="got previous deployment" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:18.554+11:00 level=INFO msg="esbuild building" out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1770523638217.mjs
-time=2026-02-08T15:07:18.572+11:00 level=INFO msg="esbuild built" outfile=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1770523638217.mjs
-time=2026-02-08T15:07:18.576+11:00 level=INFO msg="built sst.config.ts" service=project.run updateID=fe63c49148377813c3a7f7c0 to=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1770523638217.mjs
-time=2026-02-08T15:07:18.578+11:00 level=INFO msg="tracked files" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:18.578+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=_fallback"
-time=2026-02-08T15:07:18.578+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=michael"
-time=2026-02-08T15:07:18.696+11:00 level=INFO msg="starting pulumi" service=project.run updateID=fe63c49148377813c3a7f7c0 args="[/Users/michaelcuneo/Library/Application Support/sst/bin/pulumi up --yes -f --stack organization/markdown-editor/michael --non-interactive --event-log /Users/michaelcuneo/Desktop/markdown-editor/.sst/pulumi/fe63c49148377813c3a7f7c0/eventlog.json --config aws:region=ap-southeast-2 --config aws:defaultTags={\"tags\":{\"sst:app\":\"markdown-editor\",\"sst:stage\":\"michael\"}}]"
-time=2026-02-08T15:07:19.202+11:00 level=INFO msg=subscribed service=dev addr=[::1]:50945
-time=2026-02-08T15:07:19.204+11:00 level=INFO msg="matching dev" service=dev full=/Users/michaelcuneo/Desktop/markdown-editor directory=""
-time=2026-02-08T15:07:19.204+11:00 level=INFO msg="loading aws credentials" service=project.env resource=MyWeb role=arn:aws:iam::481588845003:role/markdown-editor-michael-MyWebDevServerRole-mhostvkt
-time=2026-02-08T15:07:19.369+11:00 level=INFO msg=dev service=project.env resource=MyWeb links=[]
-time=2026-02-08T15:07:19.736+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:19.736+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:19.736+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE|CHMOD
-time=2026-02-08T15:07:19.736+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md
-time=2026-02-08T15:07:20.564+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:20.609+11:00 level=INFO msg="INFO pushing partial state updateID=fe63c49148377813c3a7f7c0"
-time=2026-02-08T15:07:20.675+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2026-02-08T15:07:20.676+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2026-02-08T15:07:20.676+11:00 level=INFO msg="building function" runtime=nodejs20.x functionID=MyWebDevServer
-time=2026-02-08T15:07:20.676+11:00 level=INFO msg="function built" runtime=nodejs20.x functionID=MyWebDevServer
-time=2026-02-08T15:07:20.707+11:00 level=INFO msg="rpc request" method=POST url=/rpc
-time=2026-02-08T15:07:20.896+11:00 level=INFO msg="pulumi exited" service=project.run updateID=fe63c49148377813c3a7f7c0 err=<nil>
-time=2026-02-08T15:07:20.896+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe63c49148377813c3a7f7c0 eofs=0
-time=2026-02-08T15:07:20.897+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe63c49148377813c3a7f7c0 eofs=1
-time=2026-02-08T15:07:20.897+11:00 level=INFO msg="breaking out of tail loop" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:20.897+11:00 level=INFO msg="parsing state" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:20.926+11:00 level=INFO msg="INFO pushing partial state updateID=fe63c49148377813c3a7f7c0"
-time=2026-02-08T15:07:20.991+11:00 level=INFO msg="generating types" root=/Users/michaelcuneo/Desktop/markdown-editor
-time=2026-02-08T15:07:20.991+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=CHMOD
-time=2026-02-08T15:07:20.992+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=WRITE
-time=2026-02-08T15:07:20.992+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts
-time=2026-02-08T15:07:20.992+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=WRITE
-time=2026-02-08T15:07:20.992+11:00 level=INFO msg="canceling partial" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:20.992+11:00 level=INFO msg="waiting for partial to exit" service=project.run updateID=fe63c49148377813c3a7f7c0
-time=2026-02-08T15:07:21.127+11:00 level=INFO msg="INFO pushing eventlog updateID=fe63c49148377813c3a7f7c0"
-time=2026-02-08T15:07:21.127+11:00 level=INFO msg="INFO pushing snapshot updateID=fe63c49148377813c3a7f7c0"
-time=2026-02-08T15:07:21.513+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=michael"
-time=2026-02-08T15:07:21.609+11:00 level=INFO msg="done running stack command" service=project.run updateID=fe63c49148377813c3a7f7c0 resources=11
-time=2026-02-08T15:07:21.611+11:00 level=INFO msg="matching dev" service=dev full=/Users/michaelcuneo/Desktop/markdown-editor directory=""
-time=2026-02-08T15:07:21.611+11:00 level=INFO msg="loading aws credentials" service=project.env resource=MyWeb role=arn:aws:iam::481588845003:role/markdown-editor-michael-MyWebDevServerRole-mhostvkt
-time=2026-02-08T15:07:21.613+11:00 level=INFO msg="INFO unlocking app=markdown-editor stage=michael"
-time=2026-02-08T15:07:21.687+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:21.687+11:00 level=INFO msg="build hash" service=deployer hash=jKg0mxvZXU0
-time=2026-02-08T15:07:21.687+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:21.687+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:21.687+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:21.718+11:00 level=INFO msg=dev service=project.env resource=MyWeb links=[]
-time=2026-02-08T15:07:22.778+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=CHMOD
-time=2026-02-08T15:07:55.297+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=CHMOD
-time=2026-02-08T15:07:55.298+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=WRITE
-time=2026-02-08T15:07:55.298+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:55.298+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js
-time=2026-02-08T15:07:55.680+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=CHMOD
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE|CHMOD
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:55.785+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md
-time=2026-02-08T15:07:56.453+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=CHMOD
-time=2026-02-08T15:07:56.454+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=WRITE
-time=2026-02-08T15:07:56.454+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:56.454+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js
-time=2026-02-08T15:07:56.476+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE|CHMOD
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:07:56.485+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md
-time=2026-02-08T15:07:57.954+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
-time=2026-02-08T15:07:58.027+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/svelte.config.js op=CHMOD
-time=2026-02-08T15:08:17.632+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:09:17.600+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:10:17.499+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:11:17.545+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:11:17.815+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:11:17.815+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=WRITE
-time=2026-02-08T15:11:17.815+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:11:17.815+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte
-time=2026-02-08T15:11:19.583+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:11:33.763+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:11:33.763+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=WRITE
-time=2026-02-08T15:11:33.763+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:11:33.763+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte
-time=2026-02-08T15:11:35.346+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:11:38.613+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:11:38.614+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=WRITE
-time=2026-02-08T15:11:38.614+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:11:38.614+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte
-time=2026-02-08T15:11:39.831+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:12:17.906+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:13:10.447+11:00 level=INFO msg=resize
-time=2026-02-08T15:13:17.689+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:13:49.806+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts op=CHMOD
-time=2026-02-08T15:13:49.806+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts op=WRITE
-time=2026-02-08T15:13:49.806+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:13:49.806+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts
-time=2026-02-08T15:13:50.818+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts op=CHMOD
-time=2026-02-08T15:13:50.819+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts op=WRITE
-time=2026-02-08T15:13:50.819+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:13:50.819+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts
-time=2026-02-08T15:13:52.046+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/taskTogglePlugin.ts op=CHMOD
-time=2026-02-08T15:14:17.596+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:15:17.498+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:15:48.971+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema/tasklistSchema.ts op=CHMOD
-time=2026-02-08T15:15:48.971+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema/tasklistSchema.ts op=WRITE
-time=2026-02-08T15:15:48.971+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema/tasklistSchema.ts
-time=2026-02-08T15:15:48.971+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:15:50.945+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema/tasklistSchema.ts op=CHMOD
-time=2026-02-08T15:16:17.507+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:16:26.659+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:26.659+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:26.659+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:26.659+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:28.164+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:28.361+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:28.361+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:28.361+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:28.361+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:29.583+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:37.912+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:37.912+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:37.912+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:37.912+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:38.306+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:45.287+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:45.288+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:45.288+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:45.288+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:46.540+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:46.540+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:46.540+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:46.540+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:47.861+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:47.861+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:47.861+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:16:47.862+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:51.002+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:16:51.003+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=WRITE
-time=2026-02-08T15:16:51.003+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:16:51.003+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts
-time=2026-02-08T15:17:17.527+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:17:25.537+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils/highlightSetup.ts op=CHMOD
-time=2026-02-08T15:18:17.523+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
-time=2026-02-08T15:18:41.256+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:18:41.256+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=WRITE
-time=2026-02-08T15:18:41.256+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:18:41.256+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte
-time=2026-02-08T15:18:42.474+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/EditorToolbar.svelte op=CHMOD
-time=2026-02-08T15:18:51.283+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules/markdownInputRules.ts op=CHMOD
-time=2026-02-08T15:18:51.283+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules/markdownInputRules.ts op=WRITE
-time=2026-02-08T15:18:51.284+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules/markdownInputRules.ts
-time=2026-02-08T15:18:51.284+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:18:52.509+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules/markdownInputRules.ts op=CHMOD
-time=2026-02-08T15:18:55.906+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/linkClickPlugin.ts op=CHMOD
-time=2026-02-08T15:18:55.907+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/linkClickPlugin.ts op=WRITE
-time=2026-02-08T15:18:55.907+11:00 level=INFO msg="waiting for trigger" service=deployer
-time=2026-02-08T15:18:55.907+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/linkClickPlugin.ts
-time=2026-02-08T15:18:57.125+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins/linkClickPlugin.ts op=CHMOD
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg=interrupted
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg=done service=dev
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg=done service=aws.task
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg=done service=deployer
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg="shutting down server" service=server
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg=done service=watcher
-time=2026-02-08T15:19:02.933+11:00 level=INFO msg="INFO connection closed service=appsync.connection"
-time=2026-02-08T15:19:02.934+11:00 level=INFO msg="server done" service=server
-time=2026-02-08T15:19:02.934+11:00 level=INFO msg="done mosaic" err=<nil>
-time=2026-02-08T15:19:02.934+11:00 level=INFO msg="killing process" pid=12538
-time=2026-02-08T15:19:02.934+11:00 level=INFO msg="killing process" pid=12537
-time=2026-02-08T15:19:02.934+11:00 level=INFO msg="killing process" pid=12564
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="process killed with term" pid=12537
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="untracked process" pid=12537
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="process killed with term" pid=12538
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="untracked process" pid=12538
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="process killed with term" pid=12564
-time=2026-02-08T15:19:03.811+11:00 level=INFO msg="untracked process" pid=12564
+time=2026-02-18T12:51:02.948+11:00 level=INFO msg="checking for pulumi" path="/Users/michaelcuneo/Library/Application Support/sst/bin/pulumi"
+time=2026-02-18T12:51:03.649+11:00 level=INFO msg="checking for bun" path="/Users/michaelcuneo/Library/Application Support/sst/bin/bun"
+time=2026-02-18T12:51:03.653+11:00 level=INFO msg="initializing project" version=3.18.7
+time=2026-02-18T12:51:03.654+11:00 level=INFO msg="esbuild building" out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1771379463654.mjs
+time=2026-02-18T12:51:03.656+11:00 level=INFO msg="esbuild built" outfile=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1771379463654.mjs
+time=2026-02-18T12:51:03.656+11:00 level=INFO msg="evaluating config"
+time=2026-02-18T12:51:03.684+11:00 level=INFO msg="config evaluated"
+time=2026-02-18T12:51:03.684+11:00 level=INFO msg="checking platform"
+time=2026-02-18T12:51:03.684+11:00 level=INFO msg="loading home"
+time=2026-02-18T12:51:03.685+11:00 level=INFO msg="aws credentials found" region=ap-southeast-2 profile=default
+time=2026-02-18T12:51:03.685+11:00 level=INFO msg="fetching bootstrap"
+time=2026-02-18T12:51:03.777+11:00 level=INFO msg="found existing bootstrap" data="{\"version\":5,\"asset\":\"sst-asset-khcxzaurubuc\",\"assetEcrRegistryId\":\"481588845003\",\"assetEcrUrl\":\"481588845003.dkr.ecr.ap-southeast-2.amazonaws.com/sst-asset\",\"state\":\"sst-state-khcxzaurubuc\",\"appsyncHttp\":\"\",\"appsyncRealtime\":\"\"}"
+time=2026-02-18T12:51:03.777+11:00 level=INFO msg="loaded config" app=markdown-editor stage=michael
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg=mosaic project=/Users/michaelcuneo/Desktop/markdown-editor
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg="starting watcher" service=watcher root=/Users/michaelcuneo/Desktop/markdown-editor
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg="server port assigned" port=13557
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg=starting service=dev
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg="getting endpoint"
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg=starting service=server
+time=2026-02-18T12:51:03.778+11:00 level=INFO msg=starting service=deployer
+time=2026-02-18T12:51:03.779+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:51:03.779+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor
+time=2026-02-18T12:51:03.779+11:00 level=INFO msg=server service=server addr=0.0.0.0:13557
+time=2026-02-18T12:51:03.779+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg="server ready to accept connections" service=server
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/controller
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg=resize
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/keymap
+time=2026-02-18T12:51:03.780+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/plugins
+time=2026-02-18T12:51:03.781+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/rules
+time=2026-02-18T12:51:03.782+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/schema
+time=2026-02-18T12:51:03.782+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/tasks
+time=2026-02-18T12:51:03.782+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/theme
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/editor/utils
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/styles
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/dist/types
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/scripts
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src
+time=2026-02-18T12:51:03.783+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib
+time=2026-02-18T12:51:03.784+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor
+time=2026-02-18T12:51:03.784+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/controller
+time=2026-02-18T12:51:03.784+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/keymap
+time=2026-02-18T12:51:03.784+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/plugins
+time=2026-02-18T12:51:03.785+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/rules
+time=2026-02-18T12:51:03.785+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/schema
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/tasks
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/theme
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/editor/utils
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/styles
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/lib/types
+time=2026-02-18T12:51:03.786+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes
+time=2026-02-18T12:51:03.787+11:00 level=INFO msg=watching service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static
+time=2026-02-18T12:51:04.033+11:00 level=INFO msg="found appsync" rest=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-api.ap-southeast-2.amazonaws.com realtime=hf7hdbeyubgtlp4n4xvvvo6ywy.appsync-realtime-api.ap-southeast-2.amazonaws.com
+time=2026-02-18T12:51:04.033+11:00 level=INFO msg="checking if appsync is ready"
+time=2026-02-18T12:51:04.156+11:00 level=INFO msg="INFO connecting service=appsync.connection"
+time=2026-02-18T12:51:04.301+11:00 level=INFO msg="INFO connect message service=appsync.connection msg=\"map[connectionTimeoutMs:300000 type:connection_ack]\""
+time=2026-02-18T12:51:04.301+11:00 level=INFO msg="subscribing to" prefix=/sst/markdown-editor/michael/in
+time=2026-02-18T12:51:04.301+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:51:04.400+11:00 level=INFO msg="INFO msg service=appsync.connection type=subscribe_success id=019c6e71986d1f79cae38305"
+time=2026-02-18T12:51:04.400+11:00 level=INFO msg="INFO subscribed service=appsync.connection channel=/sst/markdown-editor/michael/in id=019c6e71986d1f79cae38305"
+time=2026-02-18T12:51:04.401+11:00 level=INFO msg=starting service=aws.task
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:53009
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:53010
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg="deploy requested" service=dev
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg=deploying service=deployer
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg="running stack command" service=project.run cmd=deploy
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg="INFO locking app=markdown-editor stage=michael"
+time=2026-02-18T12:51:04.489+11:00 level=INFO msg="INFO getting data key=lock app=markdown-editor stage=michael"
+time=2026-02-18T12:51:04.669+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=michael"
+time=2026-02-18T12:51:04.766+11:00 level=INFO msg="INFO getting passphrase app=markdown-editor stage=michael"
+time=2026-02-18T12:51:04.859+11:00 level=INFO msg="INFO pulling state app=markdown-editor stage=michael out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/pulumi/fe63918e66d6a6cfe1f4fdef/.pulumi/stacks/markdown-editor/michael.json"
+time=2026-02-18T12:51:05.070+11:00 level=INFO msg="got previous deployment" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:05.070+11:00 level=INFO msg="esbuild building" out=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1771379464858.mjs
+time=2026-02-18T12:51:05.087+11:00 level=INFO msg="esbuild built" outfile=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1771379464858.mjs
+time=2026-02-18T12:51:05.090+11:00 level=INFO msg="built sst.config.ts" service=project.run updateID=fe63918e66d6a6cfe1f4fdef to=/Users/michaelcuneo/Desktop/markdown-editor/.sst/platform/sst.config.1771379464858.mjs
+time=2026-02-18T12:51:05.092+11:00 level=INFO msg="tracked files" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:05.092+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=_fallback"
+time=2026-02-18T12:51:05.092+11:00 level=INFO msg="INFO getting data key=secret app=markdown-editor stage=michael"
+time=2026-02-18T12:51:05.174+11:00 level=INFO msg="starting pulumi" service=project.run updateID=fe63918e66d6a6cfe1f4fdef args="[/Users/michaelcuneo/Library/Application Support/sst/bin/pulumi up --yes -f --stack organization/markdown-editor/michael --non-interactive --event-log /Users/michaelcuneo/Desktop/markdown-editor/.sst/pulumi/fe63918e66d6a6cfe1f4fdef/eventlog.json --config aws:defaultTags={\"tags\":{\"sst:app\":\"markdown-editor\",\"sst:stage\":\"michael\"}} --config aws:region=ap-southeast-2]"
+time=2026-02-18T12:51:07.089+11:00 level=INFO msg="INFO pushing partial state updateID=fe63918e66d6a6cfe1f4fdef"
+time=2026-02-18T12:51:07.138+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2026-02-18T12:51:07.138+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2026-02-18T12:51:07.138+11:00 level=INFO msg="building function" runtime=nodejs20.x functionID=MyWebDevServer
+time=2026-02-18T12:51:07.139+11:00 level=INFO msg="function built" runtime=nodejs20.x functionID=MyWebDevServer
+time=2026-02-18T12:51:07.172+11:00 level=INFO msg="rpc request" method=POST url=/rpc
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="pulumi exited" service=project.run updateID=fe63918e66d6a6cfe1f4fdef err=<nil>
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe63918e66d6a6cfe1f4fdef eofs=0
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="eof and exited" service=project.run updateID=fe63918e66d6a6cfe1f4fdef eofs=1
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="breaking out of tail loop" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="parsing state" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:07.207+11:00 level=INFO msg="INFO pushing partial state updateID=fe63918e66d6a6cfe1f4fdef"
+time=2026-02-18T12:51:07.292+11:00 level=INFO msg="generating types" root=/Users/michaelcuneo/Desktop/markdown-editor
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=CHMOD
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=WRITE
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=WRITE
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="canceling partial" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:07.294+11:00 level=INFO msg="waiting for partial to exit" service=project.run updateID=fe63918e66d6a6cfe1f4fdef
+time=2026-02-18T12:51:07.341+11:00 level=INFO msg="INFO pushing snapshot updateID=fe63918e66d6a6cfe1f4fdef"
+time=2026-02-18T12:51:07.341+11:00 level=INFO msg="INFO pushing eventlog updateID=fe63918e66d6a6cfe1f4fdef"
+time=2026-02-18T12:51:07.514+11:00 level=INFO msg="INFO putting update app=markdown-editor stage=michael"
+time=2026-02-18T12:51:07.638+11:00 level=INFO msg="done running stack command" service=project.run updateID=fe63918e66d6a6cfe1f4fdef resources=11
+time=2026-02-18T12:51:07.643+11:00 level=INFO msg="INFO unlocking app=markdown-editor stage=michael"
+time=2026-02-18T12:51:07.704+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:51:07.704+11:00 level=INFO msg="build hash" service=deployer hash=fETKeETvHMM
+time=2026-02-18T12:51:07.704+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:51:07.704+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:51:08.309+11:00 level=INFO msg=subscribed service=dev addr=127.0.0.1:53057
+time=2026-02-18T12:51:08.310+11:00 level=INFO msg="matching dev" service=dev full=/Users/michaelcuneo/Desktop/markdown-editor directory=""
+time=2026-02-18T12:51:08.310+11:00 level=INFO msg="loading aws credentials" service=project.env resource=MyWeb role=arn:aws:iam::481588845003:role/markdown-editor-michael-MyWebDevServerRole-mhostvkt
+time=2026-02-18T12:51:08.411+11:00 level=INFO msg=dev service=project.env resource=MyWeb links=[]
+time=2026-02-18T12:51:08.901+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
+time=2026-02-18T12:51:08.901+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
+time=2026-02-18T12:51:08.901+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=WRITE|CHMOD
+time=2026-02-18T12:51:08.901+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md
+time=2026-02-18T12:51:08.901+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:51:09.017+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/sst-env.d.ts op=CHMOD
+time=2026-02-18T12:51:10.272+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/static/README.md op=CHMOD
+time=2026-02-18T12:52:04.276+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:52:48.729+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+layout.svelte op=CHMOD
+time=2026-02-18T12:52:48.729+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+layout.svelte op=WRITE
+time=2026-02-18T12:52:48.729+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:52:48.729+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+layout.svelte
+time=2026-02-18T12:52:50.397+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+layout.svelte op=CHMOD
+time=2026-02-18T12:52:51.689+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:52:51.689+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:52:51.689+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:52:51.689+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:52:53.036+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:52:53.258+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:52:53.258+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:52:53.258+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:52:53.258+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:52:54.255+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:52:54.255+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:52:54.255+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:52:54.255+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:52:55.518+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:04.278+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:53:05.841+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:05.841+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:05.841+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:05.841+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:07.629+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:13.062+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:13.063+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:13.063+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:13.063+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:14.650+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:14.650+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:14.650+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:14.650+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:14.771+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:15.309+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:15.309+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:15.309+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:15.309+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:16.771+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:16.771+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:16.771+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:16.771+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:23.641+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:23.642+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:23.642+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:23.642+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:34.149+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:34.149+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:34.149+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:34.149+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:35.670+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:35.670+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:35.670+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:35.670+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:53:44.803+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:53:44.803+11:00 level=INFO msg="file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=WRITE
+time=2026-02-18T12:53:44.803+11:00 level=INFO msg="waiting for trigger" service=deployer
+time=2026-02-18T12:53:44.803+11:00 level=INFO msg="checking if code needs to be rebuilt" service=aws.function file=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte
+time=2026-02-18T12:54:04.332+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:54:14.517+11:00 level=INFO msg="ignoring file event" service=watcher path=/Users/michaelcuneo/Desktop/markdown-editor/src/routes/+page.svelte op=CHMOD
+time=2026-02-18T12:55:04.280+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:56:04.278+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:57:04.276+11:00 level=INFO msg="INFO msg service=appsync.connection type=ka id=<nil>"
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg=interrupted
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg=done service=aws.task
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg=done service=watcher
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg=done service=deployer
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg=done service=dev
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg="shutting down server" service=server
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg="INFO connection closed service=appsync.connection"
+time=2026-02-18T12:57:32.907+11:00 level=INFO msg="server done" service=server
+time=2026-02-18T12:57:32.908+11:00 level=INFO msg="done mosaic" err=<nil>
+time=2026-02-18T12:57:32.908+11:00 level=INFO msg="killing process" pid=27559
+time=2026-02-18T12:57:32.908+11:00 level=INFO msg="killing process" pid=27558
+time=2026-02-18T12:57:32.908+11:00 level=INFO msg="killing process" pid=27594
+time=2026-02-18T12:57:33.373+11:00 level=INFO msg="process killed with term" pid=27559
+time=2026-02-18T12:57:33.373+11:00 level=INFO msg="untracked process" pid=27559
+time=2026-02-18T12:57:33.373+11:00 level=INFO msg="process killed with term" pid=27594
+time=2026-02-18T12:57:33.373+11:00 level=INFO msg="untracked process" pid=27594
+time=2026-02-18T12:57:33.422+11:00 level=INFO msg="process killed with term" pid=27558
+time=2026-02-18T12:57:33.422+11:00 level=INFO msg="untracked process" pid=27558
