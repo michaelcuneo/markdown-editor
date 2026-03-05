@@ -1,131 +1,13 @@
-Updating (production):
-    pulumi:pulumi:Stack markdown-editor-production  warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
-    pulumi:pulumi:Stack markdown-editor-production  warning: using pulumi-resource-pulumi-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-resource-pulumi-nodejs
+Updating (michael):
 
-    pulumi:pulumi:Stack markdown-editor-production running warning: using pulumi-resource-pulumi-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-resource-pulumi-nodejs
-@ updating......
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; > @michaelcuneo/markdown-editor@0.0.3 build
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; > vite build && npm run prepack
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; vite v7.2.1 building ssr environment for production...
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; 📘 Synced README.md → static/README.md
- ++ command:local:Command MyWebBuilder creating replacement (0s) [diff: ]; transforming...
-@ updating....
-    pulumi:pulumi:Stack markdown-editor-production running warning: using pulumi-resource-pulumi-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-resource-pulumi-nodejs
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; "Node" is imported from external module "prosemirror-model" but never used in "src/lib/editor/schema/tasklistSchema.ts" and "src/lib/editor/tasks/markdownTaskSupport.ts".
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; "ViewUpdate" is imported from external module "@codemirror/view" but never used in "src/lib/editor/theme/codeMirrorTheme.ts" and "src/lib/editor/plugins/codemirrorBlockPlugin.ts".
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; ✓ 212 modules transformed.
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; rendering chunks...
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; vite v7.2.1 building client environment for production...
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; 📘 Synced README.md → static/README.md
- ++ command:local:Command MyWebBuilder creating replacement (1s) [diff: ]; transforming...
-@ updating....
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; ✓ 285 modules transformed.
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; rendering chunks...
-@ updating....
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; computing gzip size...
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/version.json                         0.03 kB │ gzip:   0.05 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/.vite/manifest.json                       3.47 kB │ gzip:   0.66 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/assets/2.COYhnj-A.css      1.26 kB │ gzip:   0.48 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/assets/0.CyZJ3Wg5.css     15.19 kB │ gzip:   3.64 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/EQOfHpou.js         0.03 kB │ gzip:   0.05 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/entry/start.D0GuFuwg.js    0.08 kB │ gzip:   0.09 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/CVmhbEJL.js         0.37 kB │ gzip:   0.27 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/BtbyzAr_.js         0.64 kB │ gzip:   0.40 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/DmA4aPPk.js         0.69 kB │ gzip:   0.43 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/nodes/1.B4gkvp52.js        1.02 kB │ gzip:   0.59 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/DbtivfDR.js         2.11 kB │ gzip:   1.14 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/CQrefEaF.js         2.38 kB │ gzip:   1.13 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/C_SqQ9fq.js         4.55 kB │ gzip:   2.05 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/entry/app.DH3VRzSv.js      5.50 kB │ gzip:   2.58 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/nodes/0.BdOLHXwq.js        9.74 kB │ gzip:   3.58 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/DVMvzcRc.js        21.48 kB │ gzip:   8.39 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/chunks/FI2o77K0.js        26.20 kB │ gzip:  10.31 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/client/_app/immutable/nodes/2.C9j2gD_N.js      870.97 kB │ gzip: 309.97 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; ✓ built in 1.27s
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; (!) Some chunks are larger than 500 kB after minification. Consider:
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; - Using dynamic import() to code-split the application
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/.vite/manifest.json                           2.92 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/_app/immutable/assets/_page.COYhnj-A.css      1.26 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/_app/immutable/assets/_layout.DgKwB7Jr.css   15.02 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/internal.js                                   0.33 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/equality.js                            0.33 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/environment.js                         0.66 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/utils2.js                              1.11 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/utils.js                               1.15 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/shared.js                              1.35 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/entries/fallbacks/error.svelte.js             1.36 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/context.js                             1.70 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/exports.js                             6.97 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/entries/pages/_page.svelte.js                 7.75 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/entries/pages/_layout.svelte.js              10.50 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/index.js                              25.59 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/remote-entry.js                              27.94 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/chunks/internal.js                           75.06 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; .svelte-kit/output/server/index.js                                    126.04 kB
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; ✓ built in 2.33s
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; Run npm run preview to preview your production build locally.
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; > Using @sveltejs/adapter-auto
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ];   ✔ done
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; 
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; > @michaelcuneo/markdown-editor@0.0.3 prepack
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; > svelte-kit sync && svelte-package && publint
- ++ command:local:Command MyWebBuilder creating replacement (2s) [diff: ]; 
 @ updating.....
- ++ command:local:Command MyWebBuilder creating replacement (4s) [diff: ]; src/lib -> dist
- ++ command:local:Command MyWebBuilder creating replacement (4s) [diff: ]; Running publint v0.3.15 for @michaelcuneo/markdown-editor...
- ++ command:local:Command MyWebBuilder creating replacement (4s) [diff: ]; Packing files with `npm pack`...
- ++ command:local:Command MyWebBuilder creating replacement (5s) [diff: ]; Linting...
- ++ command:local:Command MyWebBuilder creating replacement (5s) [diff: ]; All good!
- ++ command:local:Command MyWebBuilder created replacement (5s) [diff: ]; All good!
- +- command:local:Command MyWebBuilder replacing (0s) [diff: ]; All good!
- +- command:local:Command MyWebBuilder replaced (0.00s) [diff: ]; All good!
-@ updating....
- ~  pulumi-nodejs:dynamic:Resource MyWebAssetFiles.sst.aws.BucketFiles updating (0s) [diff: ~files]
- ++ aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code creating replacement (0s) [diff: ~key,source]
- ++ aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 creating replacement (0s)[retain] [diff: ~key,source]
- ++ aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code created replacement (0.27s) [diff: ~key,source]
- +- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code replacing (0s) [diff: ~key,source]
- +- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code replaced (0.00s) [diff: ~key,source]
- ~  aws:lambda:Function MyWebServerApsoutheast2Function updating (0s) [diff: ~s3Key]
-@ updating....
- ~  pulumi-nodejs:dynamic:Resource MyWebAssetFiles.sst.aws.BucketFiles updated (0.58s) [diff: ~files]
- ++ aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 created replacement (0.51s)[retain] [diff: ~key,source]
- +- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 replacing (0s)[retain] [diff: ~key,source]
- +- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 replaced (0.00s)[retain] [diff: ~key,source]
-@ updating........
- ~  aws:lambda:Function MyWebServerApsoutheast2Function updated (5s) [diff: ~s3Key]
- ~  pulumi-nodejs:dynamic:Resource MyWebInvalidation.sst.aws.DistributionInvalidation updating (0s) [diff: ~version]
-@ updating....
- ~  pulumi-nodejs:dynamic:Resource MyWebInvalidation.sst.aws.DistributionInvalidation updated (1s) [diff: ~version]
- -- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code deleting original (0s) [diff: ~key,source]
- -- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 deleting original (0s)[retain] [diff: ~key,source]
- -- command:local:Command MyWebBuilder deleting original (0s) [diff: ]; All good!
- -- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Sourcemap0 deleted original (0.01s)[retain] [diff: ~key,source]
- -- command:local:Command MyWebBuilder deleted original (0.02s) [diff: ]; All good!
- -- aws:s3:BucketObjectv2 MyWebServerApsoutheast2Code deleted original (0.11s) [diff: ~key,source]
-    pulumi:pulumi:Stack markdown-editor-production  3 warnings
-Diagnostics:
-  pulumi:pulumi:Stack (markdown-editor-production):
-    warning: using pulumi-language-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-language-nodejs
-    warning: using pulumi-resource-pulumi-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-resource-pulumi-nodejs
-    warning: using pulumi-resource-pulumi-nodejs from $PATH at /home/michael/.pulumi/bin/pulumi-resource-pulumi-nodejs
-
+    pulumi:pulumi:Stack markdown-editor-michael  
 Outputs:
-    _protect: true
-    web     : "https://markdown-editor.michaelcuneo.com.au"
+    _protect: false
+    web     : "http://url-unavailable-in-dev.mode"
 
 Resources:
-    ~ 3 updated
-    +-3 replaced
-    6 changes. 31 unchanged
+    9 unchanged
 
-Duration: 17s
+Duration: 3s
 

@@ -36,7 +36,6 @@ export function wysiwymPlugin(schema: Schema) {
 
 				event.preventDefault();
 
-				// --- inside handleKeyDown(view, event)
 				const { state, dispatch } = view;
 				const { selection } = state;
 				const { from, to, empty } = selection;
@@ -95,6 +94,7 @@ export function wysiwymPlugin(schema: Schema) {
 
 		appendTransaction(transactions, _oldState, newState) {
 			if (!transactions.some((tr) => tr.docChanged)) return null;
+
 			const tr = newState.tr;
 
 			const sel = newState.selection;
@@ -110,7 +110,10 @@ export function wysiwymPlugin(schema: Schema) {
 			if (strong) {
 				const m = /(\*\*)([^*]+)\*\*$/.exec(before);
 				if (m) {
-					const [full, , content] = m;
+					const full = m[0];
+					const content = m[2];
+					if (!content) return null;
+
 					const start = offset - full.length;
 					const openFrom = parentStart + start;
 					const innerFrom = openFrom + 2;
@@ -127,7 +130,10 @@ export function wysiwymPlugin(schema: Schema) {
 			if (em) {
 				const m = /(?<!\*)_([^_]+)_(?!_)$/.exec(before) || /(?<!\*)\*([^*]+)\*(?!\*)$/.exec(before);
 				if (m) {
-					const [full, content] = m;
+					const full = m[0];
+					const content = m[1];
+					if (!content) return null;
+
 					const start = offset - full.length;
 					const openFrom = parentStart + start;
 					const innerFrom = openFrom + 1;
@@ -144,7 +150,10 @@ export function wysiwymPlugin(schema: Schema) {
 			if (code) {
 				const m = /`([^`]+)`$/.exec(before);
 				if (m) {
-					const [full, content] = m;
+					const full = m[0];
+					const content = m[1];
+					if (!content) return null;
+
 					const start = offset - full.length;
 					const openFrom = parentStart + start;
 					const innerFrom = openFrom + 1;
@@ -161,7 +170,11 @@ export function wysiwymPlugin(schema: Schema) {
 			if (link) {
 				const m = /\[([^\]]+)\]\(([^)]+)\)$/.exec(before);
 				if (m) {
-					const [full, label, hrefRaw] = m;
+					const full = m[0];
+					const label = m[1];
+					const hrefRaw = m[2];
+					if (!label || !hrefRaw) return null;
+
 					const start = offset - full.length;
 					const fullFrom = parentStart + start;
 					const fullTo = fullFrom + full.length;

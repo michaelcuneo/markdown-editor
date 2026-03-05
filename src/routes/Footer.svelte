@@ -4,7 +4,7 @@
 </script>
 
 <footer class="site-footer">
-  <span>Built with love by &nbsp;<a href="https://michaelcuneo.com" target="_blank" rel="noopener">Michael Cuneo</a></span>
+  <span>Built with love by &nbsp;<a href="https://michaelcuneo.com.au" target="_blank" rel="noopener">Michael Cuneo</a></span>
   <span> | </span>
   <span class="icon"><a href="https://www.typescriptlang.org/"><SiTypescript /></a></span>
   <span class="icon"><a href="https://sst.dev"><SiSST /></a></span>

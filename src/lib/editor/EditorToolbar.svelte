@@ -104,7 +104,7 @@
     disabled={!commandStates['codeblock']?.enabled}
     onclick={() => handleClick('codeblock')}
     title={commandStates.codeblock?.enabled ? 'Code Block (```)' : commandStates.codeblock?.reason}>
-    {"</>"}
+    &lt;/&gt;
   </button>
 
   <!-- Links -->

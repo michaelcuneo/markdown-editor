@@ -89,7 +89,7 @@ That’s it! You’re editing with a fully interactive Markdown editor built wit
 `);
 
   let readmeHtml = $state<string>('');
-  let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
+  // let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
 
   onMount(async () => {
     try {
