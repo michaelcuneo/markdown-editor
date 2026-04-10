@@ -3,14 +3,14 @@
   import { onMount } from 'svelte';
 
   let activeTab: 'editor' | 'docs' = $state('editor');
-let content = $state(`# Welcome to the Markdown Editor!
+  let content = $state(`# Welcome to the Markdown Editor!
 
 This is a **fully featured WYSIWYM Markdown editor** built with [Svelte&nbsp;5](https://svelte.dev) ✨  
 It supports _rich formatting_, **live preview**, \`inline code\`, and even syntax-highlighted code blocks.
 
 ---
 
-## 🎨 Typography & Formatting
+## Typography & Formatting
 
 You can use **bold**, _italic_, **_both_**, or \`inline code\`.  
 Links like [OpenAI](https://openai.com) are automatically styled and clickable.  
@@ -20,7 +20,7 @@ Links like [OpenAI](https://openai.com) are automatically styled and clickable.
 
 ---
 
-## 🧮 Code Blocks with Syntax Highlighting
+## Code Blocks with Syntax Highlighting
 
 \`\`\`ts
 // TypeScript Example
@@ -41,7 +41,7 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## ✅ Task Lists
+## Task Lists
 
 - [x] Build Markdown Schema
 - [x] Add WYSIWYM Formatting
@@ -51,7 +51,7 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## 🧾 Lists & Nesting
+## Lists & Nesting
 
 - Features:
   - Toolbar Formatting
@@ -67,14 +67,14 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## 💬 Blockquotes & Rules
+## Blockquotes & Rules
 
 > "The best way to predict the future is to implement it."  
 > — Alan Kay
 
 ---
 
-## 💡 Try It Out
+## Try It Out
 
 Type some Markdown below to see real-time updates.  
 Experiment with:
@@ -130,13 +130,13 @@ That's it! You're editing with a fully interactive Markdown editor built with �
         Edit Markdown in the left pane and see live preview updates on the right.
       </p>
 
-    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} />
+    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} imageQueue={imageQueue} />
     </section>
   {:else}
     <section class="docs-section">
       <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} imageQueue={undefined} />
     </section>
   {/if}
 </main>

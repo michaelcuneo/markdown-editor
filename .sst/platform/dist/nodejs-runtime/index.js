@@ -2,22 +2,48 @@
 import path from "node:path";
 import fs from "node:fs";
 import url from "node:url";
+import http from "node:http";
+import { Writable } from "node:stream";
 var handler = process.argv[2];
 var AWS_LAMBDA_RUNTIME_API = `http://` + process.env.AWS_LAMBDA_RUNTIME_API + "/2018-06-01";
 var parsed = path.parse(handler);
 var file = [".js", ".jsx", ".mjs", ".cjs"].map((ext) => path.join(parsed.dir, parsed.name + ext)).find((file2) => {
   return fs.existsSync(file2);
 });
+var STREAMING_SYMBOL = Symbol.for("aws.lambda.streaming");
+var awslambda = {
+  streamifyResponse(handler2) {
+    handler2[STREAMING_SYMBOL] = true;
+    return handler2;
+  },
+  HttpResponseStream: {
+    from(responseStream, metadata) {
+      responseStream._preludeWritten = true;
+      if (responseStream._contentType && metadata) {
+        metadata.headers = metadata.headers || {};
+        metadata.headers["Content-Type"] = metadata.headers["Content-Type"] || responseStream._contentType;
+      }
+      const prelude = JSON.stringify(metadata);
+      responseStream.write(prelude);
+      responseStream.write(new Uint8Array(8));
+      return responseStream;
+    }
+  }
+};
+global.awslambda = awslambda;
 var fn;
 var request;
 var response;
 var context;
 async function error(ex) {
+  const errorType = ex instanceof Error ? ex.name : "Error";
+  const errorMessage = ex instanceof Error ? ex.message : String(ex);
+  const trace = ex instanceof Error ? ex.stack?.split(`
+`) : undefined;
   const body = JSON.stringify({
-    errorType: "Error",
-    errorMessage: ex.message,
-    trace: ex.stack?.split(`
-`)
+    errorType,
+    errorMessage,
+    trace
   });
   await fetch(AWS_LAMBDA_RUNTIME_API + (!context ? `/runtime/init/error` : `/runtime/invocation/${context.awsRequestId}/error`), {
     method: "POST",
@@ -91,24 +117,77 @@ while (true) {
     continue;
   }
   global[Symbol.for("aws.lambda.runtime.requestId")] = context.awsRequestId;
-  try {
-    response = await fn(request, context);
-  } catch (ex) {
-    await error(ex);
-    continue;
-  }
-  while (true) {
+  const isStreaming = fn[STREAMING_SYMBOL] === true;
+  if (isStreaming) {
     try {
-      await fetch(AWS_LAMBDA_RUNTIME_API + `/runtime/invocation/${context.awsRequestId}/response`, {
+      const req = http.request(`http://${process.env.AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/${context.awsRequestId}/response`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(response)
+          "Transfer-Encoding": "chunked",
+          "Content-Type": "application/vnd.awslambda.http-integration-response",
+          "Lambda-Runtime-Function-Response-Mode": "streaming"
+        }
       });
-      break;
+      const responseStream = new Writable({
+        write(chunk, encoding, cb) {
+          if (!responseStream._preludeWritten) {
+            responseStream._preludeWritten = true;
+            const metadata = JSON.stringify({
+              statusCode: 200,
+              headers: {
+                "Content-Type": responseStream._contentType || "application/octet-stream"
+              }
+            });
+            req.write(metadata);
+            req.write(Buffer.alloc(8));
+          }
+          req.write(chunk, encoding, cb);
+        },
+        final(cb) {
+          req.end(cb);
+        }
+      });
+      responseStream._preludeWritten = false;
+      responseStream.setContentType = (type) => {
+        responseStream._contentType = type;
+      };
+      await new Promise((resolve, reject) => {
+        req.on("error", reject);
+        req.on("response", () => resolve());
+        fn(request, responseStream, context).then(() => {
+          if (!responseStream.writableEnded) {
+            responseStream.end();
+          }
+        }).catch(async (ex) => {
+          if (!responseStream.writableEnded) {
+            responseStream.end();
+          }
+          reject(ex);
+        });
+      });
     } catch (ex) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await error(ex);
+    }
+  } else {
+    try {
+      response = await fn(request, context);
+    } catch (ex) {
+      await error(ex);
+      continue;
+    }
+    while (true) {
+      try {
+        await fetch(AWS_LAMBDA_RUNTIME_API + `/runtime/invocation/${context.awsRequestId}/response`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(response)
+        });
+        break;
+      } catch (ex) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
     }
   }
 }

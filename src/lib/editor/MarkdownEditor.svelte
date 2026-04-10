@@ -1,94 +1,143 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { setupProseMirror } from './setupProseMirror.js';
-	import { handleAction, setEditorView, getCommandState } from './controller/editorController.js';
+	import { browser } from '$app/environment';
+	import type { EditorState } from 'prosemirror-state';
 	import type { EditorView } from 'prosemirror-view';
+
 	import EditorToolbar from './EditorToolbar.svelte';
 	import type { ToolbarAction } from '../types/index.js';
 	import { autoSavePlugin } from './plugins/autoSavePlugin.js';
 	import { syncImageLinesToQueue } from './utils/useImageSync.js';
 
-  function debounce<T extends (...args: any[]) => void>(fn: T, delay = 250) {
-	let timer: ReturnType<typeof setTimeout> | undefined;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn(...args), delay);
-    };
-  }
+	type ImageQueueItem = {
+		id: string;
+		file?: File;
+		name?: string;
+		type?: string;
+		size?: number;
+		previewUrl?: string;
+	};
+
+	type CommandState = {
+		enabled: boolean;
+		reason?: string;
+	};
+
+	type ExtendedEditorView = EditorView & {
+		getMarkdown?: () => string;
+		setMarkdown?: (markdown: string) => void;
+	};
+
+	type EditorController = {
+		handleAction: (action: ToolbarAction) => void;
+		setEditorView: (view: EditorView | null) => void;
+		getCommandState: (
+			action: ToolbarAction,
+			state: EditorState
+		) => CommandState;
+	};
+
+	type SetupProseMirror = (
+		element: HTMLElement,
+		initialMarkdown?: string,
+		imageQueue?: ImageQueueItem[],
+		docId?: string,
+		editable?: boolean
+	) => ExtendedEditorView;
+
+	function debounce<T extends (...args: never[]) => void>(fn: T, delay = 250) {
+		let timer: ReturnType<typeof setTimeout> | undefined;
+
+		return (...args: Parameters<T>) => {
+			if (timer) clearTimeout(timer);
+			timer = setTimeout(() => fn(...args), delay);
+		};
+	}
 
 	let {
 		markdown = $bindable(''),
 		toolbar = true,
-		imageQueue = $bindable([]),
+		imageQueue = $bindable([] as ImageQueueItem[]),
 		clearDraft = $bindable(false),
 		docId = 'default',
 		editable = true
-	}: {
-		markdown: string;
-		toolbar?: boolean;
-		imageQueue?: { id: string; file: File; previewUrl?: string }[];
-		clearDraft?: boolean | (() => void);
-		docId?: string;
-		editable?: boolean;
 	} = $props();
 
-	let editorRef: HTMLDivElement | null = $state(null);
-	let editorView: EditorView | null = null;
-	let initializing = true;
-	let commandStates: Record<string, { enabled: boolean; reason?: string }> = $state({});
-	let activeMarks = $state<Record<string, boolean>>({});
-	let activeBlocks = $state<Record<string, boolean>>({});
-	let lastAppliedDocId: string | null = null;
+	let editorRef = $state<HTMLDivElement | null>(null);
+	let editorView = $state<ExtendedEditorView | null>(null);
+	let initializing = $state(true);
+	let lastAppliedDocId = $state<string | null>(null);
 
-	// 🔁 Keep ProseMirror → Svelte synced
-  const emitMarkdownUpdate = debounce((md: string) => {
-    markdown = md;
-  }, 150);
+	let commandStates = $state<Partial<Record<ToolbarAction, CommandState>>>({});
+	let activeMarks = $state<Partial<Record<ToolbarAction, boolean>>>({});
+	let activeBlocks = $state<Partial<Record<ToolbarAction, boolean>>>({});
 
-  function updateMarkdownFromEditor() {
-    if (!editorView) return;
-    const md = (editorView as any).getMarkdown?.() ?? markdown;
-    if (md !== markdown) emitMarkdownUpdate(md);
-  }
+	let removePmUpdatedListener = $state<(() => void) | null>(null);
 
-	// 🔁 Keep Svelte → ProseMirror synced (explicit only)
-	function updateEditorFromMarkdown(md: string) {
+	let handleAction = $state<(action: ToolbarAction) => void>(() => {});
+	let setEditorView = $state<(view: EditorView | null) => void>(() => {});
+	let getCommandState = $state<(action: ToolbarAction, state: EditorState) => CommandState>(
+		() => ({ enabled: false })
+	);
+
+	const emitMarkdownUpdate = debounce((md: string) => {
+		markdown = md;
+	}, 150);
+
+	function updateMarkdownFromEditor(): void {
 		if (!editorView) return;
-		(editorView as any).setMarkdown?.(md);
+
+		const md = editorView.getMarkdown?.() ?? markdown;
+		if (md !== markdown) {
+			emitMarkdownUpdate(md);
+		}
 	}
 
-	// 🧹 Clear saved draft when requested
-	$effect(() => {
-		if (!clearDraft) return;
-		autoSavePlugin.clear('markdown-editor', docId);
-		console.info(`🧹 Cleared saved draft for docId: ${docId}`);
+	function updateEditorFromMarkdown(md: string): void {
+		if (!editorView) return;
 
-		// Reset the flag (so consumer can trigger again later)
-		if (typeof clearDraft === 'boolean') clearDraft = false;
+		const current = editorView.getMarkdown?.();
+		if (current === md) return;
+
+		editorView.setMarkdown?.(md);
+	}
+
+	$effect(() => {
+		if (!browser) return;
+		if (!clearDraft) return;
+
+		autoSavePlugin.clear('markdown-editor', docId);
+		clearDraft = false;
 	});
 
-	// ✅ Keep preview map in sync with image queue
 	$effect(() => {
-		(window as any).__imagePreviewMap = Object.fromEntries(
-			imageQueue.map(i => [i.id, i.previewUrl])
+		if (!browser) return;
+
+		(
+			window as Window & {
+				__imagePreviewMap?: Record<string, string | undefined>;
+			}
+		).__imagePreviewMap = Object.fromEntries(
+			imageQueue.map((item: ImageQueueItem) => [item.id, item.previewUrl])
 		);
 
-		// Force ProseMirror refresh to reflect new image previews
 		if (editorView?.state) {
 			const tr = editorView.state.tr.setMeta('forceUpdate', true);
 			editorView.updateState(editorView.state.apply(tr));
 		}
 	});
 
-	// ✅ Keep markdown lines synced with image queue
 	$effect(() => {
-		markdown = syncImageLinesToQueue(markdown, imageQueue);
-		updateEditorFromMarkdown(markdown);
+		const next = syncImageLinesToQueue(markdown, imageQueue.filter((item): item is Omit<ImageQueueItem, 'file'> & { file: File } => item.file !== undefined));
+		if (next !== markdown) {
+			markdown = next;
+			updateEditorFromMarkdown(next);
+		}
 	});
 
-	// 🧭 Update toolbar button states
-	function updateToolbarState() {
+	function updateToolbarState(): void {
 		if (!editorView) return;
+
 		const { state } = editorView;
 		const { from, to } = state.selection;
 		const selFrom = state.selection.$from;
@@ -96,20 +145,45 @@
 		const marks = state.schema.marks;
 		const nodes = state.schema.nodes;
 
-		const active: Record<string, boolean> = {};
-		for (const [name, mark] of Object.entries(marks)) {
-			active[name === 'strong' ? 'bold' : name] = state.doc.rangeHasMark(from, to, mark);
-		}
-		activeMarks = active;
+		const nextActiveMarks: Partial<Record<ToolbarAction, boolean>> = {};
 
-		const blockActive: Record<string, boolean> = {};
+		for (const [name, mark] of Object.entries(marks)) {
+			const action =
+				name === 'strong'
+					? 'bold'
+					: (name as ToolbarAction);
+
+			nextActiveMarks[action] = state.doc.rangeHasMark(from, to, mark);
+		}
+
+		activeMarks = nextActiveMarks;
+
+		const nextActiveBlocks: Partial<Record<ToolbarAction, boolean>> = {};
 		const parent = selFrom.parent;
-		if (parent?.type === nodes.heading) blockActive[`h${parent.attrs.level}`] = true;
-		if (parent?.type === nodes.blockquote) blockActive.quote = true;
-		if (parent?.type === nodes.bullet_list) blockActive.ul = true;
-		if (parent?.type === nodes.ordered_list) blockActive.ol = true;
-		if (parent?.attrs?.checked !== undefined) blockActive.task = true;
-		activeBlocks = blockActive;
+
+		if (nodes.heading && parent.type === nodes.heading) {
+			const level = parent.attrs.level;
+			if (level === 1) nextActiveBlocks.h1 = true;
+			if (level === 2) nextActiveBlocks.h2 = true;
+		}
+
+		if (nodes.blockquote && parent.type === nodes.blockquote) {
+			nextActiveBlocks.quote = true;
+		}
+
+		if (nodes.bullet_list && parent.type === nodes.bullet_list) {
+			nextActiveBlocks.ul = true;
+		}
+
+		if (nodes.ordered_list && parent.type === nodes.ordered_list) {
+			nextActiveBlocks.ol = true;
+		}
+
+		if (typeof parent.attrs.checked !== 'undefined') {
+			nextActiveBlocks.task = true;
+		}
+
+		activeBlocks = nextActiveBlocks;
 
 		commandStates = {
 			bold: getCommandState('bold', state),
@@ -124,79 +198,84 @@
 			undo: getCommandState('undo', state),
 			redo: getCommandState('redo', state),
 			link: getCommandState('link', state),
-			task: getCommandState('task', state)
+			task: getCommandState('task', state),
+			hr: { enabled: true }
 		};
 	}
 
-	// 🧩 Only reapply markdown when switching documents
 	$effect(() => {
 		if (!editorView || initializing) return;
 
 		if (docId !== lastAppliedDocId) {
-			console.log(`📄 Loading document ID: ${docId}`);
-			(editorView as any).setMarkdown?.(markdown);
+			editorView.setMarkdown?.(markdown);
 			lastAppliedDocId = docId;
 		}
 	});
 
-	onMount(() => {
-		if (!editorRef) return;
-		editorRef.innerHTML = '';
+	onMount(async () => {
+		if (!browser || !editorRef) return;
 
-		const savedContent = localStorage.getItem('markdown-editor-content-v1');
-		const savedImages = localStorage.getItem('markdown-editor-images-v1');
+		const [{ setupProseMirror }, controllerModule] = await Promise.all([
+			import('./setupProseMirror.js') as Promise<{
+				setupProseMirror: SetupProseMirror;
+			}>,
+			import('./controller/editorController.js') as Promise<EditorController>
+		]);
 
-		if (savedContent) markdown = savedContent;
+		handleAction = controllerModule.handleAction;
+		setEditorView = controllerModule.setEditorView;
+		getCommandState = controllerModule.getCommandState;
 
-		if (savedImages) {
-			try {
-				imageQueue = JSON.parse(savedImages);
-			} catch {
-				imageQueue = [];
-			}
-		}
+		editorView = setupProseMirror(
+			editorRef,
+			markdown,
+			imageQueue,
+			docId,
+			editable
+		);
 
-		editorView = setupProseMirror(editorRef, markdown, imageQueue, docId, editable);
 		setEditorView(editorView);
-
-		if (markdown && markdown.trim().length > 0) {
-			(editorView as any).setMarkdown?.(markdown);
-		}
 
 		editorView.setProps({
 			editable: () => editable,
-			dispatchTransaction(transaction) {
+			dispatchTransaction: (transaction) => {
 				if (!editorView) return;
+
 				const newState = editorView.state.apply(transaction);
 				editorView.updateState(newState);
-				// updateMarkdownFromEditor();
 				updateToolbarState();
 			}
 		});
 
-		editorRef.addEventListener('pm-updated', () => {
+		const onPmUpdated: EventListener = () => {
 			updateMarkdownFromEditor();
 			updateToolbarState();
-		});
+		};
+
+		editorRef.addEventListener('pm-updated', onPmUpdated);
+		removePmUpdatedListener = () => {
+			editorRef?.removeEventListener('pm-updated', onPmUpdated);
+		};
 
 		initializing = false;
 		updateToolbarState();
 	});
 
-	function onAction(action: ToolbarAction) {
+	function onAction(action: ToolbarAction): void {
 		if (!editorView) return;
+
 		handleAction(action);
 		updateToolbarState();
 	}
 
 	onDestroy(() => {
+		removePmUpdatedListener?.();
 		editorView?.destroy();
 		setEditorView(null);
 	});
 </script>
 
-<!-- ✅ Single root wrapper ensures hydration correctness -->
-<section class="markdown-editor" data-svelte-nonreactive>
+<section class="markdown-editor">
 	{#if toolbar}
 		<EditorToolbar
 			{onAction}
@@ -206,6 +285,5 @@
 		/>
 	{/if}
 
-	<!-- 👇 This must be totally isolated from reactivity -->
 	<div bind:this={editorRef} class="ProseMirror"></div>
 </section>

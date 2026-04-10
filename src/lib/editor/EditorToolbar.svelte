@@ -1,129 +1,190 @@
 <script lang="ts">
-  import type { ToolbarAction } from '$lib/types/index.js';
+	import type { ToolbarAction } from '$lib/types/index.js';
 
-  let { onAction, activeMarks = {}, activeBlocks = {}, commandStates = {} } = $props<{
-    onAction: (action: ToolbarAction) => void;
-    activeMarks?: Record<string, boolean>;
-    activeBlocks?: Record<string, boolean>;
-    commandStates?: Record<string, { enabled: boolean; reason?: string}>;
-  }>();
+	type CommandState = {
+		enabled: boolean;
+		reason?: string;
+	};
 
-  function isActive(action: string): boolean {
-    return (
-      activeMarks[action] === true ||
-      activeBlocks[action] === true
-    );
-  }
+	let {
+		onAction,
+		activeMarks = {},
+		activeBlocks = {},
+		commandStates = {}
+	} = $props<{
+		onAction: (action: ToolbarAction) => void;
+		activeMarks?: Partial<Record<ToolbarAction, boolean>>;
+		activeBlocks?: Partial<Record<ToolbarAction, boolean>>;
+		commandStates?: Partial<Record<ToolbarAction, CommandState>>;
+	}>();
 
-  function handleClick(action: ToolbarAction) {
-    onAction?.(action);
-  }
+	function isActive(action: ToolbarAction): boolean {
+		return activeMarks[action] === true || activeBlocks[action] === true;
+	}
+
+	function isEnabled(action: ToolbarAction): boolean {
+		return commandStates[action]?.enabled ?? true;
+	}
+
+	function getTitle(action: ToolbarAction, enabledTitle: string): string {
+		return isEnabled(action)
+			? enabledTitle
+			: commandStates[action]?.reason ?? enabledTitle;
+	}
+
+	function handleClick(action: ToolbarAction): void {
+		onAction(action);
+	}
 </script>
 
-<div class="toolbar">
-  <!-- Inline Formatting -->
-  <button
-    class:active={isActive('bold')}
-    disabled={!commandStates['bold']?.enabled}
-    onclick={() => handleClick('bold')}
-    title={commandStates.bold?.enabled ? 'Bold (**text**)' : commandStates.bold?.reason}>
-    <strong>B</strong>
-  </button>
+<div class="toolbar" role="toolbar" aria-label="Editor formatting toolbar">
+	<button
+		type="button"
+		class:active={isActive('bold')}
+		disabled={!isEnabled('bold')}
+		onclick={() => handleClick('bold')}
+		title={getTitle('bold', 'Bold (**text**)')}
+		aria-pressed={isActive('bold')}
+	>
+		<strong>B</strong>
+	</button>
 
-  <button
-    class:active={isActive('italic')}
-    disabled={!commandStates['italic']?.enabled}
-    onclick={() => handleClick('italic')}
-    title={commandStates.italic?.enabled ? 'Italic (*text*)' : commandStates.italic?.reason}>
-    <em>I</em>
-  </button>
+	<button
+		type="button"
+		class:active={isActive('italic')}
+		disabled={!isEnabled('italic')}
+		onclick={() => handleClick('italic')}
+		title={getTitle('italic', 'Italic (*text*)')}
+		aria-pressed={isActive('italic')}
+	>
+		<em>I</em>
+	</button>
 
-  <button
-    class:active={isActive('strike')}
-    disabled={!commandStates['strike']?.enabled}
-    onclick={() => handleClick('strike')}
-    title={commandStates.strike?.enabled ? 'Strikethrough (~~text~~)' : commandStates.strike?.reason}>
-    S̶
-  </button>
+	<button
+		type="button"
+		class:active={isActive('strike')}
+		disabled={!isEnabled('strike')}
+		onclick={() => handleClick('strike')}
+		title={getTitle('strike', 'Strikethrough (~~text~~)')}
+		aria-pressed={isActive('strike')}
+	>
+		S̶
+	</button>
 
-  <!-- Block Formatting -->
-  <button
-    class:active={isActive('h1')}
-    disabled={!commandStates['h1']?.enabled}
-    onclick={() => handleClick('h1')}
-    title={commandStates.h1?.enabled ? 'Heading 1 (#)' : commandStates.h1?.reason}>
-    H1
-  </button>
+	<button
+		type="button"
+		class:active={isActive('h1')}
+		disabled={!isEnabled('h1')}
+		onclick={() => handleClick('h1')}
+		title={getTitle('h1', 'Heading 1 (#)')}
+		aria-pressed={isActive('h1')}
+	>
+		H1
+	</button>
 
-  <button
-    class:active={isActive('h2')}
-    disabled={!commandStates['h2']?.enabled}
-    onclick={() => handleClick('h2')}
-    title={commandStates.h2?.enabled ? 'Heading 2 (##)' : commandStates.h2?.reason}>
-    H2
-  </button>
+	<button
+		type="button"
+		class:active={isActive('h2')}
+		disabled={!isEnabled('h2')}
+		onclick={() => handleClick('h2')}
+		title={getTitle('h2', 'Heading 2 (##)')}
+		aria-pressed={isActive('h2')}
+	>
+		H2
+	</button>
 
-  <button
-    class:active={isActive('quote')}
-    disabled={!commandStates['quote']?.enabled}
-    onclick={() => handleClick('quote')}
-    title={commandStates.quote?.enabled ? 'Blockquote (>)' : commandStates.quote?.reason}>
-    &raquo;
-  </button>
+	<button
+		type="button"
+		class:active={isActive('quote')}
+		disabled={!isEnabled('quote')}
+		onclick={() => handleClick('quote')}
+		title={getTitle('quote', 'Blockquote (>)')}
+		aria-pressed={isActive('quote')}
+	>
+		&raquo;
+	</button>
 
-  <button title="Insert horizontal rule" onclick={() => onAction('hr')}>―</button>
+	<button
+		type="button"
+		disabled={!isEnabled('hr')}
+		onclick={() => handleClick('hr')}
+		title={getTitle('hr', 'Insert horizontal rule')}
+	>
+		―
+	</button>
 
-  <!-- Lists -->
-  <button
-    class:active={isActive('ul')}
-    disabled={!commandStates['ul']?.enabled}
-    onclick={() => handleClick('ul')}
-    title={commandStates.ul?.enabled ? 'Unordered List (-, *, +)' : commandStates.ul?.reason}>
-    •
-  </button>
+	<button
+		type="button"
+		class:active={isActive('ul')}
+		disabled={!isEnabled('ul')}
+		onclick={() => handleClick('ul')}
+		title={getTitle('ul', 'Unordered List (-, *, +)')}
+		aria-pressed={isActive('ul')}
+	>
+		•
+	</button>
 
-  <button
-    class:active={isActive('ol')}
-    disabled={!commandStates['ol']?.enabled}
-    onclick={() => handleClick('ol')}
-    title={commandStates.ol?.enabled ? 'Ordered List (1.)' : commandStates.ol?.reason}>
-    1.
-  </button>
+	<button
+		type="button"
+		class:active={isActive('ol')}
+		disabled={!isEnabled('ol')}
+		onclick={() => handleClick('ol')}
+		title={getTitle('ol', 'Ordered List (1.)')}
+		aria-pressed={isActive('ol')}
+	>
+		1.
+	</button>
 
-  <button
-    class:active={isActive('task')}
-    disabled={!commandStates['task']?.enabled}
-    onclick={() => handleClick('task')}
-    title={commandStates.task?.enabled ? 'Task List (- [ ])' : commandStates.task?.reason}>
-    ☑
-  </button>
+	<button
+		type="button"
+		class:active={isActive('task')}
+		disabled={!isEnabled('task')}
+		onclick={() => handleClick('task')}
+		title={getTitle('task', 'Task List (- [ ])')}
+		aria-pressed={isActive('task')}
+	>
+		☑
+	</button>
 
-  <!-- Code -->
-  <button
-    class:active={isActive('codeblock')}
-    disabled={!commandStates['codeblock']?.enabled}
-    onclick={() => handleClick('codeblock')}
-    title={commandStates.codeblock?.enabled ? 'Code Block (```)' : commandStates.codeblock?.reason}>
-    {"</>"}
-  </button>
+	<button
+		type="button"
+		class:active={isActive('codeblock')}
+		disabled={!isEnabled('codeblock')}
+		onclick={() => handleClick('codeblock')}
+		title={getTitle('codeblock', 'Code Block (```)')}
+		aria-pressed={isActive('codeblock')}
+	>
+		&lt;/&gt;
+	</button>
 
-  <!-- Links -->
-  <button
-    class:active={isActive('link')}
-    disabled={!commandStates['link']?.enabled}
-    onclick={() => handleClick('link')}
-    title={commandStates.link?.enabled ? 'Insert Link (Ctrl/Cmd+K)' : commandStates.link?.reason}>
-    🔗
-  </button>
+	<button
+		type="button"
+		class:active={isActive('link')}
+		disabled={!isEnabled('link')}
+		onclick={() => handleClick('link')}
+		title={getTitle('link', 'Insert Link (Ctrl/Cmd+K)')}
+		aria-pressed={isActive('link')}
+	>
+		🔗
+	</button>
 
-  <div class="spacer"></div>
+	<div class="spacer"></div>
 
-  <!-- Undo/Redo -->
-  <button disabled={!commandStates['undo']?.enabled} onclick={() => handleClick('undo')} title={commandStates.undo?.enabled ? 'Undo (Ctrl/Cmd+Z)' : commandStates.undo?.reason}>
-    ⎌
-  </button>
+	<button
+		type="button"
+		disabled={!isEnabled('undo')}
+		onclick={() => handleClick('undo')}
+		title={getTitle('undo', 'Undo (Ctrl/Cmd+Z)')}
+	>
+		⎌
+	</button>
 
-  <button disabled={!commandStates['redo']?.enabled} onclick={() => handleClick('redo')} title={commandStates.redo?.enabled ? 'Redo (Ctrl/Cmd+Shift+Z)' : commandStates.redo?.reason}>
-    ↻
-  </button>
+	<button
+		type="button"
+		disabled={!isEnabled('redo')}
+		onclick={() => handleClick('redo')}
+		title={getTitle('redo', 'Redo (Ctrl/Cmd+Shift+Z)')}
+	>
+		↻
+	</button>
 </div>

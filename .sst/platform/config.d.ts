@@ -9,7 +9,7 @@ declare global {
   export import aws = _aws
   interface Providers {
     providers?: {
-      "aws"?:  (_aws.ProviderArgs & { version?: string }) | boolean | string;
+      "aws"?:  (_aws.ProviderArgs & { package?: string, version?: string }) | string;
     }
   }
   export const $config: (

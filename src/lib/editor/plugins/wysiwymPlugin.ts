@@ -1,21 +1,139 @@
 // src/lib/editor/plugins/wysiwymPlugin.ts
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
-import type { Schema } from 'prosemirror-model';
+import type { EditorState, Transaction, PluginSpec } from 'prosemirror-state';
+import type { Schema, MarkType, Mark } from 'prosemirror-model';
+import type { EditorView } from 'prosemirror-view';
+
+type MarkAttrs = Record<string, string | number | boolean | null>;
 
 function normalizeHref(href: string): string {
 	const trimmed = href.trim();
 	if (!trimmed) return '';
-	if (/^[a-z]+:\/\//i.test(trimmed)) return trimmed;
-	if (/^mailto:|^tel:/i.test(trimmed)) return trimmed;
+
+	if (/^(https?|ftp):\/\//i.test(trimmed)) return trimmed;
+	if (/^(mailto:|tel:)/i.test(trimmed)) return trimmed;
+
 	return `https://${trimmed}`;
 }
 
-/**
- * WYSIWYM inline Markdown plugin.
- * Converts **bold**, *italic* / _italic_, `code`, and [text](url) while typing.
- * Adds Mod/Cmd+K to insert/edit links.
- */
-export function wysiwymPlugin(schema: Schema) {
+function promptUrl(initial = ''): string {
+	if (typeof window === 'undefined') return '';
+	return normalizeHref(window.prompt('Enter URL:', initial) ?? '');
+}
+
+function isSingleCharTextInsertion(tr: Transaction): boolean {
+	if (!tr.docChanged || !tr.selectionSet) return false;
+
+	for (const step of tr.steps) {
+		const json = step.toJSON() as {
+			stepType?: string;
+			slice?: {
+				content?: Array<{
+					type?: string;
+					text?: string;
+				}>;
+			};
+		};
+
+		if (json.stepType !== 'replace' && json.stepType !== 'replaceAround') {
+			continue;
+		}
+
+		const content = json.slice?.content;
+		if (!content || content.length !== 1) continue;
+
+		const first = content[0];
+		if (!first || first.type !== 'text') continue;
+		if ((first.text ?? '').length !== 1) continue;
+
+		return true;
+	}
+
+	return false;
+}
+
+function wordRangeAtCursor(state: EditorState): { from: number; to: number } | null {
+	const { $from } = state.selection;
+	const parent = $from.parent;
+
+	if (!parent.isTextblock) return null;
+
+	const text = parent.textContent;
+	const offset = $from.parentOffset;
+
+	const leftText = text.slice(0, offset);
+	const rightText = text.slice(offset);
+
+	const leftMatch = leftText.match(/[^\s()[\]{}<>"]+$/);
+	const rightMatch = rightText.match(/^[^\s()[\]{}<>"]+/);
+
+	const left = leftMatch ? offset - leftMatch[0].length : offset;
+	const right = rightMatch ? offset + rightMatch[0].length : offset;
+
+	if (left === right) return null;
+
+	return {
+		from: $from.start() + left,
+		to: $from.start() + right
+	};
+}
+
+function getMarkHref(mark: Mark | undefined): string | undefined {
+	const href = mark?.attrs?.href;
+	return typeof href === 'string' ? href : undefined;
+}
+
+function findExistingLinkHref(
+	state: EditorState,
+	from: number,
+	to: number,
+	link: MarkType
+): string | undefined {
+	const $from = state.doc.resolve(from);
+	const $to = state.doc.resolve(Math.max(from, to));
+
+	const direct = $from.marks().find((mark) => mark.type === link);
+	const directHref = getMarkHref(direct);
+	if (directHref) return directHref;
+
+	let href: string | undefined;
+
+	state.doc.nodesBetween(from, $to.pos, (node) => {
+		if (!node.isText) return;
+
+		const mark = node.marks.find((m) => m.type === link);
+		const foundHref = getMarkHref(mark);
+		if (foundHref) {
+			href = foundHref;
+			return false;
+		}
+
+		return;
+	});
+
+	return href;
+}
+
+function replaceWrappedTextWithMark(
+	tr: Transaction,
+	fullFrom: number,
+	fullTo: number,
+	innerText: string,
+	markType: MarkType,
+	attrs?: MarkAttrs
+): Transaction {
+	tr.delete(fullFrom, fullTo);
+	tr.insertText(innerText, fullFrom);
+	tr.addMark(fullFrom, fullFrom + innerText.length, markType.create(attrs));
+	return tr;
+}
+
+function selectionAt(tr: Transaction, pos: number): TextSelection {
+	const safePos = Math.max(0, Math.min(pos, tr.doc.content.size));
+	return TextSelection.create(tr.doc, safePos);
+}
+
+export function wysiwymPlugin(schema: Schema): Plugin {
 	const key = new PluginKey('wysiwymMarkdown');
 
 	const strong = schema.marks.strong;
@@ -23,12 +141,11 @@ export function wysiwymPlugin(schema: Schema) {
 	const code = schema.marks.code;
 	const link = schema.marks.link;
 
-	return new Plugin({
+	const spec: PluginSpec<null> = {
 		key,
 
 		props: {
-			// Mod/Cmd + K → prompt for link and apply to selection
-			handleKeyDown(view, event) {
+			handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
 				const isMod = event.metaKey || event.ctrlKey;
 				if (!isMod) return false;
 				if (event.key.toLowerCase() !== 'k') return false;
@@ -36,153 +153,170 @@ export function wysiwymPlugin(schema: Schema) {
 
 				event.preventDefault();
 
-				// --- inside handleKeyDown(view, event)
 				const { state, dispatch } = view;
 				const { selection } = state;
 				const { from, to, empty } = selection;
 
-				// If nothing selected → try to expand to the word under cursor
 				let selFrom = from;
 				let selTo = to;
 
 				if (empty) {
-					const $pos = state.selection.$from;
-					const parent = $pos.parent;
-					if (!parent.isTextblock) return false;
+					const range = wordRangeAtCursor(state);
 
-					const text = parent.textContent ?? '';
-					const off = $pos.parentOffset;
-
-					// Expand to word under cursor
-					const left = text.slice(0, off).search(/\S+$/);
-					const rightMatch = text.slice(off).match(/^\S+/);
-					const right = rightMatch ? off + rightMatch[0].length : off;
-
-					if (left !== -1 && right > off) {
-						selFrom = $pos.start() + left;
-						selTo = $pos.start() + right;
+					if (range) {
+						selFrom = range.from;
+						selTo = range.to;
 					} else {
-						// Nothing selected, just insert a new link directly
-						const url0 = normalizeHref(prompt('Enter URL:') || '');
-						if (!url0) return true;
-						const mark = link.create({ href: url0 });
-						const trEmpty = state.tr
-							.insertText(url0, from, to)
-							.addMark(from, from + url0.length, mark);
-						dispatch(trEmpty.scrollIntoView());
+						const href0 = promptUrl();
+						if (!href0) return true;
+
+						const mark = link.create({ href: href0 });
+						let tr = state.tr.insertText(href0, from, to);
+						tr = tr.addMark(from, from + href0.length, mark);
+						tr = tr.setSelection(selectionAt(tr, from + href0.length));
+						dispatch(tr.scrollIntoView());
 						return true;
 					}
 				}
 
-				// Try to read any existing link mark at the selection start
-				const $left = state.doc.resolve(selFrom);
-				const marksHere = $left.marks();
-				const existingMark = marksHere.find((m) => m.type === link);
-				const initialHref = existingMark?.attrs?.href as string | undefined;
-
-				// Prompt for new or updated URL
-				const href = normalizeHref(prompt('Enter URL:', initialHref ?? '') || '');
+				const initialHref = findExistingLinkHref(state, selFrom, selTo, link);
+				const href = promptUrl(initialHref ?? '');
 				if (!href) return true;
 
-				const mark = link.create({ href });
-				const tr = state.tr
-					.addMark(selFrom, selTo, mark)
-					.setSelection(TextSelection.create(state.doc, selTo));
+				let tr = state.tr.removeMark(selFrom, selTo, link);
+				tr = tr.addMark(selFrom, selTo, link.create({ href }));
+				tr = tr.setSelection(selectionAt(tr, selTo));
 				dispatch(tr.scrollIntoView());
 				return true;
 			}
 		},
 
-		appendTransaction(transactions, _oldState, newState) {
-			if (!transactions.some((tr) => tr.docChanged)) return null;
-			const tr = newState.tr;
+		appendTransaction(
+			transactions: readonly Transaction[],
+			_oldState: EditorState,
+			newState: EditorState
+		): Transaction | null {
+			if (!transactions.some((tr) => isSingleCharTextInsertion(tr))) return null;
 
 			const sel = newState.selection;
+			if (!sel.empty) return null;
+
 			const $from = sel.$from;
 			if (!$from.parent.isTextblock) return null;
 
 			const parentStart = $from.start();
-			const text = $from.parent.textContent ?? '';
+			const text = $from.parent.textContent;
 			const offset = $from.parentOffset;
 			const before = text.slice(0, offset);
 
-			// --- **strong**
 			if (strong) {
-				const m = /(\*\*)([^*]+)\*\*$/.exec(before);
-				if (m) {
-					const [full, , content] = m;
-					const start = offset - full.length;
-					const openFrom = parentStart + start;
-					const innerFrom = openFrom + 2;
-					const innerTo = innerFrom + content.length;
+				const match = /(\*\*)([^*\n]+)\*\*$/.exec(before);
+				if (match) {
+					const full = match[0];
+					const content = match[2];
+					if (!content) return null;
 
-					tr.delete(innerTo, innerTo + 2); // closing **
-					tr.delete(openFrom, openFrom + 2); // opening **
-					tr.addMark(innerFrom - 2, innerTo - 2, strong.create()); // adjust after deletes
-					return tr;
-				}
-			}
-
-			// --- _emphasis_ or *emphasis*
-			if (em) {
-				const m = /(?<!\*)_([^_]+)_(?!_)$/.exec(before) || /(?<!\*)\*([^*]+)\*(?!\*)$/.exec(before);
-				if (m) {
-					const [full, content] = m;
-					const start = offset - full.length;
-					const openFrom = parentStart + start;
-					const innerFrom = openFrom + 1;
-					const innerTo = innerFrom + content.length;
-
-					tr.delete(innerTo, innerTo + 1); // closing
-					tr.delete(openFrom, openFrom + 1); // opening
-					tr.addMark(innerFrom - 1, innerTo - 1, em.create()); // adjust after deletes
-					return tr;
-				}
-			}
-
-			// --- `code`
-			if (code) {
-				const m = /`([^`]+)`$/.exec(before);
-				if (m) {
-					const [full, content] = m;
-					const start = offset - full.length;
-					const openFrom = parentStart + start;
-					const innerFrom = openFrom + 1;
-					const innerTo = innerFrom + content.length;
-
-					tr.delete(innerTo, innerTo + 1); // closing `
-					tr.delete(openFrom, openFrom + 1); // opening `
-					tr.addMark(innerFrom - 1, innerTo - 1, code.create()); // adjust after deletes
-					return tr;
-				}
-			}
-
-			// --- [text](url)
-			if (link) {
-				const m = /\[([^\]]+)\]\(([^)]+)\)$/.exec(before);
-				if (m) {
-					const [full, label, hrefRaw] = m;
 					const start = offset - full.length;
 					const fullFrom = parentStart + start;
 					const fullTo = fullFrom + full.length;
 
+					const tr = replaceWrappedTextWithMark(
+						newState.tr,
+						fullFrom,
+						fullTo,
+						content,
+						strong
+					);
+
+					return tr.setSelection(selectionAt(tr, fullFrom + content.length));
+				}
+			}
+
+			if (em) {
+				const match =
+					/(^|[^*])\*([^*\n]+)\*$/.exec(before) ||
+					/(^|[^_])_([^_\n]+)_$/.exec(before);
+
+				if (match) {
+					const prefix = match[1] ?? '';
+					const content = match[2];
+					const full = match[0];
+
+					if (!content) return null;
+
+					const fullStart = offset - full.length;
+					const wrappedStart = fullStart + prefix.length;
+
+					const fullFrom = parentStart + wrappedStart;
+					const fullTo = fullFrom + (full.length - prefix.length);
+
+					const tr = replaceWrappedTextWithMark(
+						newState.tr,
+						fullFrom,
+						fullTo,
+						content,
+						em
+					);
+
+					return tr.setSelection(selectionAt(tr, fullFrom + content.length));
+				}
+			}
+
+			if (code) {
+				const match = /`([^`\n]+)`$/.exec(before);
+				if (match) {
+					const full = match[0];
+					const content = match[1];
+					if (!content) return null;
+
+					const start = offset - full.length;
+					const fullFrom = parentStart + start;
+					const fullTo = fullFrom + full.length;
+
+					const tr = replaceWrappedTextWithMark(
+						newState.tr,
+						fullFrom,
+						fullTo,
+						content,
+						code
+					);
+
+					return tr.setSelection(selectionAt(tr, fullFrom + content.length));
+				}
+			}
+
+			if (link) {
+				const match = /\[([^\]\n]+)\]\(([^()\n]+)\)$/.exec(before);
+				if (match) {
+					const full = match[0];
+					const label = match[1];
+					const hrefRaw = match[2];
+
+					if (!label || !hrefRaw) return null;
+
 					const href = normalizeHref(hrefRaw);
-					const mark = link.create({ href });
+					if (!href) return null;
 
-					// Remove the whole [text](url)
-					tr.delete(fullFrom, fullTo);
+					const start = offset - full.length;
+					const fullFrom = parentStart + start;
+					const fullTo = fullFrom + full.length;
 
-					// Insert just the label text at fullFrom
-					tr.insertText(label, fullFrom);
+					const tr = replaceWrappedTextWithMark(
+						newState.tr,
+						fullFrom,
+						fullTo,
+						label,
+						link,
+						{ href }
+					);
 
-					// Apply link mark to that inserted label
-					tr.addMark(fullFrom, fullFrom + label.length, mark);
-
-					return tr.scrollIntoView();
+					return tr.setSelection(selectionAt(tr, fullFrom + label.length));
 				}
 			}
 
 			return null;
 		}
-	});
+	};
+
+	return new Plugin(spec);
 }

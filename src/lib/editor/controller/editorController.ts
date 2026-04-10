@@ -1,8 +1,10 @@
 import type { EditorView } from 'prosemirror-view';
 import type { EditorState, Command } from 'prosemirror-state';
 import type { ToolbarAction } from '../../types/index.js';
+
 import { undo, redo } from 'prosemirror-history';
 import { toggleMark, setBlockType, wrapIn } from 'prosemirror-commands';
+import { wrapInList } from 'prosemirror-schema-list';
 import { defaultMarkdownSerializer, defaultMarkdownParser } from 'prosemirror-markdown';
 
 let editorView: EditorView | null = null;
@@ -15,163 +17,228 @@ export function getEditorView(): EditorView | null {
 	return editorView;
 }
 
-function runCommand(command: Command, state: EditorState, view: EditorView): void {
-	if (!command(state, view.dispatch, view)) {
-		console.warn('[ProseMirror] Command not executed:', command);
+function withView<T>(fn: (view: EditorView) => T): T | null {
+	if (!editorView) return null;
+	return fn(editorView);
+}
+
+function runCommand(view: EditorView, command: Command): boolean {
+	const executed = command(view.state, view.dispatch, view);
+	if (!executed) {
+		console.warn('[ProseMirror] Command not executed');
 	}
+	return executed;
+}
+
+function canRun(command: Command, state: EditorState): boolean {
+	return command(state);
 }
 
 export function exportMarkdown(): string | null {
-	if (!editorView) return null;
-	return defaultMarkdownSerializer.serialize(editorView.state.doc);
+	return withView((view) => defaultMarkdownSerializer.serialize(view.state.doc));
 }
 
 export function importMarkdown(markdown: string): void {
-	if (!editorView) return;
-	const { state } = editorView;
-	const doc = defaultMarkdownParser.parse(markdown);
-	const tr = state.tr.replaceWith(0, state.doc.content.size, doc.content);
-	editorView.dispatch(tr.scrollIntoView());
+	withView((view) => {
+		try {
+			const { state } = view;
+			const doc = defaultMarkdownParser.parse(markdown);
+
+			const from = 0;
+			const to = state.doc.content.size;
+
+			const tr = state.tr.replaceWith(from, to, doc.content).scrollIntoView();
+			view.dispatch(tr);
+		} catch (err) {
+			console.error('[ProseMirror] Failed to import markdown', err);
+		}
+	});
 }
 
-/**
- * Handle toolbar actions (GFM-style)
- */
-export function handleAction(action: ToolbarAction): void {
-	if (!editorView) return;
+function toggleCodeBlock(view: EditorView): boolean {
+	const { state } = view;
+	const { code_block, paragraph } = state.schema.nodes;
 
-	const { state } = editorView;
-	const { schema } = state;
-	const safeRun = (cmd: Command) => runCommand(cmd, state, editorView!);
+	if (!code_block || !paragraph) return false;
 
-	switch (action) {
-		// --- Inline marks ---
-		case 'bold':
-			if (schema.marks.strong) safeRun(toggleMark(schema.marks.strong));
-			break;
+	const isCodeBlock = state.selection.$from.parent.type === code_block;
+	const command = isCodeBlock ? setBlockType(paragraph) : setBlockType(code_block);
 
-		case 'italic':
-			if (schema.marks.em) safeRun(toggleMark(schema.marks.em));
-			break;
+	return runCommand(view, command);
+}
 
-		case 'strike':
-			if (schema.marks.strikethrough) safeRun(toggleMark(schema.marks.strikethrough));
-			break;
+function canToggleCodeBlock(state: EditorState): { enabled: boolean; active: boolean } {
+	const { code_block, paragraph } = state.schema.nodes;
 
-		case 'link': {
-			const linkMark = schema.marks.link;
-			if (!linkMark) break;
-			let url = prompt('Enter URL:');
-			if (url) {
-				if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-				safeRun(toggleMark(linkMark, { href: url }));
-			}
-			break;
-		}
-
-		// --- Block types ---
-		case 'h1':
-			if (schema.nodes.heading) safeRun(setBlockType(schema.nodes.heading, { level: 1 }));
-			break;
-
-		case 'h2':
-			if (schema.nodes.heading) safeRun(setBlockType(schema.nodes.heading, { level: 2 }));
-			break;
-
-		case 'quote':
-			if (schema.nodes.blockquote) safeRun(wrapIn(schema.nodes.blockquote));
-			break;
-
-		case 'codeblock': {
-			const { code_block, paragraph } = schema.nodes;
-			if (!code_block || !paragraph) break;
-
-			const isCode = state.selection.$from.parent.type === code_block;
-
-			// toggle on/off
-			if (isCode) {
-				safeRun(setBlockType(paragraph)); // unmake
-			} else {
-				safeRun(setBlockType(code_block)); // make
-			}
-			break;
-		}
-
-		case 'hr': {
-			const { schema } = state;
-			if (schema.nodes.horizontal_rule) {
-				const node = schema.nodes.horizontal_rule.create();
-				const tr = state.tr.replaceSelectionWith(node).scrollIntoView();
-				editorView.dispatch(tr);
-			}
-			break;
-		}
-
-		// --- Lists ---
-		case 'ul':
-			if (schema.nodes.bullet_list) safeRun(wrapIn(schema.nodes.bullet_list));
-			break;
-
-		case 'ol':
-			if (schema.nodes.ordered_list) safeRun(wrapIn(schema.nodes.ordered_list));
-			break;
-
-		// inside handleAction() switch
-		case 'task': {
-			const { state } = editorView;
-			const { schema, selection } = state;
-			const { list_item, bullet_list, paragraph } = schema.nodes;
-			if (!list_item || !bullet_list || !paragraph) break;
-
-			const { $from } = selection;
-			// If already in a list_item → toggle checked
-			const liDepth = (() => {
-				for (let d = $from.depth; d > 0; d--) if ($from.node(d).type === list_item) return d;
-				return null;
-			})();
-			if (liDepth != null) {
-				const pos = $from.before(liDepth);
-				const node = state.doc.nodeAt(pos);
-				if (node) {
-					const nextChecked = !(node.attrs?.checked ?? false);
-					editorView.dispatch(
-						state.tr
-							.setNodeMarkup(pos, list_item, { ...node.attrs, checked: nextChecked })
-							.scrollIntoView()
-					);
-					break;
-				}
-			}
-			// Else insert a new bullet list with one unchecked task
-			const task = list_item.create({ checked: false }, paragraph.create());
-			const list = bullet_list.create(null, task);
-			editorView.dispatch(state.tr.replaceSelectionWith(list).scrollIntoView());
-			break;
-		}
-
-		// --- History ---
-		case 'undo':
-			safeRun(undo);
-			break;
-
-		case 'redo':
-			safeRun(redo);
-			break;
-
-		// --- Import/Export ---
-		case 'export':
-			console.log(exportMarkdown());
-			break;
-
-		case 'import':
-			alert('Use importMarkdown(markdown) programmatically.');
-			break;
-
-		default:
-			console.warn(`⚠️ Action "${action}" not implemented.`);
+	if (!code_block || !paragraph) {
+		return { enabled: false, active: false };
 	}
 
-	editorView.focus();
+	const isActive = state.selection.$from.parent.type === code_block;
+	const command = isActive ? setBlockType(paragraph) : setBlockType(code_block);
+
+	return {
+		enabled: canRun(command, state),
+		active: isActive
+	};
+}
+
+function toggleTaskItem(view: EditorView): boolean {
+	const { state } = view;
+	const { schema, selection } = state;
+	const { list_item, bullet_list, paragraph } = schema.nodes;
+
+	if (!list_item || !bullet_list || !paragraph) return false;
+
+	const { $from } = selection;
+
+	for (let depth = $from.depth; depth > 0; depth--) {
+		if ($from.node(depth).type === list_item) {
+			const pos = $from.before(depth);
+			const node = state.doc.nodeAt(pos);
+
+			if (!node) return false;
+
+			const currentChecked =
+				typeof node.attrs?.checked === 'boolean' ? node.attrs.checked : false;
+
+			view.dispatch(
+				state.tr
+					.setNodeMarkup(pos, list_item, { ...node.attrs, checked: !currentChecked })
+					.scrollIntoView()
+			);
+
+			return true;
+		}
+	}
+
+	try {
+		const task = list_item.createAndFill({ checked: false });
+		if (!task) return false;
+
+		const list = bullet_list.createAndFill(null, [task]);
+		if (!list) return false;
+
+		view.dispatch(state.tr.replaceSelectionWith(list).scrollIntoView());
+		return true;
+	} catch (err) {
+		console.error('[ProseMirror] Failed to toggle task item', err);
+		return false;
+	}
+}
+
+export function handleAction(action: ToolbarAction): void {
+	withView((view) => {
+		const { state } = view;
+		const { schema } = state;
+
+		switch (action) {
+			case 'bold':
+				if (schema.marks.strong) {
+					runCommand(view, toggleMark(schema.marks.strong));
+				}
+				break;
+
+			case 'italic':
+				if (schema.marks.em) {
+					runCommand(view, toggleMark(schema.marks.em));
+				}
+				break;
+
+			case 'strike':
+				if (schema.marks.strikethrough) {
+					runCommand(view, toggleMark(schema.marks.strikethrough));
+				}
+				break;
+
+			case 'link': {
+				const linkMark = schema.marks.link;
+				if (!linkMark) break;
+
+				let url = prompt('Enter URL:');
+				if (!url) break;
+
+				url = url.trim();
+				if (!url) break;
+
+				if (!/^(https?:\/\/|mailto:|tel:)/i.test(url)) {
+					url = 'https://' + url;
+				}
+
+				runCommand(view, toggleMark(linkMark, { href: url }));
+				break;
+			}
+
+			case 'h1':
+				if (schema.nodes.heading) {
+					runCommand(view, setBlockType(schema.nodes.heading, { level: 1 }));
+				}
+				break;
+
+			case 'h2':
+				if (schema.nodes.heading) {
+					runCommand(view, setBlockType(schema.nodes.heading, { level: 2 }));
+				}
+				break;
+
+			case 'quote':
+				if (schema.nodes.blockquote) {
+					runCommand(view, wrapIn(schema.nodes.blockquote));
+				}
+				break;
+
+			case 'codeblock':
+				toggleCodeBlock(view);
+				break;
+
+			case 'hr': {
+				const hr = schema.nodes.horizontal_rule;
+				if (!hr) break;
+
+				const node = hr.create();
+				view.dispatch(state.tr.replaceSelectionWith(node).scrollIntoView());
+				break;
+			}
+
+			case 'ul':
+				if (schema.nodes.bullet_list) {
+					runCommand(view, wrapInList(schema.nodes.bullet_list));
+				}
+				break;
+
+			case 'ol':
+				if (schema.nodes.ordered_list) {
+					runCommand(view, wrapInList(schema.nodes.ordered_list));
+				}
+				break;
+
+			case 'task':
+				toggleTaskItem(view);
+				break;
+
+			case 'undo':
+				runCommand(view, undo);
+				break;
+
+			case 'redo':
+				runCommand(view, redo);
+				break;
+
+			case 'export':
+				console.log(exportMarkdown());
+				break;
+
+			case 'import':
+				alert('Use importMarkdown(markdown) programmatically.');
+				break;
+
+			default:
+				console.warn(`[ProseMirror] Action "${action}" not implemented.`);
+				break;
+		}
+
+		view.focus();
+	});
 }
 
 export function getCommandState(
@@ -183,69 +250,97 @@ export function getCommandState(
 	try {
 		switch (action) {
 			case 'bold':
-				if (!schema.marks.strong) return { enabled: false, reason: 'Bold mark not in schema' };
-				return toggleMark(schema.marks.strong)(state)
+				if (!schema.marks.strong) {
+					return { enabled: false, reason: 'Bold mark not in schema' };
+				}
+				return canRun(toggleMark(schema.marks.strong), state)
 					? { enabled: true }
 					: { enabled: false, reason: 'Cannot apply bold here' };
 
 			case 'italic':
-				if (!schema.marks.em) return { enabled: false, reason: 'Italic mark not in schema' };
-				return toggleMark(schema.marks.em)(state)
+				if (!schema.marks.em) {
+					return { enabled: false, reason: 'Italic mark not in schema' };
+				}
+				return canRun(toggleMark(schema.marks.em), state)
 					? { enabled: true }
 					: { enabled: false, reason: 'Cannot apply italic here' };
 
 			case 'strike':
-				if (!schema.marks.strikethrough)
+				if (!schema.marks.strikethrough) {
 					return { enabled: false, reason: 'Strikethrough not supported' };
-				return toggleMark(schema.marks.strikethrough)(state)
+				}
+				return canRun(toggleMark(schema.marks.strikethrough), state)
 					? { enabled: true }
 					: { enabled: false, reason: 'Cannot strike through here' };
 
+			case 'link':
+				return schema.marks.link
+					? { enabled: true }
+					: { enabled: false, reason: 'Links not supported' };
+
 			case 'h1': {
 				const heading = schema.nodes.heading;
-				if (!heading) return { enabled: false, reason: 'Heading not supported' };
-
-				return setBlockType(heading, { level: 1 })(state)
+				if (!heading) {
+					return { enabled: false, reason: 'Heading not supported' };
+				}
+				return canRun(setBlockType(heading, { level: 1 }), state)
 					? { enabled: true }
-					: { enabled: false, reason: 'Not inside a text block' };
+					: { enabled: false, reason: 'Cannot turn this into a heading' };
 			}
 
 			case 'h2': {
 				const heading = schema.nodes.heading;
-				if (!heading) return { enabled: false, reason: 'Heading not supported' };
-
-				return setBlockType(heading, { level: 2 })(state)
+				if (!heading) {
+					return { enabled: false, reason: 'Heading not supported' };
+				}
+				return canRun(setBlockType(heading, { level: 2 }), state)
 					? { enabled: true }
-					: { enabled: false, reason: 'Not inside a text block' };
+					: { enabled: false, reason: 'Cannot turn this into a heading' };
 			}
 
 			case 'quote':
-				return schema.nodes.blockquote
-					? wrapIn(schema.nodes.blockquote)(state)
-						? { enabled: true }
-						: { enabled: false, reason: 'Cannot create quote here' }
-					: { enabled: false, reason: 'Blockquote not supported' };
+				if (!schema.nodes.blockquote) {
+					return { enabled: false, reason: 'Blockquote not supported' };
+				}
+				return canRun(wrapIn(schema.nodes.blockquote), state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Cannot create quote here' };
 
 			case 'ul':
-				return schema.nodes.bullet_list
-					? wrapIn(schema.nodes.bullet_list)(state)
-						? { enabled: true }
-						: { enabled: false, reason: 'Cannot start list here' }
-					: { enabled: false, reason: 'Lists not supported' };
+				if (!schema.nodes.bullet_list) {
+					return { enabled: false, reason: 'Bullet lists not supported' };
+				}
+				return canRun(wrapInList(schema.nodes.bullet_list), state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Cannot start bullet list here' };
 
 			case 'ol':
-				return schema.nodes.ordered_list
-					? wrapIn(schema.nodes.ordered_list)(state)
-						? { enabled: true }
-						: { enabled: false, reason: 'Cannot start ordered list here' }
-					: { enabled: false, reason: 'Lists not supported' };
+				if (!schema.nodes.ordered_list) {
+					return { enabled: false, reason: 'Ordered lists not supported' };
+				}
+				return canRun(wrapInList(schema.nodes.ordered_list), state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Cannot start ordered list here' };
 
 			case 'codeblock': {
-				const { code_block } = schema.nodes;
-				if (!code_block) return { enabled: false, reason: 'Code blocks not supported' };
-				const isActive = state.selection.$from.parent.type === code_block;
-				return { enabled: true, reason: isActive ? 'active' : undefined };
+				const result = canToggleCodeBlock(state);
+				return result.enabled
+					? { enabled: true, reason: result.active ? 'active' : undefined }
+					: { enabled: false, reason: 'Cannot toggle code block here' };
 			}
+
+			case 'task': {
+				const { list_item, bullet_list, paragraph } = schema.nodes;
+				if (!list_item || !bullet_list || !paragraph) {
+					return { enabled: false, reason: 'Task lists not supported' };
+				}
+				return { enabled: true };
+			}
+
+			case 'hr':
+				return schema.nodes.horizontal_rule
+					? { enabled: true }
+					: { enabled: false, reason: 'Horizontal rule not supported' };
 
 			case 'undo':
 				return undo(state)
@@ -257,18 +352,15 @@ export function getCommandState(
 					? { enabled: true }
 					: { enabled: false, reason: 'No redo steps available' };
 
-			// Always allowed
-			case 'link':
-			case 'task':
 			case 'export':
 			case 'import':
 				return { enabled: true };
 
 			default:
-				return { enabled: true };
+				return { enabled: false, reason: 'Unknown action' };
 		}
 	} catch (err) {
-		console.error('getCommandState error', err);
+		console.error('[ProseMirror] getCommandState error', err);
 		return { enabled: false, reason: 'Unexpected command error' };
 	}
 }

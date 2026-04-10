@@ -1,9 +1,28 @@
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
-import type { Schema } from 'prosemirror-model';
+import type { Schema, NodeType } from 'prosemirror-model';
+import type { ResolvedPos } from 'prosemirror-model';
+
+function findAncestorDepth($pos: ResolvedPos, nodeType: NodeType): number | null {
+	for (let depth = $pos.depth; depth > 0; depth -= 1) {
+		if ($pos.node(depth).type === nodeType) {
+			return depth;
+		}
+	}
+	return null;
+}
+
+function isAtStartOfTextblock($pos: ResolvedPos): boolean {
+	return $pos.parent.isTextblock && $pos.parentOffset === 0;
+}
+
+function isAtEndOfTextblock($pos: ResolvedPos): boolean {
+	return $pos.parent.isTextblock && $pos.parentOffset === $pos.parent.content.size;
+}
 
 /**
  * Smart Arrow Up / Down inside and around lists.
- * Escapes from start or end of lists smoothly.
+ * Escapes from the first/last list item when the cursor is
+ * at the start/end of the current textblock.
  */
 export function markdownArrowPlugin(schema: Schema) {
 	const key = new PluginKey('markdown-arrows');
@@ -18,32 +37,45 @@ export function markdownArrowPlugin(schema: Schema) {
 				const { $from } = selection;
 
 				if (!selection.empty) return false;
+				if (!list_item) return false;
 
-				// --- Move out of list when at top/bottom boundary
+				const listItemDepth = findAncestorDepth($from, list_item);
+				if (listItemDepth == null) return false;
+
+				const listDepth = listItemDepth - 1;
+				if (listDepth < 1) return false;
+
+				const listNode = $from.node(listDepth);
+				const itemIndex = $from.index(listDepth);
+
 				if (event.key === 'ArrowUp') {
-					const prev = state.doc.resolve($from.before()).nodeBefore;
-					if (!$from.node(-1) || $from.node(-1).type !== list_item) return false;
-					if (!prev) {
-						// At top of list → move cursor before
-						event.preventDefault();
-						const beforePos = $from.before($from.depth - 1);
-						const tr = state.tr.setSelection(TextSelection.near(state.doc.resolve(beforePos), -1));
-						dispatch(tr.scrollIntoView());
-						return true;
-					}
+					if (!isAtStartOfTextblock($from)) return false;
+					if (itemIndex !== 0) return false;
+
+					event.preventDefault();
+
+					const beforeListPos = $from.before(listDepth);
+					const tr = state.tr.setSelection(
+						TextSelection.near(state.doc.resolve(beforeListPos), -1)
+					);
+
+					dispatch(tr.scrollIntoView());
+					return true;
 				}
 
 				if (event.key === 'ArrowDown') {
-					const next = state.doc.resolve($from.after()).nodeAfter;
-					if (!$from.node(-1) || $from.node(-1).type !== list_item) return false;
-					if (!next) {
-						// At end of list → move cursor after
-						event.preventDefault();
-						const afterPos = $from.after($from.depth - 1);
-						const tr = state.tr.setSelection(TextSelection.near(state.doc.resolve(afterPos)));
-						dispatch(tr.scrollIntoView());
-						return true;
-					}
+					if (!isAtEndOfTextblock($from)) return false;
+					if (itemIndex !== listNode.childCount - 1) return false;
+
+					event.preventDefault();
+
+					const afterListPos = $from.after(listDepth);
+					const tr = state.tr.setSelection(
+						TextSelection.near(state.doc.resolve(afterListPos), 1)
+					);
+
+					dispatch(tr.scrollIntoView());
+					return true;
 				}
 
 				return false;
