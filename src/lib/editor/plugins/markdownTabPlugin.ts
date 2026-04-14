@@ -2,9 +2,6 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { sinkListItem, liftListItem } from 'prosemirror-schema-list';
 import type { Schema } from 'prosemirror-model';
 
-/**
- * Tab and Shift+Tab to indent/unindent list levels.
- */
 export function markdownTabPlugin(schema: Schema) {
 	const key = new PluginKey('markdown-tab');
 	const { list_item } = schema.nodes;

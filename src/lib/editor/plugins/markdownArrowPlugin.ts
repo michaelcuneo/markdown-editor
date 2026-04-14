@@ -1,10 +1,6 @@
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state';
 import type { Schema } from 'prosemirror-model';
 
-/**
- * Smart Arrow Up / Down inside and around lists.
- * Escapes from start or end of lists smoothly.
- */
 export function markdownArrowPlugin(schema: Schema) {
 	const key = new PluginKey('markdown-arrows');
 	const { list_item } = schema.nodes;

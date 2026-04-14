@@ -16,10 +16,8 @@ export function markdownBackspacePlugin(schema: Schema) {
 				const { selection } = state;
 				const { $from } = selection;
 
-				// Only act when cursor is at start of text
 				if (!selection.empty || $from.parentOffset > 0) return false;
 
-				// Locate the current list item
 				let depth = $from.depth;
 				while (depth > 0 && $from.node(depth).type !== list_item) depth--;
 				if (depth <= 0) return false;
@@ -36,17 +34,14 @@ export function markdownBackspacePlugin(schema: Schema) {
 				event.preventDefault();
 				const tr = state.tr;
 
-				// 🧠 CASE 1: Empty item → remove it
 				if (itemNode.textContent.trim() === '') {
 					tr.delete(itemPos, itemPos + itemNode.nodeSize);
 
-					// Remove the list if empty
 					const listAfter = tr.doc.nodeAt(listPos);
 					if (listAfter && listAfter.childCount === 0) {
 						tr.delete(listPos, listPos + listAfter.nodeSize);
 					}
 
-					// Move cursor before list or to previous item
 					const cursorPos = prevItem ? Math.max(0, itemPos - 2) : Math.max(0, listPos - 1);
 
 					tr.setSelection(TextSelection.near(tr.doc.resolve(cursorPos), -1));
@@ -54,7 +49,6 @@ export function markdownBackspacePlugin(schema: Schema) {
 					return true;
 				}
 
-				// 🧠 CASE 2: Nested lists — only lift paragraph
 				const hasNestedList = itemNode.content.content.some(
 					(child) => child.type === bullet_list || child.type === ordered_list
 				);
@@ -76,7 +70,6 @@ export function markdownBackspacePlugin(schema: Schema) {
 					return false;
 				}
 
-				// 🧠 CASE 3: Normal list item unwrap
 				const itemStart = $from.before(depth);
 				const itemEnd = itemStart + itemNode.nodeSize;
 				const range = tr.doc.resolve(itemStart).blockRange(tr.doc.resolve(itemEnd));
@@ -88,7 +81,6 @@ export function markdownBackspacePlugin(schema: Schema) {
 
 					tr.lift(range!, target);
 
-					// ✅ Re-map selection safely after lift
 					const liftedPos = tr.mapping.map($from.pos, -1);
 					const $lifted = tr.doc.resolve(Math.max(0, liftedPos));
 					tr.setSelection(TextSelection.near($lifted, -1));

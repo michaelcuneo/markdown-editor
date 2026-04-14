@@ -1,11 +1,7 @@
-// src/lib/editor/theme/codeMirrorTheme.ts
 import { EditorView } from '@codemirror/view';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
-/* -----------------------------------------------------------------------
-   🩵 Light Theme (GitHub-inspired, matches your md-* tokens)
-   ----------------------------------------------------------------------- */
 export const codeMirrorLight = EditorView.theme(
 	{
 		'&': {
@@ -34,9 +30,6 @@ export const codeMirrorLight = EditorView.theme(
 	{ dark: false }
 );
 
-/* -----------------------------------------------------------------------
-   🌑 True One Dark Theme (based on @codemirror/theme-one-dark)
-   ----------------------------------------------------------------------- */
 export const codeMirrorDark = EditorView.theme(
 	{
 		'&': {
@@ -87,9 +80,6 @@ export const codeMirrorDark = EditorView.theme(
 	{ dark: true }
 );
 
-/* -----------------------------------------------------------------------
-   ✨ Syntax Highlighting Rules (One Dark palette)
-   ----------------------------------------------------------------------- */
 export const codeMirrorHighlight = HighlightStyle.define([
 	{ tag: tags.keyword, color: '#c678dd' }, // violet
 	{
@@ -146,9 +136,6 @@ export const codeMirrorHighlight = HighlightStyle.define([
 	{ tag: tags.invalid, color: '#ffffff' }
 ]);
 
-/* -----------------------------------------------------------------------
-   🧩 Combined Theme Extension
-   ----------------------------------------------------------------------- */
 export const codeMirrorTheme = [
 	codeMirrorLight,
 	codeMirrorDark,

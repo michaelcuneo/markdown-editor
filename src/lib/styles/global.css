@@ -163,6 +163,27 @@
 	user-select: none;
 }
 
+.ProseMirror .pm-task-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	list-style: none;
+}
+
+.ProseMirror .pm-task-checkbox {
+	flex: 0 0 auto;
+	margin-top: 0.2rem;
+}
+
+.ProseMirror .pm-task-content {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ProseMirror .pm-task-content > p {
+	margin: 0;
+}
+
 /* Checkbox */
 .ProseMirror .pm-task-checkbox {
 	width: var(--md-checkbox-size);
@@ -184,6 +205,11 @@
 		background-color 0.15s ease,
 		border-color 0.15s ease,
 		box-shadow 0.15s ease;
+}
+
+.ProseMirror img.pm-image {
+	max-width: 100%;
+	height: auto;
 }
 
 /* hover & focus */

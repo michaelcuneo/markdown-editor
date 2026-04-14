@@ -404,6 +404,8 @@ export class Worker extends Component implements Link.Linkable {
                     kvNamespaceBindings: "kv_namespace",
                     d1DatabaseBindings: "d1",
                     r2BucketBindings: "r2_bucket",
+                    hyperdriveBindings: "hyperdrive",
+                    versionMetadataBindings: "version_metadata",
                   }[b.binding],
                   name,
                   ...b.properties,
@@ -584,6 +586,9 @@ export class Worker extends Component implements Link.Linkable {
         {
           accountId: DEFAULT_ACCOUNT_ID,
           scriptName: script.scriptName,
+          // Reapply placement after each script update. Asset-backed SSR workers
+          // can rewrite script settings and reset placement back to the default.
+          etag: script.etag,
           ...args.placement,
         },
         { parent },

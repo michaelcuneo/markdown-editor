@@ -1,4 +1,3 @@
-// src/lib/editor/plugins/codeMirrorBlockPlugin.ts
 import { Plugin } from 'prosemirror-state';
 import type { NodeView } from 'prosemirror-view';
 import { EditorState as CMState } from '@codemirror/state';
@@ -17,6 +16,8 @@ const languageMap: Record<string, () => Extension> = {
 	javascript,
 	ts: javascript,
 	typescript: javascript,
+	sveltekit: javascript,
+	svelte: javascript,
 	py: python,
 	python,
 	md: markdown,
@@ -25,9 +26,6 @@ const languageMap: Record<string, () => Extension> = {
 	txt: () => []
 };
 
-/**
- * CodeMirror NodeView for fenced code blocks
- */
 class CodeMirrorBlockView implements NodeView {
 	node: PMNode;
 	view: PMView;
@@ -45,17 +43,14 @@ class CodeMirrorBlockView implements NodeView {
 		this.currentLang = node.attrs.params || 'plaintext';
 		this.editable = view.editable ? view.editable : true;
 
-		// Outer wrapper
 		this.dom = document.createElement('div');
 		this.dom.className = 'pm-codemirror-wrapper';
 
-		// Language label
 		this.label = document.createElement('div');
 		this.label.className = 'pm-code-lang';
 		this.label.textContent = this.prettyLang(this.currentLang);
 		this.dom.appendChild(this.label);
 
-		// CodeMirror editor
 		this.cm = this.createCodeMirror(node.textContent, this.currentLang, this.editable);
 	}
 
@@ -112,7 +107,6 @@ class CodeMirrorBlockView implements NodeView {
 		const newLang = node.attrs.params || 'plaintext';
 		const newText = node.textContent;
 
-		// 🧠 Detect language change
 		if (newLang !== this.currentLang) {
 			this.currentLang = newLang;
 			this.label.textContent = this.prettyLang(newLang);
@@ -120,7 +114,6 @@ class CodeMirrorBlockView implements NodeView {
 			return true;
 		}
 
-		// 🧠 Sync text
 		if (newText !== this.cm.state.doc.toString()) {
 			this.cm.dispatch({
 				changes: { from: 0, to: this.cm.state.doc.length, insert: newText }
@@ -136,9 +129,6 @@ class CodeMirrorBlockView implements NodeView {
 		this.cm = this.createCodeMirror(newText, newLang, this.editable);
 	}
 
-	/**
-	 * 🔒 External setter for editable state
-	 */
 	setEditable(editable: boolean) {
 		this.editable = editable;
 		this.rebuildCodeMirror(this.node.textContent, this.currentLang);

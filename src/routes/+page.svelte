@@ -130,13 +130,13 @@ That’s it! You’re editing with a fully interactive Markdown editor built wit
         Edit Markdown in the left pane and see live preview updates on the right.
       </p>
 
-    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} />
+    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} allowHtml={true} />
     </section>
   {:else}
     <section class="docs-section">
       <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} allowHtml={true} />
     </section>
   {/if}
 </main>

@@ -1,9 +1,6 @@
 import { Plugin } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 
-/**
- * Plugin: Toggle GFM-style task checkboxes interactively.
- */
 export function taskTogglePlugin() {
 	return new Plugin({
 		props: {
@@ -30,7 +27,6 @@ export function taskTogglePlugin() {
 
 						dispatch(tr.scrollIntoView());
 
-						// 🧩 Notify Svelte to update markdown binding
 						view.dom.dispatchEvent(new CustomEvent('pm-updated', { bubbles: true }));
 						return true;
 					}

@@ -1,5 +1,4 @@
-import { Plugin } from 'prosemirror-state';
-import { TextSelection } from 'prosemirror-state';
+import { Plugin, TextSelection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 
 export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl?: string }[]) {
@@ -9,12 +8,15 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 	let dragInside = false;
 	let caretTimeout: number | null = null;
 
-	// --- Preview registration
+	function makeImageId() {
+		counter += 1;
+		return `local-img-${Date.now()}-${counter}-${Math.random().toString(36).slice(2, 10)}`;
+	}
+
 	function registerPreview(id: string, file: File) {
 		const previewUrl = URL.createObjectURL(file);
 		imageQueue.push({ id, file, previewUrl });
 
-		// Define a proper window interface with type-safe access
 		const w = window as typeof window & {
 			__imagePreviewMap?: Record<string, string>;
 		};
@@ -24,83 +26,106 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 		}
 
 		w.__imagePreviewMap[id] = previewUrl;
+		return previewUrl;
 	}
 
-	// --- Insert a new image node
-	function insertImage(view: EditorView, id: string, alt: string) {
-		const { state, dispatch } = view;
-		const imageNode = state.schema.nodes.image;
+	function insertImage(view: EditorView, src: string, alt: string) {
+		const imageNode = view.state.schema.nodes.image;
 		if (!imageNode) {
 			console.error('Image node is not defined in the schema.');
-			return;
+			return false;
 		}
-		const node = imageNode.create({ src: id, alt });
-		dispatch(state.tr.replaceSelectionWith(node).scrollIntoView());
-	}
 
-	// --- Handle dropped or pasted files
-	function handleFiles(view: EditorView, files: File[]) {
-		for (const file of files) {
-			if (!file.type.startsWith('image/')) continue;
-			const id = `local-img-${++counter}`;
-			const alt = file.name.replace(/\.[^.]+$/, '');
-			registerPreview(id, file);
-			insertImage(view, id, alt);
-		}
+		const node = imageNode.create({ src, alt });
+		view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
 		return true;
 	}
 
-	// --- Create or update fake caret
-	function showCaret(view: EditorView, x: number, y: number) {
-		if (!caretEl) {
-			caretEl = document.createElement('div');
-			caretEl.className = 'pm-drop-caret';
-			document.body.appendChild(caretEl);
+	function handleFiles(view: EditorView, files: File[]) {
+		const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+		if (!imageFiles.length) return false;
+
+		for (const file of imageFiles) {
+			const id = makeImageId();
+			const alt = file.name.replace(/\.[^.]+$/, '');
+			const previewUrl = registerPreview(id, file);
+			insertImage(view, previewUrl, alt);
 		}
 
+		return true;
+	}
+
+	function ensureCaret() {
+		if (caretEl) return caretEl;
+
+		caretEl = document.createElement('div');
+		caretEl.className = 'pm-drop-caret';
+		document.body.appendChild(caretEl);
+
+		return caretEl;
+	}
+
+	function showCaret(view: EditorView, x: number, y: number) {
 		const pos = view.posAtCoords({ left: x, top: y });
 		if (!pos) return;
 
+		const el = ensureCaret();
 		const rect = view.coordsAtPos(pos.pos);
-		caretEl.style.left = `${rect.left}px`;
-		caretEl.style.top = `${rect.top}px`;
-		caretEl.style.height = `${rect.bottom - rect.top}px`;
-		caretEl.style.opacity = '1';
 
-		// Reset cleanup timer
+		el.style.left = `${rect.left}px`;
+		el.style.top = `${rect.top}px`;
+		el.style.height = `${rect.bottom - rect.top}px`;
+		el.style.opacity = '1';
+
 		if (caretTimeout) clearTimeout(caretTimeout);
-		caretTimeout = window.setTimeout(() => hideCaret(), 1200);
+		caretTimeout = window.setTimeout(() => {
+			if (caretEl) caretEl.style.opacity = '0';
+		}, 1200);
 	}
 
-	// --- Hide caret safely
 	function hideCaret(force = false) {
 		if (!caretEl) return;
+
 		caretEl.style.opacity = '0';
+
+		if (caretTimeout) {
+			clearTimeout(caretTimeout);
+			caretTimeout = null;
+		}
+
 		if (force) {
-			setTimeout(() => {
-				caretEl?.remove();
-				caretEl = null;
-			}, 250);
+			caretEl.remove();
+			caretEl = null;
 		}
 	}
 
-	// --- Move an existing image node
 	function moveImageNode(view: EditorView, fromPos: number, toPos: number) {
-		const { state, dispatch } = view;
+		const { state } = view;
 		const node = state.doc.nodeAt(fromPos);
 		if (!node || node.type.name !== 'image') return false;
 
+		if (toPos >= fromPos && toPos <= fromPos + node.nodeSize) return false;
+
 		const tr = state.tr.delete(fromPos, fromPos + node.nodeSize);
 		const insertPos = toPos > fromPos ? toPos - node.nodeSize : toPos;
-		tr.insert(insertPos, node);
-		dispatch(tr.scrollIntoView());
-		return true;
+
+		try {
+			tr.insert(insertPos, node);
+			view.dispatch(tr.scrollIntoView());
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
-	// --- Ensure cleanup no matter what
-	function cleanupAll() {
+	function cleanupAll(view?: EditorView) {
 		hideCaret(true);
-		if (dragInside) dragInside = false;
+		dragInside = false;
+
+		if (view) {
+			view.dom.classList.remove('pm-dragging-image');
+		}
+
 		if (draggingImg) {
 			draggingImg.classList.remove('pm-img-dragging');
 			draggingImg = null;
@@ -111,32 +136,42 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 		props: {
 			handleDOMEvents: {
 				dragstart(view: EditorView, event: DragEvent) {
-					const img = (event.target as HTMLElement)?.closest('img.pm-image');
+					const img = (event.target as HTMLElement | null)?.closest('img.pm-image');
 					if (!img) return false;
+
 					draggingImg = img as HTMLElement;
-					img.classList.add('pm-img-dragging');
-					event.dataTransfer?.setData('text/plain', 'pm-image-drag');
-					event.dataTransfer!.effectAllowed = 'move';
+					draggingImg.classList.add('pm-img-dragging');
+
+					if (event.dataTransfer) {
+						event.dataTransfer.setData('text/plain', 'pm-image-drag');
+						event.dataTransfer.effectAllowed = 'move';
+					}
+
 					return true;
 				},
 
 				dragover(view: EditorView, event: DragEvent) {
-					event.preventDefault();
 					const hasImage =
-						draggingImg ||
-						Array.from(event.dataTransfer?.items || []).some((i) => i.type.startsWith('image/'));
+						!!draggingImg ||
+						Array.from(event.dataTransfer?.items ?? []).some((i) => i.type.startsWith('image/'));
+
 					if (!hasImage) return false;
 
+					event.preventDefault();
 					showCaret(view, event.clientX, event.clientY);
 
 					if (!dragInside) {
 						view.dom.classList.add('pm-dragging-image');
 						dragInside = true;
 					}
+
 					return true;
 				},
 
-				dragleave(view: EditorView) {
+				dragleave(view: EditorView, event: DragEvent) {
+					const next = event.relatedTarget as Node | null;
+					if (next && view.dom.contains(next)) return false;
+
 					view.dom.classList.remove('pm-dragging-image');
 					hideCaret();
 					dragInside = false;
@@ -145,49 +180,62 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 
 				drop(view: EditorView, event: DragEvent) {
 					event.preventDefault();
+
 					view.dom.classList.remove('pm-dragging-image');
 					hideCaret(true);
 					dragInside = false;
 
-					const coords = { left: event.clientX, top: event.clientY };
-					const pos = view.posAtCoords(coords);
-					if (!pos) return false;
+					const pos = view.posAtCoords({ left: event.clientX, top: event.clientY });
+					if (!pos) {
+						cleanupAll(view);
+						return false;
+					}
 
-					// Reorder existing image
 					if (draggingImg) {
-						const domPos = view.posAtDOM(draggingImg, 0);
-						if (domPos) moveImageNode(view, domPos, pos.pos);
-						cleanupAll();
+						const fromPos = view.posAtDOM(draggingImg, 0);
+						moveImageNode(view, fromPos, pos.pos);
+						cleanupAll(view);
 						return true;
 					}
 
-					// Drop new image
 					const files = Array.from(event.dataTransfer?.files ?? []);
-					if (!files.length) return false;
+					if (!files.length) {
+						cleanupAll(view);
+						return false;
+					}
 
-					const tr = view.state.tr.setSelection(
-						TextSelection.near(view.state.doc.resolve(pos.pos))
+					view.dispatch(
+						view.state.tr.setSelection(TextSelection.near(view.state.doc.resolve(pos.pos)))
 					);
-					view.dispatch(tr);
-					handleFiles(view, files);
-					cleanupAll();
-					return true;
+
+					const handled = handleFiles(view, files);
+					cleanupAll(view);
+					return handled;
 				},
 
-				dragend() {
-					cleanupAll();
+				dragend(view: EditorView) {
+					cleanupAll(view);
 					return false;
 				},
 
 				paste(view: EditorView, event: ClipboardEvent) {
 					const files = Array.from(event.clipboardData?.files ?? []);
 					if (!files.length) return false;
+
 					event.preventDefault();
-					handleFiles(view, files);
-					cleanupAll();
-					return true;
+					const handled = handleFiles(view, files);
+					cleanupAll(view);
+					return handled;
 				}
 			}
+		},
+
+		view() {
+			return {
+				destroy() {
+					hideCaret(true);
+				}
+			};
 		}
 	});
 }

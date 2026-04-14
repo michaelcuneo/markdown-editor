@@ -1,9 +1,5 @@
 import type MarkdownIt from 'markdown-it';
 
-/**
- * Minimal GFM-style pipe table plugin.
- * Pure ESM and zero dependencies.
- */
 export default function markdownItTables(md: MarkdownIt) {
 	md.block.ruler.before('paragraph', 'table', (state, startLine, endLine, silent) => {
 		const start = (state.bMarks?.[startLine] ?? 0) + (state.tShift?.[startLine] ?? 0);

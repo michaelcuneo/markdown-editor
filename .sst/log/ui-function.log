@@ -1,7 +1,6 @@
-time=2026-03-05T16:15:59.919+11:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
-time=2026-03-05T16:15:59.995+11:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
-time=2026-03-05T16:15:59.996+11:00 level=INFO msg="initializing ui" isTTY=true
-time=2026-03-05T16:15:59.996+11:00 level=INFO msg="initialized ui"
-time=2026-03-05T16:44:58.403+11:00 level=INFO msg=interrupted
+time=2026-04-14T15:41:12.146+10:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
+time=2026-04-14T15:41:12.228+10:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
+time=2026-04-14T15:41:12.229+10:00 level=INFO msg="initializing ui" isTTY=true
+time=2026-04-14T15:41:12.229+10:00 level=INFO msg="initializing ui"time=2026-04-14T16:03:44.704+10:00 level=INFO msg=interrupted
 "initialized ui"
-time=2026-03-05T16:44:58.403+11:00 level=INFO msg=interrupted
+time=2026-04-14T16:03:44.704+10:00 level=INFO msg=interrupted

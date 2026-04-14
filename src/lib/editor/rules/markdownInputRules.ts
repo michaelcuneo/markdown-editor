@@ -7,9 +7,6 @@ import {
 	textblockTypeInputRule
 } from 'prosemirror-inputrules';
 
-/**
- * Helper to create an inline mark input rule for Markdown delimiters
- */
 function markRule(regexp: RegExp, markType: MarkType): InputRule {
 	return new InputRule(
 		regexp,
@@ -38,9 +35,6 @@ function markRule(regexp: RegExp, markType: MarkType): InputRule {
 	);
 }
 
-/**
- * Markdown-compatible input rules for the prosemirror-markdown schema.
- */
 export function markdownInputRules(schema: Schema): Plugin {
 	const rules: InputRule[] = [];
 

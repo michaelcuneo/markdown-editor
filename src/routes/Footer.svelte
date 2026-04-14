@@ -30,10 +30,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   font-size: 0.875rem;
   position: sticky;
-  bottom: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
   background-color: color-mix(in srgb, var(--footer-bg-dark) 90%, transparent);

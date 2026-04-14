@@ -2,10 +2,6 @@ import { Plugin, PluginKey } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 import type { Schema } from 'prosemirror-model';
 
-/**
- * Smart Delete (forward delete) behavior for lists.
- * Merges current item with next item or unwraps list safely.
- */
 export function markdownDeletePlugin(schema: Schema) {
 	const key = new PluginKey('markdown-delete');
 	const { list_item, bullet_list, ordered_list } = schema.nodes;

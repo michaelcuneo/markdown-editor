@@ -10,11 +10,6 @@ function normalizeHref(href: string): string {
 	return `https://${trimmed}`;
 }
 
-/**
- * WYSIWYM inline Markdown plugin.
- * Converts **bold**, *italic* / _italic_, `code`, and [text](url) while typing.
- * Adds Mod/Cmd+K to insert/edit links.
- */
 export function wysiwymPlugin(schema: Schema) {
 	const key = new PluginKey('wysiwymMarkdown');
 

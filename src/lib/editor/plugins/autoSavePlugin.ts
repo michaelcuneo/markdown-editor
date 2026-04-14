@@ -1,4 +1,3 @@
-// src/lib/editor/plugins/autoSavePlugin.ts
 import { Plugin, PluginKey } from 'prosemirror-state';
 
 declare module 'prosemirror-view' {
@@ -11,9 +10,6 @@ import { undoDepth, redoDepth } from 'prosemirror-history';
 
 export const autoSaveKey = new PluginKey('auto-save');
 
-/**
- * Debounce utility
- */
 function debounce<A extends unknown[]>(
 	fn: (...args: A) => void,
 	delay = 800
@@ -25,9 +21,6 @@ function debounce<A extends unknown[]>(
 	};
 }
 
-/**
- * Auto-save + Auto-restore + Versioned Drafts for ProseMirror editors.
- */
 export function autoSavePlugin(
 	imageQueueRef: { id: string; file: File; previewUrl?: string }[],
 	options?: {
@@ -47,9 +40,6 @@ export function autoSavePlugin(
 	const contentKey = `${storagePrefix}-content-v1`;
 	const imageKey = `${storagePrefix}-images-v1`;
 
-	/**
-	 * Debounced save handler
-	 */
 	const debouncedSave = debounce((markdown: string) => {
 		try {
 			if (options?.onSave) {
@@ -76,9 +66,6 @@ export function autoSavePlugin(
 		}
 	}, delay);
 
-	/**
-	 * Restore previously saved content
-	 */
 	function restoreSaved() {
 		let markdown = '';
 		let queue: typeof imageQueueRef = [];
@@ -106,7 +93,6 @@ export function autoSavePlugin(
 		key: autoSaveKey,
 
 		view(view) {
-			// 🧠 Restore once on mount
 			if (!restored) {
 				const saved = restoreSaved();
 				if (saved && typeof view['setMarkdown'] === 'function') {
@@ -119,18 +105,13 @@ export function autoSavePlugin(
 		},
 
 		appendTransaction(transactions, oldState, newState) {
-			// Only run when the document has changed (not selection)
 			if (!transactions.some((tr) => tr.docChanged)) return null;
-
-			// Skip autosave during undo/redo replay
 			if (undoDepth(newState) !== 0 || redoDepth(newState) !== 0) return null;
 
-			// Run autosave asynchronously after the editor is stable
 			queueMicrotask(() => {
 				try {
 					const markdown = (newState.doc as { type?: unknown }).type
-						? // safer fallback — only if serializer is available
-							(
+						? (
 								window as {
 									defaultMarkdownSerializer?: { serialize: (doc: typeof newState.doc) => string };
 								}
@@ -149,14 +130,11 @@ export function autoSavePlugin(
 				}
 			});
 
-			return null; // ⚠️ Never return a transaction — must stay pure
+			return null;
 		}
 	});
 }
 
-/**
- * 🧹 Static helper — clear all saved data for this key or all docs
- */
 autoSavePlugin.clear = (storageKey = 'markdown-editor', docId?: string) => {
 	const prefix = docId ? `${storageKey}-${docId}` : storageKey;
 	for (const key in localStorage) {

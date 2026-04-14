@@ -9,14 +9,6 @@ function findAncestorDepthOf(nodeName: string, $pos: ResolvedPos): number | null
 	return null;
 }
 
-/**
- * Enhanced Enter plugin:
- * - Splits list items or creates new unchecked tasks
- * - Exits list if empty (lift)
- * - Handles ``` fence creation
- * - Inserts paragraph after HR / code_block
- * - Works with nested lists
- */
 export function markdownEnterPlugin(schema: Schema) {
 	const key = new PluginKey('markdown-enter');
 	const { list_item, paragraph } = schema.nodes;
@@ -30,7 +22,6 @@ export function markdownEnterPlugin(schema: Schema) {
 
 				if (event.key !== 'Enter') return false;
 
-				// 🧠 Handle code fences ```lang
 				if ($from.parent.type.name === 'paragraph') {
 					const paraText = $from.parent.textContent.trim();
 					const match = /^```([a-zA-Z0-9_+-]*)$/.exec(paraText);
@@ -52,7 +43,6 @@ export function markdownEnterPlugin(schema: Schema) {
 
 				const depth = findAncestorDepthOf('list_item', $from);
 
-				// 🧠 Not inside list — allow default paragraph split
 				if (depth == null) {
 					const nodeBefore = $from.nodeBefore;
 					if (
@@ -71,19 +61,16 @@ export function markdownEnterPlugin(schema: Schema) {
 
 				const item = $from.node(depth);
 
-				// 🧩 Empty list item → exit list
 				if (item.textContent.trim() === '') {
 					event.preventDefault();
 					if (list_item) liftListItem(list_item)(state, dispatch);
 					return true;
 				}
 
-				// 🧩 Otherwise split list item
 				if (list_item && !splitListItem(list_item)(state, dispatch)) return false;
 
 				event.preventDefault();
 
-				// 🧩 If new item is a task → make unchecked
 				const afterState = view.state;
 				const { $from: $after } = afterState.selection;
 				const newDepth = findAncestorDepthOf('list_item', $after);
