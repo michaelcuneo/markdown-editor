@@ -1,87 +1,108 @@
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { Plugin, PluginKey, Selection } from 'prosemirror-state';
 import { splitListItem, liftListItem } from 'prosemirror-schema-list';
-import type { Schema, ResolvedPos } from 'prosemirror-model';
+import type { Schema, Node as PMNode, NodeType, ResolvedPos } from 'prosemirror-model';
 
-function findAncestorDepthOf(nodeName: string, $pos: ResolvedPos): number | null {
-	for (let d = $pos.depth; d > 0; d--) {
-		if ($pos.node(d).type.name === nodeName) return d;
+function findAncestorDepth($pos: ResolvedPos, nodeType: NodeType): number | null {
+	for (let depth = $pos.depth; depth > 0; depth -= 1) {
+		if ($pos.node(depth).type === nodeType) return depth;
 	}
 	return null;
 }
 
+function isStructurallyEmptyListItem(itemNode: PMNode, paragraphType?: NodeType): boolean {
+	if (!paragraphType) return false;
+	if (itemNode.childCount !== 1) return false;
+
+	const firstChild = itemNode.firstChild;
+	if (!firstChild) return false;
+	if (firstChild.type !== paragraphType) return false;
+
+	return firstChild.content.size === 0;
+}
+
+function getFenceLanguage(text: string): string | null {
+	const match = /^```([a-zA-Z0-9_+-]*)$/.exec(text);
+	if (!match) return null;
+	return (match[1] ?? '').toLowerCase();
+}
+
+function hasCheckedAttr(node: PMNode): boolean {
+	return Object.prototype.hasOwnProperty.call(node.attrs, 'checked');
+}
+
 export function markdownEnterPlugin(schema: Schema) {
 	const key = new PluginKey('markdown-enter');
-	const { list_item, paragraph } = schema.nodes;
+	const { list_item, paragraph, code_block } = schema.nodes;
 
 	return new Plugin({
 		key,
 		props: {
 			handleKeyDown(view, event) {
-				const { state, dispatch } = view;
-				const { $from } = state.selection;
-
 				if (event.key !== 'Enter') return false;
 
-				if ($from.parent.type.name === 'paragraph') {
-					const paraText = $from.parent.textContent.trim();
-					const match = /^```([a-zA-Z0-9_+-]*)$/.exec(paraText);
-					if (match) {
-						event.preventDefault();
-						const lang = match[1]?.toLowerCase() || '';
-						const from = $from.start();
-						const to = $from.end();
+				const { state, dispatch } = view;
+				const { selection } = state;
+				const { $from } = selection;
 
-						let tr = state.tr.delete(from, to);
-						const code = schema.nodes.code_block?.create({ params: lang });
-						if (code) {
-							tr = tr.insert(from, code);
-						}
+				if (!selection.empty) return false;
+
+				if (
+					paragraph &&
+					code_block &&
+					$from.parent.type === paragraph &&
+					$from.parentOffset === $from.parent.content.size
+				) {
+					const text = $from.parent.textContent;
+					const lang = getFenceLanguage(text.trim());
+
+					if (lang != null) {
+						event.preventDefault();
+
+						const paraPos = $from.before();
+						const codeNode = code_block.create(lang ? { params: lang } : null);
+
+						let tr = state.tr.replaceWith(
+							paraPos,
+							paraPos + $from.parent.nodeSize,
+							codeNode
+						);
+
+						const codeStart = tr.mapping.map(paraPos + 1);
+						tr = tr.setSelection(Selection.near(tr.doc.resolve(codeStart)));
 						dispatch(tr.scrollIntoView());
 						return true;
 					}
 				}
 
-				const depth = findAncestorDepthOf('list_item', $from);
+				if (!list_item) return false;
 
-				if (depth == null) {
-					const nodeBefore = $from.nodeBefore;
-					if (
-						nodeBefore &&
-						(nodeBefore.type.name === 'horizontal_rule' || nodeBefore.type.name === 'code_block')
-					) {
-						event.preventDefault();
-						if (paragraph) {
-							const tr = state.tr.insert($from.pos, paragraph.create());
-							dispatch(tr.scrollIntoView());
-							return true;
-						}
-					}
-					return false;
-				}
+				const listItemDepth = findAncestorDepth($from, list_item);
+				if (listItemDepth == null) return false;
 
-				const item = $from.node(depth);
+				const itemNode = $from.node(listItemDepth);
 
-				if (item.textContent.trim() === '') {
+				if (isStructurallyEmptyListItem(itemNode, paragraph)) {
 					event.preventDefault();
-					if (list_item) liftListItem(list_item)(state, dispatch);
-					return true;
+					return liftListItem(list_item)(state, dispatch);
 				}
 
-				if (list_item && !splitListItem(list_item)(state, dispatch)) return false;
+				const didSplit = splitListItem(list_item)(state, dispatch);
+				if (!didSplit) return false;
 
 				event.preventDefault();
 
-				const afterState = view.state;
-				const { $from: $after } = afterState.selection;
-				const newDepth = findAncestorDepthOf('list_item', $after);
+				const nextState = view.state;
+				const { $from: $after } = nextState.selection;
+				const newDepth = findAncestorDepth($after, list_item);
 
 				if (newDepth != null) {
 					const newLiPos = $after.before(newDepth);
-					const newLiNode = afterState.doc.nodeAt(newLiPos);
-					if (newLiNode && newLiNode.attrs?.checked !== null) {
-						const tr = afterState.tr.setNodeMarkup(
+					const newLiNode = nextState.doc.nodeAt(newLiPos);
+
+					if (newLiNode && hasCheckedAttr(newLiNode)) {
+						const tr = nextState.tr.setNodeMarkup(
 							newLiPos,
-							list_item,
+							newLiNode.type,
 							{ ...newLiNode.attrs, checked: false },
 							newLiNode.marks
 						);

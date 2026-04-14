@@ -1,97 +1,152 @@
 import { Plugin, TextSelection } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 
-export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl?: string }[]) {
-	let counter = 0;
+type ImageQueueItem = {
+	id: string;
+	file: File;
+	previewUrl?: string;
+};
+
+type PreviewRegistryWindow = Window & {
+	__imagePreviewMap?: Record<string, string>;
+};
+
+function getPreviewRegistry(): Record<string, string> | null {
+	if (typeof window === 'undefined') return null;
+
+	const w = window as PreviewRegistryWindow;
+	if (!w.__imagePreviewMap) {
+		w.__imagePreviewMap = {};
+	}
+
+	return w.__imagePreviewMap;
+}
+
+function createImageId(): string {
+	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+		return `local-img-${crypto.randomUUID()}`;
+	}
+
+	return `local-img-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function fileNameToAlt(fileName: string): string {
+	return fileName.replace(/\.[^.]+$/, '');
+}
+
+export function imageDropPlugin(imageQueue: ImageQueueItem[]) {
 	let caretEl: HTMLDivElement | null = null;
 	let draggingImg: HTMLElement | null = null;
-	let dragInside = false;
 	let caretTimeout: number | null = null;
+	const registeredPreviewIds = new Set<string>();
 
-	function makeImageId() {
-		counter += 1;
-		return `local-img-${Date.now()}-${counter}-${Math.random().toString(36).slice(2, 10)}`;
-	}
-
-	function registerPreview(id: string, file: File) {
-		const previewUrl = URL.createObjectURL(file);
-		imageQueue.push({ id, file, previewUrl });
-
-		const w = window as typeof window & {
-			__imagePreviewMap?: Record<string, string>;
-		};
-
-		if (!w.__imagePreviewMap) {
-			w.__imagePreviewMap = {};
+	function clearCaretTimer(): void {
+		if (caretTimeout !== null) {
+			window.clearTimeout(caretTimeout);
+			caretTimeout = null;
 		}
-
-		w.__imagePreviewMap[id] = previewUrl;
-		return previewUrl;
 	}
 
-	function insertImage(view: EditorView, src: string, alt: string) {
-		const imageNode = view.state.schema.nodes.image;
-		if (!imageNode) {
-			console.error('Image node is not defined in the schema.');
-			return false;
+	function ensureCaret(): HTMLDivElement {
+		if (!caretEl) {
+			caretEl = document.createElement('div');
+			caretEl.className = 'pm-drop-caret';
+			document.body.appendChild(caretEl);
 		}
-
-		const node = imageNode.create({ src, alt });
-		view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
-		return true;
-	}
-
-	function handleFiles(view: EditorView, files: File[]) {
-		const imageFiles = files.filter((file) => file.type.startsWith('image/'));
-		if (!imageFiles.length) return false;
-
-		for (const file of imageFiles) {
-			const id = makeImageId();
-			const alt = file.name.replace(/\.[^.]+$/, '');
-			const previewUrl = registerPreview(id, file);
-			insertImage(view, previewUrl, alt);
-		}
-
-		return true;
-	}
-
-	function ensureCaret() {
-		if (caretEl) return caretEl;
-
-		caretEl = document.createElement('div');
-		caretEl.className = 'pm-drop-caret';
-		document.body.appendChild(caretEl);
 
 		return caretEl;
 	}
 
-	function showCaret(view: EditorView, x: number, y: number) {
+	function registerPreview(id: string, file: File): string {
+		const previewUrl = URL.createObjectURL(file);
+		imageQueue.push({ id, file, previewUrl });
+		registeredPreviewIds.add(id);
+
+		const registry = getPreviewRegistry();
+		if (registry) {
+			registry[id] = previewUrl;
+		}
+
+		return previewUrl;
+	}
+
+	function revokePreview(id: string): void {
+		const registry = getPreviewRegistry();
+		if (!registry) return;
+
+		const url = registry[id];
+		if (!url) return;
+
+		URL.revokeObjectURL(url);
+		delete registry[id];
+	}
+
+	function insertImagesAtSelection(
+		view: EditorView,
+		items: Array<{ id: string; alt: string }>
+	): boolean {
+		const imageNodeType = view.state.schema.nodes.image;
+		if (!imageNodeType) {
+			console.error('Image node is not defined in the schema.');
+			return false;
+		}
+
+		const nodes = items.map(({ id, alt }) => imageNodeType.create({ src: id, alt }));
+		if (nodes.length === 0) return false;
+
+		let tr = view.state.tr;
+		let insertPos = tr.selection.from;
+
+		for (const node of nodes) {
+			tr = tr.insert(insertPos, node);
+			insertPos += node.nodeSize;
+		}
+
+		tr = tr.setSelection(TextSelection.near(tr.doc.resolve(insertPos))).scrollIntoView();
+		view.dispatch(tr);
+		return true;
+	}
+
+	function handleFiles(view: EditorView, files: File[]): boolean {
+		const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+		if (imageFiles.length === 0) return false;
+
+		const items: Array<{ id: string; alt: string }> = [];
+
+		for (const file of imageFiles) {
+			const id = createImageId();
+			const alt = fileNameToAlt(file.name);
+			registerPreview(id, file);
+			items.push({ id, alt });
+		}
+
+		return insertImagesAtSelection(view, items);
+	}
+
+	function showCaret(view: EditorView, x: number, y: number): void {
 		const pos = view.posAtCoords({ left: x, top: y });
 		if (!pos) return;
 
-		const el = ensureCaret();
 		const rect = view.coordsAtPos(pos.pos);
+		const caret = ensureCaret();
 
-		el.style.left = `${rect.left}px`;
-		el.style.top = `${rect.top}px`;
-		el.style.height = `${rect.bottom - rect.top}px`;
-		el.style.opacity = '1';
+		caret.style.left = `${rect.left}px`;
+		caret.style.top = `${rect.top}px`;
+		caret.style.height = `${rect.bottom - rect.top}px`;
+		caret.style.opacity = '1';
 
-		if (caretTimeout) clearTimeout(caretTimeout);
+		clearCaretTimer();
 		caretTimeout = window.setTimeout(() => {
-			if (caretEl) caretEl.style.opacity = '0';
+			hideCaret(false);
 		}, 1200);
 	}
 
-	function hideCaret(force = false) {
+	function hideCaret(force = false): void {
+		clearCaretTimer();
+
 		if (!caretEl) return;
 
 		caretEl.style.opacity = '0';
-
-		if (caretTimeout) {
-			clearTimeout(caretTimeout);
-			caretTimeout = null;
-		}
 
 		if (force) {
 			caretEl.remove();
@@ -99,28 +154,24 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 		}
 	}
 
-	function moveImageNode(view: EditorView, fromPos: number, toPos: number) {
-		const { state } = view;
+	function moveImageNode(view: EditorView, fromPos: number, toPos: number): boolean {
+		const { state, dispatch } = view;
 		const node = state.doc.nodeAt(fromPos);
-		if (!node || node.type.name !== 'image') return false;
 
-		if (toPos >= fromPos && toPos <= fromPos + node.nodeSize) return false;
+		if (!node || node.type !== state.schema.nodes.image) {
+			return false;
+		}
 
 		const tr = state.tr.delete(fromPos, fromPos + node.nodeSize);
 		const insertPos = toPos > fromPos ? toPos - node.nodeSize : toPos;
 
-		try {
-			tr.insert(insertPos, node);
-			view.dispatch(tr.scrollIntoView());
-			return true;
-		} catch {
-			return false;
-		}
+		tr.insert(insertPos, node);
+		dispatch(tr.scrollIntoView());
+		return true;
 	}
 
-	function cleanupAll(view?: EditorView) {
+	function cleanupDragState(view?: EditorView): void {
 		hideCaret(true);
-		dragInside = false;
 
 		if (view) {
 			view.dom.classList.remove('pm-dragging-image');
@@ -132,14 +183,30 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 		}
 	}
 
+	function isExternalDragLeave(view: EditorView, event: DragEvent): boolean {
+		const related = event.relatedTarget;
+		if (!(related instanceof Node)) return true;
+		return !view.dom.contains(related);
+	}
+
+	function eventHasImageData(event: DragEvent): boolean {
+		if (draggingImg) return true;
+
+		const items = Array.from(event.dataTransfer?.items ?? []);
+		return items.some((item) => item.type.startsWith('image/'));
+	}
+
 	return new Plugin({
 		props: {
 			handleDOMEvents: {
-				dragstart(view: EditorView, event: DragEvent) {
-					const img = (event.target as HTMLElement | null)?.closest('img.pm-image');
-					if (!img) return false;
+				dragstart(_view: EditorView, event: DragEvent) {
+					const target = event.target;
+					if (!(target instanceof HTMLElement)) return false;
 
-					draggingImg = img as HTMLElement;
+					const img = target.closest('img.pm-image');
+					if (!(img instanceof HTMLElement)) return false;
+
+					draggingImg = img;
 					draggingImg.classList.add('pm-img-dragging');
 
 					if (event.dataTransfer) {
@@ -150,90 +217,93 @@ export function imageDropPlugin(imageQueue: { id: string; file: File; previewUrl
 					return true;
 				},
 
-				dragover(view: EditorView, event: DragEvent) {
-					const hasImage =
-						!!draggingImg ||
-						Array.from(event.dataTransfer?.items ?? []).some((i) => i.type.startsWith('image/'));
+				dragenter(view: EditorView, event: DragEvent) {
+					if (!eventHasImageData(event)) return false;
 
-					if (!hasImage) return false;
+					view.dom.classList.add('pm-dragging-image');
+					return true;
+				},
+
+				dragover(view: EditorView, event: DragEvent) {
+					if (!eventHasImageData(event)) return false;
 
 					event.preventDefault();
 					showCaret(view, event.clientX, event.clientY);
-
-					if (!dragInside) {
-						view.dom.classList.add('pm-dragging-image');
-						dragInside = true;
-					}
-
+					view.dom.classList.add('pm-dragging-image');
 					return true;
 				},
 
 				dragleave(view: EditorView, event: DragEvent) {
-					const next = event.relatedTarget as Node | null;
-					if (next && view.dom.contains(next)) return false;
+					if (!isExternalDragLeave(view, event)) {
+						return false;
+					}
 
-					view.dom.classList.remove('pm-dragging-image');
-					hideCaret();
-					dragInside = false;
+					cleanupDragState(view);
 					return false;
 				},
 
 				drop(view: EditorView, event: DragEvent) {
 					event.preventDefault();
 
-					view.dom.classList.remove('pm-dragging-image');
-					hideCaret(true);
-					dragInside = false;
-
 					const pos = view.posAtCoords({ left: event.clientX, top: event.clientY });
 					if (!pos) {
-						cleanupAll(view);
+						cleanupDragState(view);
 						return false;
 					}
 
 					if (draggingImg) {
-						const fromPos = view.posAtDOM(draggingImg, 0);
-						moveImageNode(view, fromPos, pos.pos);
-						cleanupAll(view);
-						return true;
+						const domPos = view.posAtDOM(draggingImg, 0);
+						const moved = domPos != null && moveImageNode(view, domPos, pos.pos);
+						cleanupDragState(view);
+						return moved;
 					}
 
 					const files = Array.from(event.dataTransfer?.files ?? []);
-					if (!files.length) {
-						cleanupAll(view);
+					if (files.length === 0) {
+						cleanupDragState(view);
 						return false;
 					}
 
-					view.dispatch(
-						view.state.tr.setSelection(TextSelection.near(view.state.doc.resolve(pos.pos)))
+					const tr = view.state.tr.setSelection(
+						TextSelection.near(view.state.doc.resolve(pos.pos))
 					);
+					view.dispatch(tr);
 
 					const handled = handleFiles(view, files);
-					cleanupAll(view);
+					cleanupDragState(view);
 					return handled;
 				},
 
 				dragend(view: EditorView) {
-					cleanupAll(view);
+					cleanupDragState(view);
 					return false;
 				},
 
 				paste(view: EditorView, event: ClipboardEvent) {
 					const files = Array.from(event.clipboardData?.files ?? []);
-					if (!files.length) return false;
+					if (files.length === 0) return false;
+
+					const hasImage = files.some((file) => file.type.startsWith('image/'));
+					if (!hasImage) return false;
 
 					event.preventDefault();
 					const handled = handleFiles(view, files);
-					cleanupAll(view);
+					cleanupDragState(view);
 					return handled;
 				}
 			}
 		},
 
-		view() {
+		view(view: EditorView) {
 			return {
 				destroy() {
-					hideCaret(true);
+					cleanupDragState(view);
+
+					for (const id of registeredPreviewIds) {
+						revokePreview(id);
+					}
+
+					registeredPreviewIds.clear();
 				}
 			};
 		}

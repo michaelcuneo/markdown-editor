@@ -1,144 +1,241 @@
+// src/lib/editor/plugins/codeMirrorBlockPlugin.ts
 import { Plugin } from 'prosemirror-state';
-import type { NodeView } from 'prosemirror-view';
-import { EditorState as CMState } from '@codemirror/state';
-import { EditorView as CMView, highlightSpecialChars, ViewUpdate } from '@codemirror/view';
-import { codeMirrorTheme } from '../theme/codeMirrorTheme';
+import type { Node as PMNode } from 'prosemirror-model';
+import type { EditorView as PMView, NodeView } from 'prosemirror-view';
+
+import { EditorState as CMState, Compartment, type Extension } from '@codemirror/state';
+import {
+	EditorView as CMView,
+	highlightSpecialChars,
+	ViewUpdate
+} from '@codemirror/view';
+
 import { javascript } from '@codemirror/lang-javascript';
 import { markdown } from '@codemirror/lang-markdown';
 import { python } from '@codemirror/lang-python';
 import { css } from '@codemirror/lang-css';
-import type { Node as PMNode } from 'prosemirror-model';
-import type { EditorView as PMView } from 'prosemirror-view';
-import type { Extension } from '@codemirror/state';
+
+import { codeMirrorTheme } from '../theme/codeMirrorTheme';
 
 const languageMap: Record<string, () => Extension> = {
 	js: javascript,
 	javascript,
 	ts: javascript,
 	typescript: javascript,
-	sveltekit: javascript,
-	svelte: javascript,
 	py: python,
 	python,
 	md: markdown,
 	markdown,
 	css,
-	txt: () => []
+	txt: () => [],
+	text: () => [],
+	plaintext: () => [],
+	plain: () => []
 };
+
+function getLanguageFromParams(params: unknown): string {
+	if (typeof params !== 'string') return 'plaintext';
+
+	const trimmed = params.trim();
+	if (!trimmed) return 'plaintext';
+
+	return trimmed.split(/\s+/)[0]?.toLowerCase() ?? 'plaintext';
+}
+
+function getLanguageExtension(lang: string): Extension {
+	const factory = languageMap[lang] ?? (() => []);
+	return factory();
+}
+
+function prettyLang(lang: string): string {
+	const aliases: Record<string, string> = {
+		js: 'JavaScript',
+		javascript: 'JavaScript',
+		ts: 'TypeScript',
+		typescript: 'TypeScript',
+		py: 'Python',
+		python: 'Python',
+		md: 'Markdown',
+		markdown: 'Markdown',
+		css: 'CSS',
+		txt: 'Plain Text',
+		text: 'Plain Text',
+		plaintext: 'Plain Text',
+		plain: 'Plain Text'
+	};
+
+	return aliases[lang] ?? lang.toUpperCase();
+}
 
 class CodeMirrorBlockView implements NodeView {
 	node: PMNode;
 	view: PMView;
-	getPos: () => number;
-	cm: CMView;
+	getPos: () => number | undefined;
+
 	dom: HTMLElement;
 	label: HTMLElement;
+	cmHost: HTMLElement;
+	cm: CMView;
+
 	currentLang: string;
 	editable: boolean;
 
-	constructor(node: PMNode, view: PMView, getPos: () => number) {
+	private syncingFromPM = false;
+	private syncingFromCM = false;
+
+	private languageCompartment = new Compartment();
+	private editableCompartment = new Compartment();
+
+	constructor(node: PMNode, view: PMView, getPos: () => number | undefined) {
 		this.node = node;
 		this.view = view;
 		this.getPos = getPos;
-		this.currentLang = node.attrs.params || 'plaintext';
-		this.editable = view.editable ? view.editable : true;
+
+		this.currentLang = getLanguageFromParams(node.attrs.params);
+		this.editable = this.isEditable();
 
 		this.dom = document.createElement('div');
 		this.dom.className = 'pm-codemirror-wrapper';
 
 		this.label = document.createElement('div');
 		this.label.className = 'pm-code-lang';
-		this.label.textContent = this.prettyLang(this.currentLang);
+		this.label.textContent = prettyLang(this.currentLang);
 		this.dom.appendChild(this.label);
+
+		this.cmHost = document.createElement('div');
+		this.cmHost.className = 'pm-codemirror-editor';
+		this.dom.appendChild(this.cmHost);
 
 		this.cm = this.createCodeMirror(node.textContent, this.currentLang, this.editable);
 	}
 
-	createCodeMirror(doc: string, lang: string, editable = true) {
-		const languageExtension = this.getLanguageExtension(lang);
+	private isEditable(): boolean {
+		try {
+			return this.view.editable;
+		} catch {
+			return true;
+		}
+	}
 
+	private createCodeMirror(doc: string, lang: string, editable: boolean): CMView {
 		return new CMView({
+			parent: this.cmHost,
 			state: CMState.create({
 				doc,
 				extensions: [
 					highlightSpecialChars(),
-					...codeMirrorTheme, // 👈 drop in our theme
-					languageExtension,
-					editable ? [] : CMView.editable.of(false),
+					...codeMirrorTheme,
+					this.languageCompartment.of(getLanguageExtension(lang)),
+					this.editableCompartment.of(CMView.editable.of(editable)),
 					CMView.updateListener.of((update: ViewUpdate) => {
-						if (update.docChanged && editable) {
-							const text = update.state.doc.toString();
-							const tr = this.view.state.tr.replaceWith(
-								this.getPos() + 1,
-								this.getPos() + 1 + this.node.content.size,
-								this.view.state.schema.text(text)
-							);
-							this.view.dispatch(tr);
-						}
+						this.onCodeMirrorUpdate(update);
 					})
 				]
-			}),
-			parent: this.dom
+			})
 		});
 	}
 
-	getLanguageExtension(lang: string) {
-		const normal = lang.toLowerCase();
-		const factory = languageMap[normal] || (() => []);
-		return factory();
+	private onCodeMirrorUpdate(update: ViewUpdate): void {
+		if (!update.docChanged) return;
+		if (!this.editable) return;
+		if (this.syncingFromPM) return;
+
+		const pos = this.safeGetPos();
+		if (pos == null) return;
+
+		const text = update.state.doc.toString();
+		const { state } = this.view;
+		const from = pos + 1;
+		const to = pos + 1 + this.node.content.size;
+
+		this.syncingFromCM = true;
+		try {
+			let tr = state.tr;
+
+			if (text.length > 0) {
+				tr = tr.replaceWith(from, to, state.schema.text(text));
+			} else {
+				tr = tr.delete(from, to);
+			}
+
+			if (tr.docChanged) {
+				this.view.dispatch(tr);
+			}
+		} finally {
+			this.syncingFromCM = false;
+		}
+	}
+	
+	private safeGetPos(): number | null {
+		try {
+			const pos = this.getPos();
+			return typeof pos === 'number' ? pos : null;
+		} catch {
+			return null;
+		}
 	}
 
-	prettyLang(lang: string) {
-		if (!lang || lang === 'plaintext') return 'Plain Text';
-		const normalized = lang.toLowerCase();
-		const aliases: Record<string, string> = {
-			js: 'JavaScript',
-			ts: 'TypeScript',
-			py: 'Python',
-			md: 'Markdown',
-			json: 'JSON',
-			css: 'CSS'
-		};
-		return aliases[normalized] || lang.toUpperCase();
+	private setLanguage(lang: string): void {
+		if (lang === this.currentLang) return;
+		this.currentLang = lang;
+		this.label.textContent = prettyLang(lang);
+		this.cm.dispatch({
+			effects: this.languageCompartment.reconfigure(getLanguageExtension(lang))
+		});
 	}
 
-	update(node: PMNode) {
+	private setEditable(editable: boolean): void {
+		if (editable === this.editable) return;
+		this.editable = editable;
+		this.cm.dispatch({
+			effects: this.editableCompartment.reconfigure(CMView.editable.of(editable))
+		});
+	}
+
+	update(node: PMNode): boolean {
 		if (node.type !== this.node.type) return false;
-		const newLang = node.attrs.params || 'plaintext';
-		const newText = node.textContent;
 
-		if (newLang !== this.currentLang) {
-			this.currentLang = newLang;
-			this.label.textContent = this.prettyLang(newLang);
-			this.rebuildCodeMirror(newText, newLang);
-			return true;
-		}
-
-		if (newText !== this.cm.state.doc.toString()) {
-			this.cm.dispatch({
-				changes: { from: 0, to: this.cm.state.doc.length, insert: newText }
-			});
-		}
+		const nextLang = getLanguageFromParams(node.attrs.params);
+		const nextText = node.textContent;
+		const nextEditable = this.isEditable();
 
 		this.node = node;
+		this.setLanguage(nextLang);
+		this.setEditable(nextEditable);
+
+		const currentText = this.cm.state.doc.toString();
+		if (!this.syncingFromCM && nextText !== currentText) {
+			this.syncingFromPM = true;
+			try {
+				this.cm.dispatch({
+					changes: { from: 0, to: this.cm.state.doc.length, insert: nextText }
+				});
+			} finally {
+				this.syncingFromPM = false;
+			}
+		}
+
 		return true;
 	}
 
-	rebuildCodeMirror(newText: string, newLang: string) {
-		this.cm.destroy();
-		this.cm = this.createCodeMirror(newText, newLang, this.editable);
+	selectNode(): void {
+		this.dom.classList.add('ProseMirror-selectednode');
 	}
 
-	setEditable(editable: boolean) {
-		this.editable = editable;
-		this.rebuildCodeMirror(this.node.textContent, this.currentLang);
+	deselectNode(): void {
+		this.dom.classList.remove('ProseMirror-selectednode');
 	}
 
-	stopEvent() {
+	stopEvent(event: Event): boolean {
+		const target = event.target as Node | null;
+		return !!target && this.dom.contains(target);
+	}
+
+	ignoreMutation(): boolean {
 		return true;
 	}
 
-	destroy() {
+	destroy(): void {
 		this.cm.destroy();
 	}
 }
@@ -148,20 +245,11 @@ export function codeMirrorBlockPlugin() {
 		props: {
 			nodeViews: {
 				code_block(node, view, getPos) {
-					if (!getPos) throw new Error('getPos is undefined');
-					const cmView = new CodeMirrorBlockView(node, view, getPos as () => number);
+					if (typeof getPos !== 'function') {
+						throw new Error('code_block node view requires getPos');
+					}
 
-					// 🔒 Listen for changes in editable state
-					const origSetProps = view.setProps.bind(view);
-					view.setProps = (props) => {
-						if (typeof props.editable === 'function') {
-							const editable = props.editable(view.state);
-							cmView.setEditable(editable);
-						}
-						origSetProps(props);
-					};
-
-					return cmView;
+					return new CodeMirrorBlockView(node, view, getPos);
 				}
 			}
 		}

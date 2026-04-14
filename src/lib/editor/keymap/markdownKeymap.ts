@@ -3,6 +3,9 @@ import {
 	toggleMark,
 	setBlockType,
 	chainCommands,
+	deleteSelection,
+	joinBackward,
+	selectNodeBackward,
 	splitBlock,
 	liftEmptyBlock,
 	newlineInCode,
@@ -10,53 +13,95 @@ import {
 	wrapIn
 } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
-import { liftListItem, sinkListItem } from 'prosemirror-schema-list'; // ✅ FIXED
+import {
+	liftListItem,
+	sinkListItem,
+	splitListItem
+} from 'prosemirror-schema-list';
 import type { Schema } from 'prosemirror-model';
 import type { Plugin, EditorState, Transaction } from 'prosemirror-state';
 
-/**
- * Comprehensive Markdown-style keyboard shortcuts
- */
+type KeyCommand = (
+	state: EditorState,
+	dispatch?: (tr: Transaction) => void
+) => boolean;
+
 export function markdownKeymap(schema: Schema): Plugin {
-	const bindings: Record<
-		string,
-		(state: EditorState, dispatch?: (tr: Transaction) => void) => boolean
-	> = {};
+	const bindings: Record<string, KeyCommand> = {};
 
 	// --- Editing basics ---
-	bindings['Enter'] = chainCommands(newlineInCode, splitBlock);
-	bindings['Shift-Enter'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
-		const br = schema.nodes.hard_break;
-		if (!br) return false;
-		dispatch?.(state.tr.replaceSelectionWith(br.create()).scrollIntoView());
-		return true;
-	};
-	bindings['Mod-Enter'] = exitCode;
-	bindings['Backspace'] = liftEmptyBlock;
+	if (schema.nodes.list_item) {
+		bindings['Enter'] = chainCommands(
+			newlineInCode,
+			splitListItem(schema.nodes.list_item),
+			splitBlock
+		);
+	} else {
+		bindings['Enter'] = chainCommands(newlineInCode, splitBlock);
+	}
 
-	// --- Undo/Redo ---
+	bindings['Shift-Enter'] = chainCommands(
+		newlineInCode,
+		(state: EditorState, dispatch?: (tr: Transaction) => void) => {
+			const br = schema.nodes.hard_break;
+			if (!br) return false;
+
+			dispatch?.(state.tr.replaceSelectionWith(br.create()).scrollIntoView());
+			return true;
+		}
+	);
+
+	bindings['Mod-Enter'] = exitCode;
+
+	bindings['Backspace'] = chainCommands(
+		deleteSelection,
+		joinBackward,
+		liftEmptyBlock,
+		selectNodeBackward
+	);
+
+	// --- Undo / Redo ---
 	bindings['Mod-z'] = undo;
 	bindings['Mod-Shift-z'] = redo;
-	bindings['Mod-y'] = redo; // Windows-friendly redo
+	bindings['Mod-y'] = redo;
 
 	// --- Inline formatting ---
-	if (schema.marks.strong) bindings['Mod-b'] = toggleMark(schema.marks.strong);
-	if (schema.marks.em) bindings['Mod-i'] = toggleMark(schema.marks.em);
-	if ('strikethrough' in schema.marks)
+	if (schema.marks.strong) {
+		bindings['Mod-b'] = toggleMark(schema.marks.strong);
+	}
+
+	if (schema.marks.em) {
+		bindings['Mod-i'] = toggleMark(schema.marks.em);
+	}
+
+	if (schema.marks.strikethrough) {
 		bindings['Mod-Shift-x'] = toggleMark(schema.marks.strikethrough);
-	if (schema.marks.code) bindings['Mod-`'] = toggleMark(schema.marks.code);
+	}
+
+	if (schema.marks.code) {
+		bindings['Mod-`'] = toggleMark(schema.marks.code);
+	}
 
 	// --- Links ---
 	if (schema.marks.link) {
-		bindings['Mod-k'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
-			const url = prompt('Enter link URL:');
-			if (!url) return false;
-			const mark = schema.marks.link?.create({ href: url });
-			if (!mark) return false;
+		bindings['Mod-k'] = (
+			state: EditorState,
+			dispatch?: (tr: Transaction) => void
+		) => {
 			const { from, to } = state.selection;
 			if (from === to) return false;
-			dispatch?.(state.tr.addMark(from, to, mark).scrollIntoView());
-			return true;
+
+			let url = prompt('Enter link URL:');
+			if (!url) return false;
+
+			url = url.trim();
+			if (!url) return false;
+
+			if (!/^(https?:\/\/|mailto:|tel:)/i.test(url)) {
+				url = 'https://' + url;
+			}
+
+			return toggleMark(schema.marks.link!, { href: url })(state, dispatch);
 		};
 	}
 
@@ -68,7 +113,11 @@ export function markdownKeymap(schema: Schema): Plugin {
 	}
 
 	// --- Lists ---
-	if (schema.nodes.bullet_list && schema.nodes.list_item) {
+	if (schema.nodes.list_item) {
+		bindings['Tab'] = sinkListItem(schema.nodes.list_item);
+		bindings['Shift-Tab'] = liftListItem(schema.nodes.list_item);
+
+		// Optional alternative shortcuts if you still want them
 		bindings['Mod-]'] = sinkListItem(schema.nodes.list_item);
 		bindings['Mod-['] = liftListItem(schema.nodes.list_item);
 	}
@@ -79,8 +128,31 @@ export function markdownKeymap(schema: Schema): Plugin {
 	}
 
 	// --- Code blocks ---
-	if (schema.nodes.code_block) {
-		bindings['Mod-Alt-c'] = setBlockType(schema.nodes.code_block);
+	if (schema.nodes.code_block && schema.nodes.paragraph) {
+		bindings['Mod-Alt-c'] = (
+			state: EditorState,
+			dispatch?: (tr: Transaction) => void
+		) => {
+			const { code_block, paragraph } = schema.nodes;
+			if (!code_block || !paragraph) return false;
+
+			const isCodeBlock = state.selection.$from.parent.type === code_block;
+			return setBlockType(isCodeBlock ? paragraph : code_block)(state, dispatch);
+		};
+	}
+
+	// --- Horizontal rule ---
+	if (schema.nodes.horizontal_rule) {
+		bindings['Mod-Shift--'] = (
+			state: EditorState,
+			dispatch?: (tr: Transaction) => void
+		) => {
+			const hr = schema.nodes.horizontal_rule;
+			if (!hr) return false;
+
+			dispatch?.(state.tr.replaceSelectionWith(hr.create()).scrollIntoView());
+			return true;
+		};
 	}
 
 	return keymap(bindings);

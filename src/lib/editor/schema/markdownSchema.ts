@@ -1,11 +1,9 @@
-import { Schema } from 'prosemirror-model';
+import type { Schema } from 'prosemirror-model';
 import { createTaskListSchema } from './tasklistSchema.js';
 
+/**
+ * Create the unified Markdown schema.
+ */
 export function createMarkdownSchema(): Schema {
-	const taskSchema = createTaskListSchema();
-
-	return new Schema({
-		nodes: taskSchema.spec.nodes,
-		marks: taskSchema.spec.marks
-	});
+	return createTaskListSchema();
 }

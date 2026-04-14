@@ -29,22 +29,6 @@ function taskListItemToDOM(node: PMNode): DOMOutputSpec {
 	];
 }
 
-function normalizeAlign(value: unknown): AlignValue {
-	if (value === 'left' || value === 'center' || value === 'right') {
-		return value;
-	}
-	return null;
-}
-
-function getAlignFromDom(dom: HTMLElement): AlignValue {
-	return normalizeAlign(dom.getAttribute('align')?.toLowerCase() ?? null);
-}
-
-function buildAlignAttrs(node: PMNode): Record<string, string> | null {
-	const align = normalizeAlign(node.attrs.align);
-	return align ? { align } : null;
-}
-
 export function createTaskListSchema(): Schema {
 	const baseListItem = baseMarkdownSchema.spec.nodes.get('list_item');
 	const baseImage = baseMarkdownSchema.spec.nodes.get('image');
@@ -72,6 +56,22 @@ export function createTaskListSchema(): Schema {
 		throw new Error('Base markdown schema is missing blockquote');
 	}
 
+	function normalizeAlign(value: unknown): AlignValue {
+		if (value === 'left' || value === 'center' || value === 'right') {
+			return value;
+		}
+		return null;
+	}
+
+	function getAlignFromDom(dom: HTMLElement): AlignValue {
+		return normalizeAlign(dom.getAttribute('align')?.toLowerCase() ?? null);
+	}
+
+	function buildAlignAttrs(node: PMNode): Record<string, string> | null {
+		const align = normalizeAlign(node.attrs.align);
+		return align ? { align } : null;
+	}
+
 	const nodes = baseMarkdownSchema.spec.nodes
 		.update('paragraph', {
 			...baseParagraph,
@@ -84,9 +84,7 @@ export function createTaskListSchema(): Schema {
 					tag: 'p[align]',
 					getAttrs(dom) {
 						if (!(dom instanceof HTMLElement)) return false;
-						return {
-							align: getAlignFromDom(dom)
-						};
+						return { align: getAlignFromDom(dom) };
 					}
 				},
 				...(baseParagraph.parseDOM ?? [])
@@ -150,9 +148,7 @@ export function createTaskListSchema(): Schema {
 					tag: 'blockquote[align]',
 					getAttrs(dom) {
 						if (!(dom instanceof HTMLElement)) return false;
-						return {
-							align: getAlignFromDom(dom)
-						};
+						return { align: getAlignFromDom(dom) };
 					}
 				},
 				...(baseBlockquote.parseDOM ?? [])

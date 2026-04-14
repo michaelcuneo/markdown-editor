@@ -1,4 +1,5 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
+import type { EditorView } from 'prosemirror-view';
 
 declare module 'prosemirror-view' {
 	interface EditorView {
@@ -6,141 +7,174 @@ declare module 'prosemirror-view' {
 		getMarkdown?: () => string;
 	}
 }
-import { undoDepth, redoDepth } from 'prosemirror-history';
 
 export const autoSaveKey = new PluginKey('auto-save');
 
-function debounce<A extends unknown[]>(
-	fn: (...args: A) => void,
-	delay = 800
-): (...args: A) => void {
-	let timeout: ReturnType<typeof setTimeout>;
-	return (...args: A) => {
-		clearTimeout(timeout);
+export type ImageQueueItem = {
+	id: string;
+	file?: File;
+	name?: string;
+	type?: string;
+	size?: number;
+	previewUrl?: string;
+};
+
+export type StoredImageQueueItem = {
+	id: string;
+	name?: string;
+	type?: string;
+	size?: number;
+	previewUrl?: string;
+};
+
+export type AutoSaveOptions = {
+	docId?: string;
+	onSave?: (markdown: string, queue: ImageQueueItem[]) => void;
+	onRestore?: (
+		markdown: string,
+		queue: ImageQueueItem[] | StoredImageQueueItem[]
+	) => void;
+	storageKey?: string;
+	delay?: number;
+};
+
+type DebouncedFn<A extends unknown[]> = ((...args: A) => void) & {
+	cancel: () => void;
+};
+
+type AutoSavePluginFn = (
+	imageQueueRef: ImageQueueItem[],
+	options?: AutoSaveOptions
+) => Plugin;
+
+type AutoSavePluginFactory = AutoSavePluginFn & {
+	clear: (storageKey?: string, docId?: string) => void;
+};
+
+// ------------------------
+// Utils
+// ------------------------
+
+function debounce<A extends unknown[]>(fn: (...args: A) => void, delay: number): DebouncedFn<A> {
+	let timeout: ReturnType<typeof setTimeout> | null = null;
+
+	const wrapped = (...args: A) => {
+		if (timeout) clearTimeout(timeout);
 		timeout = setTimeout(() => fn(...args), delay);
 	};
+
+	wrapped.cancel = () => {
+		if (timeout) {
+			clearTimeout(timeout);
+			timeout = null;
+		}
+	};
+
+	return wrapped;
 }
 
-export function autoSavePlugin(
-	imageQueueRef: { id: string; file: File; previewUrl?: string }[],
-	options?: {
-		docId?: string; // optional unique key for multi-doc setups
-		onSave?: (markdown: string, queue: typeof imageQueueRef) => void;
-		onRestore?: (markdown: string, queue: typeof imageQueueRef) => void;
-		storageKey?: string;
-		delay?: number;
-	}
-) {
-	const baseKey = options?.storageKey ?? 'markdown-editor';
-	const docId = options?.docId ?? 'default';
-	const delay = options?.delay ?? 800;
+function getStorageKey(base: string, docId?: string): string {
+	return docId ? `${base}:${docId}` : base;
+}
 
-	const storagePrefix = `${baseKey}-${docId}`;
+// ------------------------
+// Plugin
+// ------------------------
 
-	const contentKey = `${storagePrefix}-content-v1`;
-	const imageKey = `${storagePrefix}-images-v1`;
+export const autoSavePlugin: AutoSavePluginFactory = Object.assign(
+	function autoSavePluginImpl(
+		imageQueueRef: ImageQueueItem[],
+		options: AutoSaveOptions = {}
+	): Plugin {
+		const {
+			docId,
+			onSave,
+			onRestore,
+			storageKey = 'markdown-editor',
+			delay = 500
+		} = options;
 
-	const debouncedSave = debounce((markdown: string) => {
-		try {
-			if (options?.onSave) {
-				options.onSave(markdown, imageQueueRef);
-				return;
-			}
+		const key = getStorageKey(storageKey, docId);
 
-			localStorage.setItem(contentKey, markdown);
-			localStorage.setItem(
-				imageKey,
-				JSON.stringify(
-					imageQueueRef.map(({ id, file, previewUrl }) => ({
-						id,
-						name: file.name,
-						type: file.type,
-						size: file.size,
-						previewUrl
-					}))
-				)
-			);
-			console.info(`💾 Auto-saved [${docId}] markdown + images`);
-		} catch (err) {
-			console.warn('⚠️ Auto-save failed:', err);
-		}
-	}, delay);
+		return new Plugin({
+			key: autoSaveKey,
 
-	function restoreSaved() {
-		let markdown = '';
-		let queue: typeof imageQueueRef = [];
-
-		try {
-			markdown = localStorage.getItem(contentKey) || '';
-			const savedImages = localStorage.getItem(imageKey);
-			queue = savedImages ? JSON.parse(savedImages) : [];
-		} catch (err) {
-			console.warn('⚠️ Failed to restore saved content:', err);
-		}
-
-		if (queue?.length) {
-			imageQueueRef.splice(0, imageQueueRef.length, ...queue);
-		}
-
-		if (options?.onRestore) options.onRestore(markdown, queue);
-
-		return markdown;
-	}
-
-	let restored = false;
-
-	return new Plugin({
-		key: autoSaveKey,
-
-		view(view) {
-			if (!restored) {
-				const saved = restoreSaved();
-				if (saved && typeof view['setMarkdown'] === 'function') {
-					view['setMarkdown'](saved);
-					console.info(`🔄 Restored editor from localStorage [${docId}]`);
-				}
-				restored = true;
-			}
-			return {};
-		},
-
-		appendTransaction(transactions, oldState, newState) {
-			if (!transactions.some((tr) => tr.docChanged)) return null;
-			if (undoDepth(newState) !== 0 || redoDepth(newState) !== 0) return null;
-
-			queueMicrotask(() => {
+			view(view: EditorView) {
+				// ------------------------
+				// Restore
+				// ------------------------
 				try {
-					const markdown = (newState.doc as { type?: unknown }).type
-						? (
-								window as {
-									defaultMarkdownSerializer?: { serialize: (doc: typeof newState.doc) => string };
-								}
-							).defaultMarkdownSerializer?.serialize
-							? (
-									window as unknown as {
-										defaultMarkdownSerializer?: { serialize: (doc: typeof newState.doc) => string };
-									}
-								).defaultMarkdownSerializer?.serialize(newState.doc)
-							: newState.doc.textContent
-						: '';
+					const raw = localStorage.getItem(key);
+					if (raw) {
+						const parsed = JSON.parse(raw) as {
+							markdown: string;
+							queue: StoredImageQueueItem[];
+						};
 
-					if (markdown) debouncedSave(markdown);
-				} catch (err) {
-					console.warn('⚠️ Auto-save failed:', err);
+						if (parsed?.markdown && view.setMarkdown) {
+							view.setMarkdown(parsed.markdown);
+						}
+
+						if (parsed?.queue && Array.isArray(parsed.queue)) {
+							imageQueueRef.splice(0, imageQueueRef.length, ...parsed.queue);
+						}
+
+						onRestore?.(parsed.markdown, parsed.queue);
+					}
+				} catch {
+					// ignore corrupted storage
 				}
-			});
 
-			return null;
-		}
-	});
-}
+				// ------------------------
+				// Save (debounced)
+				// ------------------------
+				const save = debounce(() => {
+					if (!view.getMarkdown) return;
 
-autoSavePlugin.clear = (storageKey = 'markdown-editor', docId?: string) => {
-	const prefix = docId ? `${storageKey}-${docId}` : storageKey;
-	for (const key in localStorage) {
-		if (key.startsWith(prefix)) {
-			localStorage.removeItem(key);
-			console.info(`🧹 Cleared saved data: ${key}`);
+					try {
+						const markdown = view.getMarkdown();
+
+						const queue: StoredImageQueueItem[] = imageQueueRef.map((q) => ({
+							id: q.id,
+							name: q.name,
+							type: q.type,
+							size: q.size,
+							previewUrl: q.previewUrl
+						}));
+
+						localStorage.setItem(
+							key,
+							JSON.stringify({
+								markdown,
+								queue
+							})
+						);
+
+						onSave?.(markdown, imageQueueRef);
+					} catch {
+						// ignore storage errors
+					}
+				}, delay);
+
+				return {
+					update() {
+						save();
+					},
+					destroy() {
+						save.cancel();
+					}
+				};
+			}
+		});
+	},
+	{
+		clear(storageKey = 'markdown-editor', docId?: string): void {
+			const key = docId ? `${storageKey}:${docId}` : storageKey;
+			try {
+				localStorage.removeItem(key);
+			} catch {
+				// ignore
+			}
 		}
 	}
-};
+);

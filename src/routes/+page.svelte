@@ -3,24 +3,24 @@
   import { onMount } from 'svelte';
 
   let activeTab: 'editor' | 'docs' = $state('editor');
-let content = $state(`# Welcome to the Markdown Editor!
+  let content = $state(`# Welcome to the Markdown Editor!
 
 This is a **fully featured WYSIWYM Markdown editor** built with [Svelte&nbsp;5](https://svelte.dev) ✨  
 It supports _rich formatting_, **live preview**, \`inline code\`, and even syntax-highlighted code blocks.
 
 ---
 
-## 🎨 Typography & Formatting
+## Typography & Formatting
 
 You can use **bold**, _italic_, **_both_**, or \`inline code\`.  
 Links like [OpenAI](https://openai.com) are automatically styled and clickable.  
 
-> “Markdown is not about syntax — it’s about expression.”  
+> "Markdown is not about syntax — it's about expression."  
 > — _Anonymous Developer_
 
 ---
 
-## 🧮 Code Blocks with Syntax Highlighting
+## Code Blocks with Syntax Highlighting
 
 \`\`\`ts
 // TypeScript Example
@@ -41,7 +41,7 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## ✅ Task Lists
+## Task Lists
 
 - [x] Build Markdown Schema
 - [x] Add WYSIWYM Formatting
@@ -51,7 +51,7 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## 🧾 Lists & Nesting
+## Lists & Nesting
 
 - Features:
   - Toolbar Formatting
@@ -67,14 +67,14 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
-## 💬 Blockquotes & Rules
+## Blockquotes & Rules
 
-> “The best way to predict the future is to implement it.”  
+> "The best way to predict the future is to implement it."  
 > — Alan Kay
 
 ---
 
-## 💡 Try It Out
+## Try It Out
 
 Type some Markdown below to see real-time updates.  
 Experiment with:
@@ -85,11 +85,11 @@ Experiment with:
 
 ---
 
-That’s it! You’re editing with a fully interactive Markdown editor built with ❤️ and Svelte.
+That's it! You're editing with a fully interactive Markdown editor built with ❤️ and Svelte.
 `);
 
   let readmeHtml = $state<string>('');
-  // let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
+  let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
 
   onMount(async () => {
     try {
@@ -130,13 +130,13 @@ That’s it! You’re editing with a fully interactive Markdown editor built wit
         Edit Markdown in the left pane and see live preview updates on the right.
       </p>
 
-    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} allowHtml={true} />
+    <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} imageQueue={imageQueue} />
     </section>
   {:else}
     <section class="docs-section">
       <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} allowHtml={true} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} imageQueue={undefined} />
     </section>
   {/if}
 </main>

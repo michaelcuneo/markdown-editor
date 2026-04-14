@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { ToolbarAction } from '$lib/types/index.js';
-  import {
-    AlignHorizontalDistributeEndIcon,
-    AlignHorizontalDistributeCenterIcon,
-    AlignHorizontalDistributeStartIcon,
-    BoldIcon,
-    Heading1Icon,
-    Heading2Icon,
-    ItalicIcon,
-    StrikethroughIcon,
-  	QuoteIcon,
-  	MinusIcon,
+	import {
+		AlignHorizontalDistributeEndIcon,
+		AlignHorizontalDistributeCenterIcon,
+		AlignHorizontalDistributeStartIcon,
+		BoldIcon,
+		Heading1Icon,
+		Heading2Icon,
+		ItalicIcon,
+		StrikethroughIcon,
+		QuoteIcon,
+		MinusIcon,
 		ListIcon,
 		ListOrderedIcon,
 		ListCheckIcon,
@@ -18,7 +18,7 @@
 		Undo2Icon,
 		Redo2Icon,
 		CodeIcon
-  } from '@lucide/svelte';
+	} from '@lucide/svelte';
 
 	type CommandState = {
 		enabled: boolean;
@@ -111,7 +111,7 @@
 		title={getTitle('h2', 'Heading 2 (##)')}
 		aria-pressed={isActive('h2')}
 	>
-    <Heading2Icon size={18}/>
+		<Heading2Icon size={18}/>
 	</button>
 
 	{#if allowHtml}
@@ -232,7 +232,7 @@
 		onclick={() => handleClick('undo')}
 		title={getTitle('undo', 'Undo (Ctrl/Cmd+Z)')}
 	>
-    <Undo2Icon size={18}/>
+		<Undo2Icon size={18}/>
 	</button>
 
 	<button
@@ -241,6 +241,6 @@
 		onclick={() => handleClick('redo')}
 		title={getTitle('redo', 'Redo (Ctrl/Cmd+Shift+Z)')}
 	>
-    <Redo2Icon size={18}/>
+		<Redo2Icon size={18}/>
 	</button>
 </div>

@@ -165,7 +165,8 @@ function toggleTaskItem(view: EditorView): boolean {
 
 			if (!node) return false;
 
-			const currentChecked = typeof node.attrs?.checked === 'boolean' ? node.attrs.checked : false;
+			const currentChecked =
+				typeof node.attrs?.checked === 'boolean' ? node.attrs.checked : false;
 
 			view.dispatch(
 				state.tr

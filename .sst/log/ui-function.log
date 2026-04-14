@@ -1,6 +1,7 @@
-time=2026-04-14T15:41:12.146+10:00 level=INFO msg="checking for pulumi" path=/home/michael/.config/sst/bin/pulumi
-time=2026-04-14T15:41:12.228+10:00 level=INFO msg="checking for bun" path=/home/michael/.config/sst/bin/bun
-time=2026-04-14T15:41:12.229+10:00 level=INFO msg="initializing ui" isTTY=true
-time=2026-04-14T15:41:12.229+10:00 level=INFO msg="initializing ui"time=2026-04-14T16:03:44.704+10:00 level=INFO msg=interrupted
+time=2026-04-10T10:57:06.765+10:00 level=INFO msg="checking for pulumi" path="/Users/michaelcuneo/Library/Application Support/sst/bin/pulumi"
+time=2026-04-10T10:57:07.606+10:00 level=INFO msg="checking for bun" path="/Users/michaelcuneo/Library/Application Support/sst/bin/bun"
+time=2026-04-10T10:57:07.612+10:00 level=INFO msg="initializing ui" isTTY=true
+time=2026-04-10T10:57:07.612+10:00 level=INFO msg="initialized ui"
+time=2026-04-10T16:20:04.944+10:00 level=INFO msg=interrupted
 "initialized ui"
-time=2026-04-14T16:03:44.704+10:00 level=INFO msg=interrupted
+time=2026-04-10T16:20:04.944+10:00 level=INFO msg=interrupted
