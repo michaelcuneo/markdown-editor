@@ -1,5 +1,24 @@
 <script lang="ts">
 	import type { ToolbarAction } from '$lib/types/index.js';
+	import {
+		AlignHorizontalDistributeEndIcon,
+		AlignHorizontalDistributeCenterIcon,
+		AlignHorizontalDistributeStartIcon,
+		BoldIcon,
+		Heading1Icon,
+		Heading2Icon,
+		ItalicIcon,
+		StrikethroughIcon,
+		QuoteIcon,
+		MinusIcon,
+		ListIcon,
+		ListOrderedIcon,
+		ListCheckIcon,
+		Link2Icon,
+		Undo2Icon,
+		Redo2Icon,
+		CodeIcon
+	} from '@lucide/svelte';
 
 	type CommandState = {
 		enabled: boolean;
@@ -10,12 +29,14 @@
 		onAction,
 		activeMarks = {},
 		activeBlocks = {},
-		commandStates = {}
+		commandStates = {},
+		allowHtml = false
 	} = $props<{
 		onAction: (action: ToolbarAction) => void;
 		activeMarks?: Partial<Record<ToolbarAction, boolean>>;
 		activeBlocks?: Partial<Record<ToolbarAction, boolean>>;
 		commandStates?: Partial<Record<ToolbarAction, CommandState>>;
+		allowHtml?: boolean;
 	}>();
 
 	function isActive(action: ToolbarAction): boolean {
@@ -46,7 +67,7 @@
 		title={getTitle('bold', 'Bold (**text**)')}
 		aria-pressed={isActive('bold')}
 	>
-		<strong>B</strong>
+		<BoldIcon size={18}/>
 	</button>
 
 	<button
@@ -57,7 +78,7 @@
 		title={getTitle('italic', 'Italic (*text*)')}
 		aria-pressed={isActive('italic')}
 	>
-		<em>I</em>
+		<ItalicIcon size={18}/>
 	</button>
 
 	<button
@@ -68,7 +89,7 @@
 		title={getTitle('strike', 'Strikethrough (~~text~~)')}
 		aria-pressed={isActive('strike')}
 	>
-		S̶
+		<StrikethroughIcon size={18}/>
 	</button>
 
 	<button
@@ -79,7 +100,7 @@
 		title={getTitle('h1', 'Heading 1 (#)')}
 		aria-pressed={isActive('h1')}
 	>
-		H1
+		<Heading1Icon size={18}/>
 	</button>
 
 	<button
@@ -90,8 +111,43 @@
 		title={getTitle('h2', 'Heading 2 (##)')}
 		aria-pressed={isActive('h2')}
 	>
-		H2
+		<Heading2Icon size={18}/>
 	</button>
+
+	{#if allowHtml}
+		<button
+			type="button"
+			class:active={isActive('alignLeft')}
+			disabled={!isEnabled('alignLeft')}
+			onclick={() => handleClick('alignLeft')}
+			title={getTitle('alignLeft', 'Align left')}
+			aria-pressed={isActive('alignLeft')}
+		>
+			<AlignHorizontalDistributeStartIcon size={18}/>
+		</button>
+
+		<button
+			type="button"
+			class:active={isActive('alignCenter')}
+			disabled={!isEnabled('alignCenter')}
+			onclick={() => handleClick('alignCenter')}
+			title={getTitle('alignCenter', 'Align center')}
+			aria-pressed={isActive('alignCenter')}
+		>
+			<AlignHorizontalDistributeCenterIcon size={18}/>
+		</button>
+
+		<button
+			type="button"
+			class:active={isActive('alignRight')}
+			disabled={!isEnabled('alignRight')}
+			onclick={() => handleClick('alignRight')}
+			title={getTitle('alignRight', 'Align right')}
+			aria-pressed={isActive('alignRight')}
+		>
+			<AlignHorizontalDistributeEndIcon size={18}/>
+		</button>
+	{/if}
 
 	<button
 		type="button"
@@ -101,7 +157,7 @@
 		title={getTitle('quote', 'Blockquote (>)')}
 		aria-pressed={isActive('quote')}
 	>
-		&raquo;
+		<QuoteIcon size={18}/>
 	</button>
 
 	<button
@@ -110,7 +166,7 @@
 		onclick={() => handleClick('hr')}
 		title={getTitle('hr', 'Insert horizontal rule')}
 	>
-		―
+		<MinusIcon size={18}/>
 	</button>
 
 	<button
@@ -121,7 +177,7 @@
 		title={getTitle('ul', 'Unordered List (-, *, +)')}
 		aria-pressed={isActive('ul')}
 	>
-		•
+		<ListIcon size={18}/>
 	</button>
 
 	<button
@@ -132,7 +188,7 @@
 		title={getTitle('ol', 'Ordered List (1.)')}
 		aria-pressed={isActive('ol')}
 	>
-		1.
+		<ListOrderedIcon size={18}/>
 	</button>
 
 	<button
@@ -143,7 +199,7 @@
 		title={getTitle('task', 'Task List (- [ ])')}
 		aria-pressed={isActive('task')}
 	>
-		☑
+		<ListCheckIcon size={18}/>
 	</button>
 
 	<button
@@ -154,7 +210,7 @@
 		title={getTitle('codeblock', 'Code Block (```)')}
 		aria-pressed={isActive('codeblock')}
 	>
-		&lt;/&gt;
+		<CodeIcon size={18}/>
 	</button>
 
 	<button
@@ -165,7 +221,7 @@
 		title={getTitle('link', 'Insert Link (Ctrl/Cmd+K)')}
 		aria-pressed={isActive('link')}
 	>
-		🔗
+		<Link2Icon size={18}/>
 	</button>
 
 	<div class="spacer"></div>
@@ -176,7 +232,7 @@
 		onclick={() => handleClick('undo')}
 		title={getTitle('undo', 'Undo (Ctrl/Cmd+Z)')}
 	>
-		⎌
+		<Undo2Icon size={18}/>
 	</button>
 
 	<button
@@ -185,6 +241,6 @@
 		onclick={() => handleClick('redo')}
 		title={getTitle('redo', 'Redo (Ctrl/Cmd+Shift+Z)')}
 	>
-		↻
+		<Redo2Icon size={18}/>
 	</button>
 </div>

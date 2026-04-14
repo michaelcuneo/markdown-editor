@@ -31,6 +31,7 @@
 	type EditorController = {
 		handleAction: (action: ToolbarAction) => void;
 		setEditorView: (view: EditorView | null) => void;
+		setEditorOptions: (options: { allowHtml?: boolean }) => void;
 		getCommandState: (
 			action: ToolbarAction,
 			state: EditorState
@@ -42,7 +43,8 @@
 		initialMarkdown?: string,
 		imageQueue?: ImageQueueItem[],
 		docId?: string,
-		editable?: boolean
+		editable?: boolean,
+		allowHtml?: boolean
 	) => ExtendedEditorView;
 
 	function debounce<T extends (...args: never[]) => void>(fn: T, delay = 250) {
@@ -60,7 +62,8 @@
 		imageQueue = $bindable([] as ImageQueueItem[]),
 		clearDraft = $bindable(false),
 		docId = 'default',
-		editable = true
+		editable = true,
+		allowHtml = false
 	} = $props();
 
 	let editorRef = $state<HTMLDivElement | null>(null);
@@ -76,6 +79,7 @@
 
 	let handleAction = $state<(action: ToolbarAction) => void>(() => {});
 	let setEditorView = $state<(view: EditorView | null) => void>(() => {});
+	let setEditorOptions = $state<(options: { allowHtml?: boolean }) => void>(() => {});
 	let getCommandState = $state<(action: ToolbarAction, state: EditorState) => CommandState>(
 		() => ({ enabled: false })
 	);
@@ -171,6 +175,13 @@
 			nextActiveBlocks.quote = true;
 		}
 
+		if (allowHtml) {
+			const align = parent.attrs.align;
+			if (align === 'left') nextActiveBlocks.alignLeft = true;
+			if (align === 'center') nextActiveBlocks.alignCenter = true;
+			if (align === 'right') nextActiveBlocks.alignRight = true;
+		}
+
 		if (nodes.bullet_list && parent.type === nodes.bullet_list) {
 			nextActiveBlocks.ul = true;
 		}
@@ -192,6 +203,9 @@
 			h1: getCommandState('h1', state),
 			h2: getCommandState('h2', state),
 			quote: getCommandState('quote', state),
+			alignLeft: getCommandState('alignLeft', state),
+			alignCenter: getCommandState('alignCenter', state),
+			alignRight: getCommandState('alignRight', state),
 			ul: getCommandState('ul', state),
 			ol: getCommandState('ol', state),
 			codeblock: getCommandState('codeblock', state),
@@ -224,6 +238,7 @@
 
 		handleAction = controllerModule.handleAction;
 		setEditorView = controllerModule.setEditorView;
+		setEditorOptions = controllerModule.setEditorOptions;
 		getCommandState = controllerModule.getCommandState;
 
 		editorView = setupProseMirror(
@@ -231,10 +246,12 @@
 			markdown,
 			imageQueue,
 			docId,
-			editable
+			editable,
+			allowHtml
 		);
 
 		setEditorView(editorView);
+		setEditorOptions({ allowHtml });
 
 		editorView.setProps({
 			editable: () => editable,
@@ -282,6 +299,7 @@
 			{activeMarks}
 			{activeBlocks}
 			{commandStates}
+			{allowHtml}
 		/>
 	{/if}
 

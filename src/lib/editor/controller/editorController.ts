@@ -8,9 +8,14 @@ import { wrapInList } from 'prosemirror-schema-list';
 import { defaultMarkdownSerializer, defaultMarkdownParser } from 'prosemirror-markdown';
 
 let editorView: EditorView | null = null;
+let allowHtml = false;
 
 export function setEditorView(view: EditorView | null): void {
 	editorView = view;
+}
+
+export function setEditorOptions(options: { allowHtml?: boolean }): void {
+	allowHtml = options.allowHtml === true;
 }
 
 export function getEditorView(): EditorView | null {
@@ -32,6 +37,67 @@ function runCommand(view: EditorView, command: Command): boolean {
 
 function canRun(command: Command, state: EditorState): boolean {
 	return command(state);
+}
+
+function isAlignableNodeName(name: string): boolean {
+	return name === 'paragraph' || name === 'heading' || name === 'blockquote';
+}
+
+function setTextAlignment(align: 'left' | 'center' | 'right'): Command {
+	return (state, dispatch) => {
+		let tr = state.tr;
+		let changed = false;
+		const { from, to } = state.selection;
+
+		state.doc.nodesBetween(from, to, (node, pos) => {
+			if (!node.isBlock || !isAlignableNodeName(node.type.name)) return;
+
+			tr = tr.setNodeMarkup(pos, node.type, { ...node.attrs, align }, node.marks);
+			changed = true;
+		});
+
+		if (!changed) {
+			const { $from } = state.selection;
+
+			for (let depth = $from.depth; depth > 0; depth -= 1) {
+				const node = $from.node(depth);
+				if (!isAlignableNodeName(node.type.name)) continue;
+
+				const pos = $from.before(depth);
+				tr = tr.setNodeMarkup(pos, node.type, { ...node.attrs, align }, node.marks);
+				changed = true;
+				break;
+			}
+		}
+
+		if (changed && dispatch) {
+			dispatch(tr.scrollIntoView());
+		}
+
+		return changed;
+	};
+}
+
+function canSetAlignment(state: EditorState): boolean {
+	const { from, to } = state.selection;
+	let allowed = false;
+
+	state.doc.nodesBetween(from, to, (node) => {
+		if (node.isBlock && isAlignableNodeName(node.type.name)) {
+			allowed = true;
+		}
+	});
+
+	if (allowed) return true;
+
+	const { $from } = state.selection;
+	for (let depth = $from.depth; depth > 0; depth -= 1) {
+		if (isAlignableNodeName($from.node(depth).type.name)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 export function exportMarkdown(): string | null {
@@ -187,6 +253,24 @@ export function handleAction(action: ToolbarAction): void {
 				}
 				break;
 
+			case 'alignLeft':
+				if (allowHtml) {
+					runCommand(view, setTextAlignment('left'));
+				}
+				break;
+
+			case 'alignCenter':
+				if (allowHtml) {
+					runCommand(view, setTextAlignment('center'));
+				}
+				break;
+
+			case 'alignRight':
+				if (allowHtml) {
+					runCommand(view, setTextAlignment('right'));
+				}
+				break;
+
 			case 'codeblock':
 				toggleCodeBlock(view);
 				break;
@@ -305,6 +389,16 @@ export function getCommandState(
 				return canRun(wrapIn(schema.nodes.blockquote), state)
 					? { enabled: true }
 					: { enabled: false, reason: 'Cannot create quote here' };
+
+			case 'alignLeft':
+			case 'alignCenter':
+			case 'alignRight':
+				if (!allowHtml) {
+					return { enabled: false, reason: 'HTML mode is disabled' };
+				}
+				return canSetAlignment(state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Cannot align this block' };
 
 			case 'ul':
 				if (!schema.nodes.bullet_list) {

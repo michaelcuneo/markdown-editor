@@ -38,10 +38,11 @@ type EditorBundle = {
 function createEditorBundle(
 	initialMarkdown: string,
 	imageQueue: ImageQueueItem[],
-	docId: string
+	docId: string,
+	allowHtml: boolean
 ): EditorBundle {
 	const schema = createTaskListSchema();
-	const { parser, serializer } = createMarkdownTaskSupport(schema);
+	const { parser, serializer } = createMarkdownTaskSupport(schema, { allowHtml });
 
 	const doc = initialMarkdown.trim()
 		? parser.parse(initialMarkdown)
@@ -78,12 +79,14 @@ export function setupProseMirror(
 	initialMarkdown = '',
 	imageQueue: ImageQueueItem[] = [],
 	docId = 'default',
-	editable = true
+	editable = true,
+	allowHtml = false
 ): ProseMirrorEditorView {
 	const { state, parser, serializer } = createEditorBundle(
 		initialMarkdown,
 		imageQueue,
-		docId
+		docId,
+		allowHtml
 	);
 
 	const view: ProseMirrorEditorView = new EditorView(element, {

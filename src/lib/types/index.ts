@@ -40,8 +40,10 @@ export type ToolbarAction =
 	| 'h2'
 	| 'codeblock'
 	| 'hr'
+	| 'alignLeft'
+	| 'alignCenter'
+	| 'alignRight'
 	| 'undo'
 	| 'redo'
 	| 'import'
-	| 'export'
-	| 'toggleHtml';
+	| 'export';

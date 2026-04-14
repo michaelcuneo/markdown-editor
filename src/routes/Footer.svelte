@@ -4,7 +4,7 @@
 </script>
 
 <footer class="site-footer">
-  <span>Built with love by &nbsp;<a href="https://michaelcuneo.com" target="_blank" rel="noopener">Michael Cuneo</a></span>
+  <span>Built with love by &nbsp;<a href="https://michaelcuneo.com.au" target="_blank" rel="noopener">Michael Cuneo</a></span>
   <span> | </span>
   <span class="icon"><a href="https://www.typescriptlang.org/"><SiTypescript /></a></span>
   <span class="icon"><a href="https://sst.dev"><SiSST /></a></span>
@@ -30,10 +30,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   font-size: 0.875rem;
   position: sticky;
-  bottom: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
   background-color: color-mix(in srgb, var(--footer-bg-dark) 90%, transparent);
