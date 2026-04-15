@@ -36,6 +36,7 @@ export function createTaskListSchema(): Schema {
 	const baseParagraph = baseMarkdownSchema.spec.nodes.get('paragraph');
 	const baseHeading = baseMarkdownSchema.spec.nodes.get('heading');
 	const baseBlockquote = baseMarkdownSchema.spec.nodes.get('blockquote');
+	const baseCodeBlock = baseMarkdownSchema.spec.nodes.get('code_block');
 
 	if (!baseListItem) {
 		throw new Error('Base markdown schema is missing list_item');
@@ -57,6 +58,10 @@ export function createTaskListSchema(): Schema {
 		throw new Error('Base markdown schema is missing blockquote');
 	}
 
+	if (!baseCodeBlock) {
+		throw new Error('Base markdown schema is missing code_block');
+	}
+
 	function normalizeAlign(value: unknown): AlignValue {
 		if (value === 'left' || value === 'center' || value === 'right') {
 			return value;
@@ -71,6 +76,16 @@ export function createTaskListSchema(): Schema {
 	function buildAlignAttrs(node: PMNode): Record<string, string> | null {
 		const align = normalizeAlign(node.attrs.align);
 		return align ? { align } : null;
+	}
+
+	function getCodeLanguageFromDom(dom: HTMLElement): string | null {
+		const code = dom.querySelector('code');
+		if (!(code instanceof HTMLElement)) return null;
+
+		const className = code.className || '';
+		const match = className.match(/(?:^|\s)language-([A-Za-z0-9_-]+)(?:\s|$)/);
+
+		return match?.[1]?.toLowerCase() ?? null;
 	}
 
 	const nodes = baseMarkdownSchema.spec.nodes
@@ -203,6 +218,31 @@ export function createTaskListSchema(): Schema {
 						'data-id': node.attrs.src ?? ''
 					}
 				];
+			}
+		})
+		.update('code_block', {
+			...baseCodeBlock,
+			attrs: {
+				...(baseCodeBlock.attrs ?? {}),
+				params: { default: '' }
+			},
+			parseDOM: [
+				{
+					tag: 'pre',
+					preserveWhitespace: 'full',
+					getAttrs(dom) {
+						if (!(dom instanceof HTMLElement)) return false;
+
+						const params = getCodeLanguageFromDom(dom) ?? '';
+						return { params };
+					}
+				}
+			],
+			toDOM(node: PMNode): DOMOutputSpec {
+				const params = typeof node.attrs.params === 'string' ? node.attrs.params.trim() : '';
+
+				const codeAttrs = params ? { class: `language-${params}` } : {};
+				return ['pre', ['code', codeAttrs, 0]];
 			}
 		});
 

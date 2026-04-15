@@ -8,14 +8,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.0.5] - 2026-04-15
+
+### Added
+
+- Added GFM table support with full editor ↔ markdown round-trip.
+
+---
+
 ## [0.0.4] - 2026-04-14
 
 ### Added
 
-- Toolbar image button for inserting images via file picker.
 - HTML support (`allowHtml`) enabling text alignment (left, centre, right).
 - Inline image insertion at cursor position.
 - Image queue system for managing local image previews.
+  - (Can be uploaded to a CDN)
 
 ### Changed
 

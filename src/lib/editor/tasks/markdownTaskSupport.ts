@@ -260,17 +260,10 @@ export function createMarkdownTaskSupport(
 	parser.parse = (src: string): PMNode => {
 		const preprocessed = preprocessAlignmentHtml(src, allowHtml);
 
-		console.log('SRC>>>', JSON.stringify(src));
-		console.log('PREPROCESSED>>>', JSON.stringify(preprocessed));
-
 		const html = md.render(preprocessed);
-		console.log('HTML>>>', html);
-
 		const container = document.createElement('div');
 		container.innerHTML = html;
-
 		const doc = PMDOMParser.fromSchema(schema).parse(container);
-		console.log('DOC>>>', JSON.stringify(doc.toJSON(), null, 2));
 
 		return normalizeAlignmentMarkers(normalizeTasks(doc));
 	};

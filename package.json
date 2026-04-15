@@ -1,6 +1,6 @@
 {
 	"name": "@michaelcuneo/markdown-editor",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A Svelte-based Markdown editor component with ProseMirror and CodeMirror integration.",
 	"author": "Michael Cuneo <me@michaelcuneo.com.au>",
 	"scripts": {
