@@ -4,10 +4,13 @@ import {
 	defaultMarkdownParser,
 	defaultMarkdownSerializer
 } from 'prosemirror-markdown';
-import type { Schema, Node as PMNode } from 'prosemirror-model';
-import { Fragment } from 'prosemirror-model';
+import {
+	DOMParser as PMDOMParser,
+	Fragment,
+	type Schema,
+	type Node as PMNode
+} from 'prosemirror-model';
 import MarkdownIt from 'markdown-it';
-import markdownItTables from '../utils/markdownItTables.js';
 
 type AlignValue = 'left' | 'center' | 'right';
 type MarkdownTaskSupport = {
@@ -238,38 +241,37 @@ export function createMarkdownTaskSupport(
 ): MarkdownTaskSupport {
 	const allowHtml = options.allowHtml === true;
 
-	const md = new MarkdownIt('commonmark', {
+	const md = new MarkdownIt({
 		html: allowHtml,
 		linkify: true,
 		breaks: true
 	});
 
-	md.use(markdownItTables);
-
-	const { table, table_row, table_header, table_cell, paragraph } = schema.nodes;
+	md.enable(['table', 'strikethrough']);
 
 	const tokens = {
 		...defaultMarkdownParser.tokens,
 		html_inline: { ignore: true },
-		html_block: { ignore: true },
-		...(table && table_row && table_header && table_cell && paragraph
-			? {
-					table: { block: 'table' },
-					thead: { ignore: true },
-					tbody: { ignore: true },
-					tr: { block: 'table_row' },
-					th: { block: 'table_header' },
-					td: { block: 'table_cell' }
-				}
-			: {})
+		html_block: { ignore: true }
 	};
 
 	const parser = new MarkdownParser(schema, md, tokens);
-	const parseBase = parser.parse.bind(parser);
 
 	parser.parse = (src: string): PMNode => {
 		const preprocessed = preprocessAlignmentHtml(src, allowHtml);
-		const doc = parseBase(preprocessed);
+
+		console.log('SRC>>>', JSON.stringify(src));
+		console.log('PREPROCESSED>>>', JSON.stringify(preprocessed));
+
+		const html = md.render(preprocessed);
+		console.log('HTML>>>', html);
+
+		const container = document.createElement('div');
+		container.innerHTML = html;
+
+		const doc = PMDOMParser.fromSchema(schema).parse(container);
+		console.log('DOC>>>', JSON.stringify(doc.toJSON(), null, 2));
+
 		return normalizeAlignmentMarkers(normalizeTasks(doc));
 	};
 
@@ -389,6 +391,7 @@ export function createMarkdownTaskSupport(
 
 			baseListItem(state, patchedNode, parent, index);
 		},
+
 		table(
 			state: Parameters<NonNullable<typeof baseTable>>[0],
 			node: Parameters<NonNullable<typeof baseTable>>[1],

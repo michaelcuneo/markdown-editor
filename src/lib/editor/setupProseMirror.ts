@@ -40,7 +40,8 @@ function createEditorBundle(
 	initialMarkdown: string,
 	imageQueue: ImageQueueItem[],
 	docId: string,
-	allowHtml: boolean
+	allowHtml: boolean,
+	editable: boolean
 ): EditorBundle {
 	const schema = createTaskListSchema();
 	const { parser, serializer } = createMarkdownTaskSupport(schema, { allowHtml });
@@ -68,7 +69,7 @@ function createEditorBundle(
 			codeMirrorBlockPlugin(),
 			tableEditing(),
 			markdownKeymap(schema),
-			autoSavePlugin(imageQueue, { docId }),
+			...(editable ? [autoSavePlugin(imageQueue, { docId })] : []),
 			keymap(baseKeymap)
 		]
 	});
@@ -88,7 +89,8 @@ export function setupProseMirror(
 		initialMarkdown,
 		imageQueue,
 		docId,
-		allowHtml
+		allowHtml,
+		editable
 	);
 
 	const view: ProseMirrorEditorView = new EditorView(element, {

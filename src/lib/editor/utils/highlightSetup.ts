@@ -26,16 +26,7 @@ hljs.registerAliases(['sh'], { languageName: 'bash' });
 
 // Configure AFTER registration
 hljs.configure({
-	languages: [
-		'plaintext',
-		'javascript',
-		'typescript',
-		'json',
-		'xml',
-		'css',
-		'bash',
-		'python'
-	]
+	languages: ['plaintext', 'javascript', 'typescript', 'json', 'xml', 'css', 'bash', 'python']
 });
 
 export { hljs };
