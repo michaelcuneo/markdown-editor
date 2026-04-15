@@ -7,6 +7,7 @@ import {
 import type { Schema, Node as PMNode } from 'prosemirror-model';
 import { Fragment } from 'prosemirror-model';
 import MarkdownIt from 'markdown-it';
+import markdownItTables from '../utils/markdownItTables.js';
 
 type AlignValue = 'left' | 'center' | 'right';
 type MarkdownTaskSupport = {
@@ -17,6 +18,28 @@ type MarkdownTaskSupport = {
 type MarkdownTaskSupportOptions = {
 	allowHtml?: boolean;
 };
+
+function escapeTableCellText(text: string): string {
+	return text.replace(/\|/g, '\\|').replace(/\n+/g, ' ').trim();
+}
+
+function tableRowToCells(row: PMNode): string[] {
+	const cells: string[] = [];
+
+	for (let index = 0; index < row.childCount; index += 1) {
+		cells.push(escapeTableCellText(row.child(index)?.textContent ?? ''));
+	}
+
+	return cells;
+}
+
+function writeTableRow(
+	state: Parameters<NonNullable<typeof defaultMarkdownSerializer.nodes.paragraph>>[0],
+	cells: string[]
+): void {
+	state.write(`| ${cells.join(' | ')} |`);
+	state.ensureNewLine();
+}
 
 const ALIGN_MARKER_PREFIX = '@@PM_ALIGN:';
 const ALIGN_MARKER_SUFFIX = '@@';
@@ -221,10 +244,24 @@ export function createMarkdownTaskSupport(
 		breaks: true
 	});
 
+	md.use(markdownItTables);
+
+	const { table, table_row, table_header, table_cell, paragraph } = schema.nodes;
+
 	const tokens = {
 		...defaultMarkdownParser.tokens,
 		html_inline: { ignore: true },
-		html_block: { ignore: true }
+		html_block: { ignore: true },
+		...(table && table_row && table_header && table_cell && paragraph
+			? {
+					table: { block: 'table' },
+					thead: { ignore: true },
+					tbody: { ignore: true },
+					tr: { block: 'table_row' },
+					th: { block: 'table_header' },
+					td: { block: 'table_cell' }
+				}
+			: {})
 	};
 
 	const parser = new MarkdownParser(schema, md, tokens);
@@ -240,6 +277,7 @@ export function createMarkdownTaskSupport(
 	const baseParagraph = defaultMarkdownSerializer.nodes.paragraph;
 	const baseHeading = defaultMarkdownSerializer.nodes.heading;
 	const baseBlockquote = defaultMarkdownSerializer.nodes.blockquote;
+	const baseTable = defaultMarkdownSerializer.nodes.table;
 
 	const serializerNodes = {
 		...defaultMarkdownSerializer.nodes,
@@ -350,6 +388,37 @@ export function createMarkdownTaskSupport(
 			);
 
 			baseListItem(state, patchedNode, parent, index);
+		},
+		table(
+			state: Parameters<NonNullable<typeof baseTable>>[0],
+			node: Parameters<NonNullable<typeof baseTable>>[1],
+			parent: Parameters<NonNullable<typeof baseTable>>[2],
+			index: Parameters<NonNullable<typeof baseTable>>[3]
+		): void {
+			if (node.childCount === 0) {
+				baseTable?.(state, node, parent, index);
+				return;
+			}
+
+			const headerRow = node.firstChild;
+			if (!headerRow) {
+				baseTable?.(state, node, parent, index);
+				return;
+			}
+
+			const headerCells = tableRowToCells(headerRow);
+			writeTableRow(state, headerCells);
+			writeTableRow(
+				state,
+				headerCells.map(() => '---')
+			);
+
+			for (let rowIndex = 1; rowIndex < node.childCount; rowIndex += 1) {
+				const row = node.child(rowIndex);
+				writeTableRow(state, tableRowToCells(row));
+			}
+
+			state.closeBlock(node);
 		}
 	};
 

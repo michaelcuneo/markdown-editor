@@ -89,18 +89,19 @@ That's it! You're editing with a fully interactive Markdown editor built with ‚ù
 `);
 
   let readmeHtml = $state<string>('');
+  let readmeDocId = $state('readme-empty');
   let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
 
   onMount(async () => {
     try {
       const res = await fetch('/README.md');
       if (!res.ok) throw new Error(`Failed to fetch README.md: ${res.statusText}`);
-      const content = await res.text();
-      // We don‚Äôt parse it ‚Äî the MarkdownEditor will handle that internally
-      readmeHtml = content;
+      readmeHtml = await res.text();
+      readmeDocId = 'readme-loaded';
     } catch (err) {
       console.error('‚ùå Failed to load README:', err);
       readmeHtml = '# Documentation could not be loaded.';
+      readmeDocId = 'readme-error';
     }
   });
 </script>
@@ -136,7 +137,7 @@ That's it! You're editing with a fully interactive Markdown editor built with ‚ù
     <section class="docs-section">
       <h1>Documentation</h1>
       <p>The component documentation and usage guide from your package README:</p>
-      <SvelteMarkdownEditor bind:markdown={readmeHtml} toolbar={false} editable={false} imageQueue={undefined} />
+      <SvelteMarkdownEditor bind:markdown={readmeHtml} docId={readmeDocId} toolbar={false} editable={false} imageQueue={undefined} />
     </section>
   {/if}
 </main>

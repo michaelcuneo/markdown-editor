@@ -194,6 +194,13 @@
 			nextActiveBlocks.task = true;
 		}
 
+		for (let depth = selFrom.depth; depth > 0; depth -= 1) {
+			if (selFrom.node(depth).type.name === 'table') {
+				nextActiveBlocks.table = true;
+				break;
+			}
+		}
+
 		activeBlocks = nextActiveBlocks;
 
 		commandStates = {
@@ -208,6 +215,7 @@
 			alignRight: getCommandState('alignRight', state),
 			ul: getCommandState('ul', state),
 			ol: getCommandState('ol', state),
+			table: getCommandState('table', state),
 			codeblock: getCommandState('codeblock', state),
 			undo: getCommandState('undo', state),
 			redo: getCommandState('redo', state),

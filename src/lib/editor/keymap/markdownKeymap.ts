@@ -13,18 +13,12 @@ import {
 	wrapIn
 } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
-import {
-	liftListItem,
-	sinkListItem,
-	splitListItem
-} from 'prosemirror-schema-list';
+import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
+import { goToNextCell } from 'prosemirror-tables';
 import type { Schema } from 'prosemirror-model';
 import type { Plugin, EditorState, Transaction } from 'prosemirror-state';
 
-type KeyCommand = (
-	state: EditorState,
-	dispatch?: (tr: Transaction) => void
-) => boolean;
+type KeyCommand = (state: EditorState, dispatch?: (tr: Transaction) => void) => boolean;
 
 export function markdownKeymap(schema: Schema): Plugin {
 	const bindings: Record<string, KeyCommand> = {};
@@ -84,10 +78,7 @@ export function markdownKeymap(schema: Schema): Plugin {
 
 	// --- Links ---
 	if (schema.marks.link) {
-		bindings['Mod-k'] = (
-			state: EditorState,
-			dispatch?: (tr: Transaction) => void
-		) => {
+		bindings['Mod-k'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
 			const { from, to } = state.selection;
 			if (from === to) return false;
 
@@ -114,8 +105,8 @@ export function markdownKeymap(schema: Schema): Plugin {
 
 	// --- Lists ---
 	if (schema.nodes.list_item) {
-		bindings['Tab'] = sinkListItem(schema.nodes.list_item);
-		bindings['Shift-Tab'] = liftListItem(schema.nodes.list_item);
+		bindings['Tab'] = chainCommands(goToNextCell(1), sinkListItem(schema.nodes.list_item));
+		bindings['Shift-Tab'] = chainCommands(goToNextCell(-1), liftListItem(schema.nodes.list_item));
 
 		// Optional alternative shortcuts if you still want them
 		bindings['Mod-]'] = sinkListItem(schema.nodes.list_item);
@@ -129,10 +120,7 @@ export function markdownKeymap(schema: Schema): Plugin {
 
 	// --- Code blocks ---
 	if (schema.nodes.code_block && schema.nodes.paragraph) {
-		bindings['Mod-Alt-c'] = (
-			state: EditorState,
-			dispatch?: (tr: Transaction) => void
-		) => {
+		bindings['Mod-Alt-c'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
 			const { code_block, paragraph } = schema.nodes;
 			if (!code_block || !paragraph) return false;
 
@@ -143,10 +131,7 @@ export function markdownKeymap(schema: Schema): Plugin {
 
 	// --- Horizontal rule ---
 	if (schema.nodes.horizontal_rule) {
-		bindings['Mod-Shift--'] = (
-			state: EditorState,
-			dispatch?: (tr: Transaction) => void
-		) => {
+		bindings['Mod-Shift--'] = (state: EditorState, dispatch?: (tr: Transaction) => void) => {
 			const hr = schema.nodes.horizontal_rule;
 			if (!hr) return false;
 

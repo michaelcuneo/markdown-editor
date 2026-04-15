@@ -3,6 +3,7 @@ import { EditorView } from 'prosemirror-view';
 import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
+import { tableEditing } from 'prosemirror-tables';
 
 import { createTaskListSchema } from './schema/tasklistSchema.js';
 import { createMarkdownTaskSupport } from './tasks/markdownTaskSupport.js';
@@ -65,6 +66,7 @@ function createEditorBundle(
 			imageDropPlugin(imageQueue),
 			linkClickPlugin(),
 			codeMirrorBlockPlugin(),
+			tableEditing(),
 			markdownKeymap(schema),
 			autoSavePlugin(imageQueue, { docId }),
 			keymap(baseKeymap)

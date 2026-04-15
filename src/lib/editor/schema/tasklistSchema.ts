@@ -1,5 +1,6 @@
 import { schema as baseMarkdownSchema } from 'prosemirror-markdown';
 import { Schema, type DOMOutputSpec, type Node as PMNode } from 'prosemirror-model';
+import { tableNodes } from 'prosemirror-tables';
 
 type AlignValue = 'left' | 'center' | 'right' | null;
 
@@ -73,6 +74,13 @@ export function createTaskListSchema(): Schema {
 	}
 
 	const nodes = baseMarkdownSchema.spec.nodes
+		.append(
+			tableNodes({
+				tableGroup: 'block',
+				cellContent: 'block+',
+				cellAttributes: {}
+			})
+		)
 		.update('paragraph', {
 			...baseParagraph,
 			attrs: {

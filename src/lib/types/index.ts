@@ -35,6 +35,7 @@ export type ToolbarAction =
 	| 'ul'
 	| 'ol'
 	| 'task'
+	| 'table'
 	| 'link'
 	| 'h1'
 	| 'h2'

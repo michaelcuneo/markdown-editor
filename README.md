@@ -210,6 +210,7 @@ The editor is reactive by design.
 - Inline code and fenced code blocks
 - Blockquotes
 - Lists and task lists
+- Tables (GFM)
 - Links
 - Horizontal rules
 - Syntax-highlighted code blocks

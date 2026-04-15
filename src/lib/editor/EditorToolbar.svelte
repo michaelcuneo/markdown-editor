@@ -14,6 +14,7 @@
 		ListIcon,
 		ListOrderedIcon,
 		ListCheckIcon,
+		Table2Icon,
 		Link2Icon,
 		Undo2Icon,
 		Redo2Icon,
@@ -200,6 +201,17 @@
 		aria-pressed={isActive('task')}
 	>
 		<ListCheckIcon size={18}/>
+	</button>
+
+	<button
+		type="button"
+		class:active={isActive('table')}
+		disabled={!isEnabled('table')}
+		onclick={() => handleClick('table')}
+		title={getTitle('table', 'Insert table')}
+		aria-pressed={isActive('table')}
+	>
+		<Table2Icon size={18}/>
 	</button>
 
 	<button

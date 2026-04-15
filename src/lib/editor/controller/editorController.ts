@@ -165,8 +165,7 @@ function toggleTaskItem(view: EditorView): boolean {
 
 			if (!node) return false;
 
-			const currentChecked =
-				typeof node.attrs?.checked === 'boolean' ? node.attrs.checked : false;
+			const currentChecked = typeof node.attrs?.checked === 'boolean' ? node.attrs.checked : false;
 
 			view.dispatch(
 				state.tr
@@ -191,6 +190,32 @@ function toggleTaskItem(view: EditorView): boolean {
 		console.error('[ProseMirror] Failed to toggle task item', err);
 		return false;
 	}
+}
+
+function insertDefaultTable(view: EditorView): boolean {
+	const { state } = view;
+	const { schema } = state;
+	const { table, table_row, table_header, table_cell, paragraph } = schema.nodes;
+
+	if (!table || !table_row || !table_header || !table_cell || !paragraph) {
+		return false;
+	}
+
+	const makeParagraph = (text: string) =>
+		text.length > 0 ? paragraph.create(null, schema.text(text)) : paragraph.create();
+
+	const makeHeaderCell = (text: string) => table_header.create(null, makeParagraph(text));
+
+	const makeBodyCell = (text: string) => table_cell.create(null, makeParagraph(text));
+	const headerRow = table_row.create(null, [
+		makeHeaderCell('Column 1'),
+		makeHeaderCell('Column 2')
+	]);
+	const bodyRow = table_row.create(null, [makeBodyCell(''), makeBodyCell('')]);
+	const tableNode = table.create(null, [headerRow, bodyRow]);
+
+	view.dispatch(state.tr.replaceSelectionWith(tableNode).scrollIntoView());
+	return true;
 }
 
 export function handleAction(action: ToolbarAction): void {
@@ -298,6 +323,10 @@ export function handleAction(action: ToolbarAction): void {
 
 			case 'task':
 				toggleTaskItem(view);
+				break;
+
+			case 'table':
+				insertDefaultTable(view);
 				break;
 
 			case 'undo':
@@ -427,6 +456,14 @@ export function getCommandState(
 				const { list_item, bullet_list, paragraph } = schema.nodes;
 				if (!list_item || !bullet_list || !paragraph) {
 					return { enabled: false, reason: 'Task lists not supported' };
+				}
+				return { enabled: true };
+			}
+
+			case 'table': {
+				const { table, table_row, table_header, table_cell, paragraph } = schema.nodes;
+				if (!table || !table_row || !table_header || !table_cell || !paragraph) {
+					return { enabled: false, reason: 'Tables not supported' };
 				}
 				return { enabled: true };
 			}
