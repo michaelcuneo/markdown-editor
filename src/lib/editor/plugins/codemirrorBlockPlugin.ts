@@ -15,6 +15,7 @@ import { codeMirrorTheme } from '../theme/codeMirrorTheme';
 
 const LANGUAGE_OPTIONS = [
 	{ value: 'plaintext', label: 'Plain Text' },
+	{ value: 'svelte', label: 'Svelte' },
 	{ value: 'javascript', label: 'JavaScript' },
 	{ value: 'typescript', label: 'TypeScript' },
 	{ value: 'python', label: 'Python' },
@@ -34,6 +35,7 @@ const LANGUAGE_ALIASES: Record<string, string> = {
 	css: 'css',
 	txt: 'plaintext',
 	text: 'plaintext',
+	svelte: 'svelte',
 	plaintext: 'plaintext',
 	plain: 'plaintext'
 };
@@ -41,6 +43,7 @@ const LANGUAGE_ALIASES: Record<string, string> = {
 const languageMap: Record<string, () => Extension> = {
 	javascript,
 	typescript: javascript,
+	svelte: () => javascript({ typescript: true }),
 	python,
 	markdown,
 	css,

@@ -1,4 +1,4 @@
-# 🪶 @michaelcuneo/markdown-editor
+# @michaelcuneo/markdown-editor
 
 A modern **WYSIWYM Markdown editor for Svelte 5**, built with **ProseMirror** and **CodeMirror 6**.
 
@@ -132,15 +132,13 @@ The editor is reactive by design.
 
 ## Props
 
-| Prop            | Type                              | Default     | Description                                  |
-| --------------- | --------------------------------- | ----------- | -------------------------------------------- |
-| `value`         | `string`                          | `''`        | Markdown content. Bindable.                  |
-| `readonly`      | `boolean`                         | `false`     | Enables viewer mode with no editing UI.      |
-| `editable`      | `boolean`                         | `true`      | Toggles editing at runtime without teardown. |
-| `docId`         | `string`                          | `undefined` | Changing it resets and reloads the editor.   |
-| `sanitizeHtml`  | `boolean`                         | `true`      | Sanitizes exported HTML using DOMPurify.     |
-| `onUpdate`      | `(value: string) => void`         | —           | Called when content changes.                 |
-| `onImageUpload` | `(file: File) => Promise<string>` | —           | Async image upload hook returning a URL.     |
+| Prop              | Type               | Default     | Description                                             |
+| ----------------- | ------------------ | ----------- | ------------------------------------------------------- |
+| `initialMarkdown` | `string`           | `undefined` | Initial markdown content used when creating the editor. |
+| `imageQueue`      | `ImageQueueItem[]` | `undefined` | Initial queue of images available to the editor.        |
+| `docId`           | `string`           | `undefined` | Identifier used to distinguish or reset editor state.   |
+| `editable`        | `boolean`          | `true`      | Controls whether the editor is editable.                |
+| `allowHtml`       | `boolean`          | `false`     | Enables or disables HTML parsing in the editor.         |
 
 ---
 

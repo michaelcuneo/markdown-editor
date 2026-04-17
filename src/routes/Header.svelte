@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
+  import { VERSION } from '$lib/version';
   import SiSvelte from '@icons-pack/svelte-simple-icons/icons/SiSvelte';
   import SiGithub from '@icons-pack/svelte-simple-icons/icons/SiGithub';
   import SiSlack from '@icons-pack/svelte-simple-icons/icons/SiSlack';
@@ -6,13 +8,19 @@
 </script>
 
 <header class="site-header">
-  <h1 class="site-title">@michaelcuneo/markdown-editor</h1>
+  <h1 class="site-title">
+    <a href={resolve('/')}>@michaelcuneo/markdown-editor</a>
+  </h1>
   <!-- link to github and slack -->
   <nav class="site-nav">
-    <a href="https://github.com/michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiGithub />Github</a>
-    <a href="https://svelte.dev/chat" target="_blank" rel="noopener" class="icon-link"><SiSvelte />Svelte</a>
-    <a href="https://join.slack.com/t/michaelcuneo/shared_invite/zt-2ewl9vs81-QWUZBWzHqkGiaN4XpqLXjg" target="_blank" rel="noopener" class="icon-link"><SiSlack />Slack</a>
-    <a href="https://www.npmjs.com/package/@michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiNpm />NPM</a>
+    <a href={resolve('/')} class="icon-link">Demo</a>
+    <a href={resolve('/documentation')} class="icon-link">Documentation</a>
+    <a href={resolve('/changelog')} class="icon-link">Changelog</a>
+    <span class="version current">v{VERSION}</span>
+    <a href="https://github.com/michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiGithub /></a>
+    <a href="https://svelte.dev/chat" target="_blank" rel="noopener" class="icon-link"><SiSvelte /></a>
+    <a href="https://join.slack.com/t/michaelcuneo/shared_invite/zt-2ewl9vs81-QWUZBWzHqkGiaN4XpqLXjg" target="_blank" rel="noopener" class="icon-link"><SiSlack /></a>
+    <a href="https://www.npmjs.com/package/@michaelcuneo/markdown-editor" target="_blank" rel="noopener" class="icon-link"><SiNpm /></a>
   </nav>
 </header>
 
@@ -75,5 +83,19 @@
   .icon-link:hover {
     color: var(--header-hover);
     transform: translateY(-1px);
+  }
+  .version {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    font-weight: normal;
+  }
+
+  .version.current {
+    background: var(--color-bg);
+    color: var(--color-text);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
   }
 </style>

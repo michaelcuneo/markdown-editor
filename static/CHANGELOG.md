@@ -12,15 +12,6 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [0.0.7] - 2026-04-17
-
-### Fixed
-
-- Fixed preloaded pipe tables parsing so they initialise as interactive editor tables (same behavior as toolbar-inserted tables).
-- Fixed table alignment markers (`:---`, `:---:`, `---:`) so alignment renders correctly in-editor and round-trips to markdown.
-
----
-
 ## [0.0.6] 🔥 - (Latest)
 
 ### Added

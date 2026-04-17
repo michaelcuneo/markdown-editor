@@ -11,6 +11,7 @@ import {
 	type Node as PMNode
 } from 'prosemirror-model';
 import MarkdownIt from 'markdown-it';
+import markdownItTables from '../utils/markdownItTables.js';
 
 type AlignValue = 'left' | 'center' | 'right';
 type MarkdownTaskSupport = {
@@ -21,6 +22,8 @@ type MarkdownTaskSupport = {
 type MarkdownTaskSupportOptions = {
 	allowHtml?: boolean;
 };
+
+type TableAlignValue = 'left' | 'center' | 'right' | null;
 
 function escapeTableCellText(text: string): string {
 	return text.replace(/\|/g, '\\|').replace(/\n+/g, ' ').trim();
@@ -42,6 +45,22 @@ function writeTableRow(
 ): void {
 	state.write(`| ${cells.join(' | ')} |`);
 	state.ensureNewLine();
+}
+
+function tableSeparatorCell(align: unknown): string {
+	if (align === 'left') return ':---';
+	if (align === 'center') return ':---:';
+	if (align === 'right') return '---:';
+	return '---';
+}
+
+function getTableCellAlign(cell: PMNode | null | undefined): TableAlignValue {
+	const align = cell?.attrs?.align;
+	if (align === 'left' || align === 'center' || align === 'right') {
+		return align;
+	}
+
+	return null;
 }
 
 const ALIGN_MARKER_PREFIX = '@@PM_ALIGN:';
@@ -247,6 +266,7 @@ export function createMarkdownTaskSupport(
 		breaks: true
 	});
 
+	markdownItTables(md);
 	md.enable(['table', 'strikethrough']);
 
 	const tokens = {
@@ -406,7 +426,7 @@ export function createMarkdownTaskSupport(
 			writeTableRow(state, headerCells);
 			writeTableRow(
 				state,
-				headerCells.map(() => '---')
+				headerCells.map((_, index) => tableSeparatorCell(getTableCellAlign(headerRow.child(index))))
 			);
 
 			for (let rowIndex = 1; rowIndex < node.childCount; rowIndex += 1) {

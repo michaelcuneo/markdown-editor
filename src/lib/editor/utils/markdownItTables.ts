@@ -34,7 +34,7 @@ function parseSeparator(raw: string): Align[] | null {
 }
 
 export default function markdownItTables(md: MarkdownIt) {
-	md.block.ruler.before('paragraph', 'table', (state, startLine, endLine, silent) => {
+	md.block.ruler.before('table', 'pm_table', (state, startLine, endLine, silent) => {
 		if (startLine + 1 >= endLine) return false;
 
 		const getLine = (lineNo: number): string => {

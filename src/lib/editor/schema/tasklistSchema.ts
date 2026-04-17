@@ -73,6 +73,26 @@ export function createTaskListSchema(): Schema {
 		return normalizeAlign(dom.getAttribute('align')?.toLowerCase() ?? null);
 	}
 
+	function getTableAlignFromDom(dom: HTMLElement): AlignValue {
+		const styleAlign = dom.style.textAlign?.toLowerCase() ?? null;
+		const attrAlign = dom.getAttribute('align')?.toLowerCase() ?? null;
+		return normalizeAlign(styleAlign ?? attrAlign);
+	}
+
+	function setTableAlignAttr(value: unknown, attrs: Record<string, string>): void {
+		const align = normalizeAlign(value);
+		if (!align) return;
+
+		const existingStyle = attrs.style?.trim();
+		if (!existingStyle) {
+			attrs.style = `text-align: ${align}`;
+			return;
+		}
+
+		const needsSemicolon = !existingStyle.endsWith(';');
+		attrs.style = `${existingStyle}${needsSemicolon ? ';' : ''} text-align: ${align}`;
+	}
+
 	function buildAlignAttrs(node: PMNode): Record<string, string> | null {
 		const align = normalizeAlign(node.attrs.align);
 		return align ? { align } : null;
@@ -93,7 +113,18 @@ export function createTaskListSchema(): Schema {
 			tableNodes({
 				tableGroup: 'block',
 				cellContent: 'block+',
-				cellAttributes: {}
+				cellAttributes: {
+					align: {
+						default: null,
+						getFromDOM(dom) {
+							if (!(dom instanceof HTMLElement)) return null;
+							return getTableAlignFromDom(dom);
+						},
+						setDOMAttr(value, attrs) {
+							setTableAlignAttr(value, attrs as Record<string, string>);
+						}
+					}
+				}
 			})
 		)
 		.update('paragraph', {
