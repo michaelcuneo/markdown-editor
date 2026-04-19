@@ -6,6 +6,10 @@
 
 declare module "sst" {
   export interface Resource {
+    "MarkdownEditorImageBucket": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
     "MyWeb": {
       "type": "sst.aws.SvelteKit"
       "url": string

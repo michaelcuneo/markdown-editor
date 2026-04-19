@@ -6,13 +6,30 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- Editable Image caption, size, layout.
-- Automatic image optimisation with my other tool, Sharpless.
-- Props to enable/disable codeblock's supported by [@codemirror](https://codemirror.net/examples/)
+- ***
+
+## [0.0.8] 🔥 - (Latest)
+
+### Added
+
+- Image manipulation controls for replace/remove/caption/resize workflows in-editor.
+- Optimization workflow improvements including responsive variant generation and `srcSet` handling.
+
+### Changed
+
+- Demo behavior now keeps image queue local/edit-only for editor demonstration flows.
+- Documentation updated to focus image sections on manipulation + optimization (provider upload docs deferred).
+- Long-document editing now keeps controls accessible with a capped editor viewport and sticky toolbar.
+
+### Fixed
+
+- Fixed image replace behavior that could retain stale responsive attributes.
+- Fixed dropped-image flicker/disappear paths caused by premature direct URL fetch attempts.
+- Fixed raw key/local source 404 fetches by using placeholder render fallbacks before hydration.
 
 ---
 
-## [0.0.7] - 2026-04-17
+## [0.0.7]
 
 ### Fixed
 
@@ -21,7 +38,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [0.0.6] 🔥 - (Latest)
+## [0.0.6] - 2026-04-16
 
 ### Added
 

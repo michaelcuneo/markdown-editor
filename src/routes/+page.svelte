@@ -1,7 +1,8 @@
 <script lang="ts">
   import SvelteMarkdownEditor from '$lib/editor/MarkdownEditor.svelte';
+  import type { MarkdownImageOptions } from '$lib';
 
-let content = $state(`# Welcome to the Markdown Editor!
+const DEFAULT_MARKDOWN_TEMPLATE = `# Welcome to the Markdown Editor!
 
 This is a **fully featured WYSIWYM Markdown editor** built with [Svelte&nbsp;5](https://svelte.dev) ✨  
 It supports _rich formatting_, **live preview**, \`inline code\`, and even syntax-highlighted code blocks.
@@ -11,7 +12,7 @@ It supports _rich formatting_, **live preview**, \`inline code\`, and even synta
 ## Typography & Formatting
 
 You can use **bold**, _italic_, **_both_**, or \`inline code\`.  
-Links like [OpenAI](https://openai.com) are automatically styled and clickable.  
+Links like [OpenAI](https://openai.com) are automatically styled and clickable.
 
 > "Markdown is not about syntax — it's about expression."  
 > — _Anonymous Developer_
@@ -92,6 +93,15 @@ console.log(greet({ id: 1, name: "Michael", isAdmin: true }));
 
 ---
 
+## Preloaded Images from Markdown
+
+The two images below are stored in markdown as S3 object keys and resolved to presigned URLs at runtime.
+
+![Mountain Demo](demo-seeds/demo-seed-mountain/w1200-700.jpg)
+![Ocean Demo](demo-seeds/demo-seed-ocean/w1200-700.jpg)
+
+---
+
 ## Try It Out
 
 Type some Markdown below to see real-time updates.  
@@ -105,9 +115,35 @@ Experiment with:
 ---
 
 That's it! You're editing with a fully interactive Markdown editor built with ❤️ and Svelte.
-`);
+`;
 
-  let imageQueue = $state<{ id: string; file: File; previewUrl?: string }[]>([]);
+let content = $state(DEFAULT_MARKDOWN_TEMPLATE);
+
+  let docId = 'demo-preloaded-images-v5';
+  let clearDraft = $state(false);
+
+  const imageOptions: MarkdownImageOptions = {
+    enableOptimization: true,
+    optimizeOnDrop: true,
+    storage: 'local',
+    preferredFormat: 'image/jpeg',
+    quality: 0.82,
+    targets: [
+      { width: 480, label: 'mobile' },
+      { width: 900, label: 'tablet' },
+      { width: 1400, label: 'desktop' }
+    ],
+    formats: ['image/jpeg', 'image/webp']
+  };
+
+  let imageQueue = $state<Record<string, { id: string; file?: File; previewUrl?: string; srcSet?: string; quality?: number }>>({});
+
+  function resetDemoMarkdown(): void {
+  content = DEFAULT_MARKDOWN_TEMPLATE;
+    imageQueue = {};
+    clearDraft = true;
+  }
+
 </script>
 
 <svelte:head>
@@ -122,31 +158,45 @@ That's it! You're editing with a fully interactive Markdown editor built with �
       This demo showcases the <code>@michaelcuneo/markdown-editor</code> component.
       Edit Markdown in the left pane and see live preview updates on the right.
     </p>
+    <button type="button" class="reset-btn" onclick={resetDemoMarkdown}>Reset Demo Markdown</button>
 
-  <SvelteMarkdownEditor bind:markdown={content} toolbar={true} editable={true} imageQueue={imageQueue} allowHtml={true} />
+  <SvelteMarkdownEditor bind:markdown={content} bind:clearDraft={clearDraft} {docId} toolbar={true} editable={true} imageQueue={imageQueue} {imageOptions} allowHtml={true} />
   </section>
 </div>
 
 <style>
   .main {
     max-width: 1200px;
-    margin: 4rem auto;
+    margin: 2.5rem auto;
     padding: 2rem;
   }
 
-  h1 {
+  .demo-section h1 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
+    line-height: 1.2;
   }
 
-  p {
+  .demo-section p {
     color: var(--color-text-muted);
     line-height: 1.6;
   }
 
+  .reset-btn {
+    margin-top: 0.5rem;
+    margin-bottom: 0.9rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: 8px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
   .demo-section {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: 2rem;
   }
@@ -160,11 +210,42 @@ That's it! You're editing with a fully interactive Markdown editor built with �
 
   @media (max-width: 700px) {
     .main {
-      padding: 1rem;
+      margin: 0;
+      padding: 0.5rem;
     }
 
     .demo-section {
-      padding: 1.25rem;
+      padding: 0.625rem;
+      border-radius: 12px;
+    }
+
+    .demo-section h1 {
+      font-size: 1.35rem;
+      margin-bottom: 0.375rem;
+    }
+
+    .demo-section p {
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .main {
+      padding: 0.35rem;
+    }
+
+    .demo-section {
+      padding: 0.5rem;
+      border-radius: 10px;
+    }
+
+    .demo-section h1 {
+      font-size: 1.2rem;
+    }
+
+    .demo-section p {
+      font-size: 0.9rem;
     }
   }
 </style>

@@ -1,5 +1,7 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import type { Node as PMNode, Schema } from 'prosemirror-model';
+import { Transform } from 'prosemirror-transform';
 import { history } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
@@ -17,12 +19,16 @@ import { imageDropPlugin } from './plugins/imageDropPlugin.js';
 import { codeMirrorBlockPlugin } from './plugins/codemirrorBlockPlugin.js';
 import { linkClickPlugin } from './plugins/linkClickPlugin.js';
 import { autoSavePlugin } from './plugins/autoSavePlugin.js';
+import { ImageNodeView } from './plugins/imageNodeView.js';
 import type { MarkdownParser, MarkdownSerializer } from 'prosemirror-markdown';
+import type { MarkdownImageOptions } from '../types/index.js';
 
 type ImageQueueItem = {
 	id: string;
-	file: File;
+	file?: File;
 	previewUrl?: string;
+	srcSet?: string;
+	quality?: number;
 };
 
 export interface ProseMirrorEditorView extends EditorView {
@@ -36,12 +42,78 @@ type EditorBundle = {
 	serializer: MarkdownSerializer;
 };
 
+function buildPreviewMap(imageQueue: Record<string, ImageQueueItem>): Map<string, string> {
+	const previewMap = new Map<string, string>();
+	for (const item of Object.values(imageQueue)) {
+		if (item.previewUrl) previewMap.set(item.id, item.previewUrl);
+	}
+	if (typeof window !== 'undefined') {
+		const registry = (
+			window as Window & {
+				__imagePreviewMap?: Record<string, string | undefined>;
+			}
+		).__imagePreviewMap;
+		if (registry) {
+			for (const [id, url] of Object.entries(registry)) {
+				if (url) previewMap.set(id, url);
+			}
+		}
+	}
+	return previewMap;
+}
+
+function hydrateImagePreviewAttrs(
+	doc: PMNode,
+	schema: Schema,
+	imageQueue: Record<string, ImageQueueItem>
+): PMNode {
+	const imageNodeType = schema.nodes.image;
+	if (!imageNodeType) return doc;
+
+	const previewMap = buildPreviewMap(imageQueue);
+	if (previewMap.size === 0) return doc;
+
+	const tr = new Transform(doc);
+	let changed = false;
+
+	doc.descendants((node, pos) => {
+		if (node.type !== imageNodeType) return;
+
+		const src = node.attrs.src;
+		if (typeof src !== 'string' || src.length === 0) return;
+		const queueItem = imageQueue[src];
+
+		const previewSrc = previewMap.get(src);
+		const nextPreviewSrc = previewSrc ?? queueItem?.previewUrl ?? null;
+		const nextSrcSet = queueItem?.srcSet ?? null;
+		const nextQuality = queueItem?.quality ?? null;
+
+		const unchanged =
+			node.attrs.previewSrc === nextPreviewSrc &&
+			node.attrs.srcSet === nextSrcSet &&
+			node.attrs.quality === nextQuality;
+
+		if (unchanged) return;
+
+		tr.setNodeMarkup(pos, undefined, {
+			...node.attrs,
+			previewSrc: nextPreviewSrc,
+			srcSet: nextSrcSet,
+			quality: nextQuality
+		});
+		changed = true;
+	});
+
+	return changed ? tr.doc : doc;
+}
+
 function createEditorBundle(
 	initialMarkdown: string,
-	imageQueue: ImageQueueItem[],
+	imageQueue: Record<string, ImageQueueItem>,
 	docId: string,
 	allowHtml: boolean,
-	editable: boolean
+	editable: boolean,
+	imageOptions: MarkdownImageOptions
 ): EditorBundle {
 	const schema = createTaskListSchema();
 	const { parser, serializer } = createMarkdownTaskSupport(schema, { allowHtml });
@@ -54,8 +126,10 @@ function createEditorBundle(
 		throw new Error('Failed to create initial ProseMirror document');
 	}
 
+	const hydratedDoc = hydrateImagePreviewAttrs(doc, schema, imageQueue);
+
 	const state = EditorState.create({
-		doc,
+		doc: hydratedDoc,
 		schema,
 		plugins: [
 			history(),
@@ -64,7 +138,7 @@ function createEditorBundle(
 			taskTogglePlugin(),
 			markdownEnterPlugin(schema),
 			markdownBackspacePlugin(schema),
-			imageDropPlugin(imageQueue),
+			imageDropPlugin(imageQueue, imageOptions),
 			linkClickPlugin(),
 			codeMirrorBlockPlugin(),
 			tableEditing(),
@@ -80,22 +154,30 @@ function createEditorBundle(
 export function setupProseMirror(
 	element: HTMLElement,
 	initialMarkdown = '',
-	imageQueue: ImageQueueItem[] = [],
+	imageQueue: Record<string, ImageQueueItem> = {},
 	docId = 'default',
 	editable = true,
-	allowHtml = false
+	allowHtml = false,
+	imageOptions: MarkdownImageOptions = {}
 ): ProseMirrorEditorView {
 	const { state, parser, serializer } = createEditorBundle(
 		initialMarkdown,
 		imageQueue,
 		docId,
 		allowHtml,
-		editable
+		editable,
+		imageOptions
 	);
 
 	const view: ProseMirrorEditorView = new EditorView(element, {
 		state,
 		editable: () => editable,
+		nodeViews: {
+			image: (node, editorView, getPos) =>
+				new ImageNodeView(node, editorView, getPos as () => number | undefined, {
+					showOptimizationControls: imageOptions.enableOptimization === true
+				})
+		},
 		dispatchTransaction(tr) {
 			const newState = view.state.apply(tr);
 			view.updateState(newState);
@@ -105,15 +187,14 @@ export function setupProseMirror(
 	view.getMarkdown = () => serializer.serialize(view.state.doc);
 
 	view.setMarkdown = (markdown: string) => {
-		const newDoc = parser.parse(markdown);
+		const parsedDoc = parser.parse(markdown);
+		const newDoc = hydrateImagePreviewAttrs(parsedDoc, view.state.schema, imageQueue);
 
-		const newState = EditorState.create({
-			doc: newDoc,
-			schema: view.state.schema,
-			plugins: view.state.plugins
-		});
-
-		view.updateState(newState);
+		// Replace only the document content so plugin state (history, decorations, etc.)
+		// is preserved and NodeViews are not needlessly destroyed and recreated.
+		const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, newDoc.content);
+		tr.setMeta('addToHistory', false);
+		view.dispatch(tr);
 	};
 
 	return view;

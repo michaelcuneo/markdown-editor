@@ -17,6 +17,19 @@ export type ImageQueueItem = {
 	type?: string;
 	size?: number;
 	previewUrl?: string;
+	srcSet?: string;
+	quality?: number;
+	optimizationSource?: 'sharpless' | 'canvas-fallback' | 'original-fallback' | 'pending';
+	format?: string;
+	variants?: Array<{
+		label: string;
+		format: string;
+		width: number;
+		height: number;
+		size: number;
+		url: string;
+	}>;
+	// [key: string]: any; // Removed for stricter typing
 };
 
 export type StoredImageQueueItem = {
@@ -25,14 +38,18 @@ export type StoredImageQueueItem = {
 	type?: string;
 	size?: number;
 	previewUrl?: string;
+	srcSet?: string;
+	quality?: number;
+	optimizationSource?: 'sharpless' | 'canvas-fallback' | 'original-fallback' | 'pending';
+	format?: string;
 };
 
 export type AutoSaveOptions = {
 	docId?: string;
-	onSave?: (markdown: string, queue: ImageQueueItem[]) => void;
+	onSave?: (markdown: string, queue: Record<string, ImageQueueItem>) => void;
 	onRestore?: (
 		markdown: string,
-		queue: ImageQueueItem[] | StoredImageQueueItem[]
+		queue: Record<string, ImageQueueItem> | StoredImageQueueItem[]
 	) => void;
 	storageKey?: string;
 	delay?: number;
@@ -42,13 +59,13 @@ type DebouncedFn<A extends unknown[]> = ((...args: A) => void) & {
 	cancel: () => void;
 };
 
-type AutoSavePluginFn = (
-	imageQueueRef: ImageQueueItem[],
-	options?: AutoSaveOptions
-) => Plugin;
-
-type AutoSavePluginFactory = AutoSavePluginFn & {
+type AutoSavePluginFactory = {
+	(imageQueueRef: Record<string, ImageQueueItem>, options?: AutoSaveOptions): Plugin;
 	clear: (storageKey?: string, docId?: string) => void;
+	restore: (
+		storageKey?: string,
+		docId?: string
+	) => { markdown: string; queue: StoredImageQueueItem[] } | null;
 };
 
 // ------------------------
@@ -81,100 +98,78 @@ function getStorageKey(base: string, docId?: string): string {
 // Plugin
 // ------------------------
 
-export const autoSavePlugin: AutoSavePluginFactory = Object.assign(
-	function autoSavePluginImpl(
-		imageQueueRef: ImageQueueItem[],
-		options: AutoSaveOptions = {}
-	): Plugin {
-		const {
-			docId,
-			onSave,
-			onRestore,
-			storageKey = 'markdown-editor',
-			delay = 500
-		} = options;
+export const autoSavePlugin: AutoSavePluginFactory = function autoSavePlugin(
+	imageQueueRef: Record<string, ImageQueueItem>,
+	options: AutoSaveOptions = {}
+): Plugin {
+	const { docId, onSave, storageKey = 'markdown-editor', delay = 500 } = options;
 
-		const key = getStorageKey(storageKey, docId);
+	const key = getStorageKey(storageKey, docId);
 
-		return new Plugin({
-			key: autoSaveKey,
+	return new Plugin({
+		key: autoSaveKey,
 
-			view(view: EditorView) {
-				// ------------------------
-				// Restore
-				// ------------------------
+		view(view: EditorView) {
+			const save = debounce(() => {
+				if (!view.getMarkdown) return;
+
 				try {
-					const raw = localStorage.getItem(key);
-					if (raw) {
-						const parsed = JSON.parse(raw) as {
-							markdown: string;
-							queue: StoredImageQueueItem[];
-						};
+					const markdown = view.getMarkdown();
 
-						if (parsed?.markdown && view.setMarkdown) {
-							view.setMarkdown(parsed.markdown);
-						}
+					const queue: StoredImageQueueItem[] = Object.values(imageQueueRef).map((q) => ({
+						id: q.id,
+						name: q.name,
+						type: q.type,
+						size: q.size,
+						previewUrl: q.previewUrl,
+						srcSet: q.srcSet,
+						quality: q.quality,
+						optimizationSource: q.optimizationSource,
+						format: q.format
+					}));
 
-						if (parsed?.queue && Array.isArray(parsed.queue)) {
-							imageQueueRef.splice(0, imageQueueRef.length, ...parsed.queue);
-						}
+					localStorage.setItem(key, JSON.stringify({ markdown, queue }));
 
-						onRestore?.(parsed.markdown, parsed.queue);
-					}
+					onSave?.(markdown, imageQueueRef);
 				} catch {
-					// ignore corrupted storage
+					// ignore storage errors
 				}
+			}, delay);
 
-				// ------------------------
-				// Save (debounced)
-				// ------------------------
-				const save = debounce(() => {
-					if (!view.getMarkdown) return;
-
-					try {
-						const markdown = view.getMarkdown();
-
-						const queue: StoredImageQueueItem[] = imageQueueRef.map((q) => ({
-							id: q.id,
-							name: q.name,
-							type: q.type,
-							size: q.size,
-							previewUrl: q.previewUrl
-						}));
-
-						localStorage.setItem(
-							key,
-							JSON.stringify({
-								markdown,
-								queue
-							})
-						);
-
-						onSave?.(markdown, imageQueueRef);
-					} catch {
-						// ignore storage errors
-					}
-				}, delay);
-
-				return {
-					update() {
-						save();
-					},
-					destroy() {
-						save.cancel();
-					}
-				};
-			}
-		});
-	},
-	{
-		clear(storageKey = 'markdown-editor', docId?: string): void {
-			const key = docId ? `${storageKey}:${docId}` : storageKey;
-			try {
-				localStorage.removeItem(key);
-			} catch {
-				// ignore
-			}
+			return {
+				update() {
+					save();
+				},
+				destroy() {
+					save.cancel();
+				}
+			};
 		}
+	});
+};
+
+// Attach static methods after export
+autoSavePlugin.clear = function clear(storageKey = 'markdown-editor', docId?: string): void {
+	const key = docId ? `${storageKey}:${docId}` : storageKey;
+	try {
+		localStorage.removeItem(key);
+	} catch {
+		// ignore
 	}
-);
+};
+
+autoSavePlugin.restore = function restore(
+	storageKey = 'markdown-editor',
+	docId?: string
+): { markdown: string; queue: StoredImageQueueItem[] } | null {
+	const key = getStorageKey(storageKey, docId);
+	try {
+		const raw = localStorage.getItem(key);
+		if (!raw) return null;
+		const parsed = JSON.parse(raw) as { markdown: string; queue: StoredImageQueueItem[] };
+		if (parsed?.markdown) return parsed;
+	} catch {
+		// ignore corrupted storage
+	}
+	return null;
+};

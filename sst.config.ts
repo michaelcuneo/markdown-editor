@@ -17,8 +17,11 @@ export default $config({
 		};
 	},
 	async run() {
+		const s3 = new sst.aws.Bucket('MarkdownEditorImageBucket');
+
 		const web = new sst.aws.SvelteKit('MyWeb', {
 			path: '.',
+			link: [s3],
 			domain: {
 				name: 'markdown-editor.michaelcuneo.com.au'
 			},
@@ -28,6 +31,7 @@ export default $config({
 		});
 
 		return {
+			s3: s3.domain,
 			web: web.url
 		};
 	}

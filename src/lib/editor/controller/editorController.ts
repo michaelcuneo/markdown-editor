@@ -6,6 +6,13 @@ import { undo, redo } from 'prosemirror-history';
 import { toggleMark, setBlockType, wrapIn } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { defaultMarkdownSerializer, defaultMarkdownParser } from 'prosemirror-markdown';
+import {
+	addRowAfter,
+	addColumnAfter,
+	deleteRow,
+	deleteColumn,
+	deleteTable
+} from 'prosemirror-tables';
 
 let editorView: EditorView | null = null;
 let allowHtml = false;
@@ -329,6 +336,26 @@ export function handleAction(action: ToolbarAction): void {
 				insertDefaultTable(view);
 				break;
 
+			case 'tableAddRow':
+				runCommand(view, addRowAfter);
+				break;
+
+			case 'tableAddColumn':
+				runCommand(view, addColumnAfter);
+				break;
+
+			case 'tableDeleteRow':
+				runCommand(view, deleteRow);
+				break;
+
+			case 'tableDeleteColumn':
+				runCommand(view, deleteColumn);
+				break;
+
+			case 'tableDelete':
+				runCommand(view, deleteTable);
+				break;
+
 			case 'undo':
 				runCommand(view, undo);
 				break;
@@ -467,6 +494,31 @@ export function getCommandState(
 				}
 				return { enabled: true };
 			}
+
+			case 'tableAddRow':
+				return canRun(addRowAfter, state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Place cursor inside a table cell' };
+
+			case 'tableAddColumn':
+				return canRun(addColumnAfter, state)
+					? { enabled: true }
+					: { enabled: false, reason: 'Place cursor inside a table cell' };
+
+			case 'tableDeleteRow':
+				return canRun(deleteRow, state)
+					? { enabled: true }
+					: { enabled: false, reason: 'No table row selected' };
+
+			case 'tableDeleteColumn':
+				return canRun(deleteColumn, state)
+					? { enabled: true }
+					: { enabled: false, reason: 'No table column selected' };
+
+			case 'tableDelete':
+				return canRun(deleteTable, state)
+					? { enabled: true }
+					: { enabled: false, reason: 'No table selected' };
 
 			case 'hr':
 				return schema.nodes.horizontal_rule

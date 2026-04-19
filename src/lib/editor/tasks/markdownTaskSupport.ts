@@ -25,6 +25,27 @@ type MarkdownTaskSupportOptions = {
 
 type TableAlignValue = 'left' | 'center' | 'right' | null;
 
+const IMAGE_PARSE_PLACEHOLDER_SRC =
+	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+function isLocalImageId(value: string): boolean {
+	return /^\/?local-img-/.test(value);
+}
+
+function isUrlLike(value: string): boolean {
+	if (/^https?:\/\//i.test(value)) return true;
+	if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return true;
+	if (/^\/\//.test(value)) return true;
+	return false;
+}
+
+function isKeyBasedImageSrc(value: string): boolean {
+	if (!value) return false;
+	if (isLocalImageId(value)) return false;
+	if (isUrlLike(value)) return false;
+	return true;
+}
+
 function escapeTableCellText(text: string): string {
 	return text.replace(/\|/g, '\\|').replace(/\n+/g, ' ').trim();
 }
@@ -269,6 +290,24 @@ export function createMarkdownTaskSupport(
 	markdownItTables(md);
 	md.enable(['table', 'strikethrough']);
 
+	const originalImageRenderer = md.renderer.rules.image;
+	md.renderer.rules.image = (tokens, idx, opts, env, self) => {
+		const token = tokens[idx];
+		const src = token?.attrGet('src') ?? '';
+		const shouldUsePlaceholder = isKeyBasedImageSrc(src) || isLocalImageId(src);
+
+		if (shouldUsePlaceholder) {
+			token?.attrSet('data-id', src);
+			token?.attrSet('src', IMAGE_PARSE_PLACEHOLDER_SRC);
+		}
+
+		if (originalImageRenderer) {
+			return originalImageRenderer(tokens, idx, opts, env, self);
+		}
+
+		return self.renderToken(tokens, idx, opts);
+	};
+
 	const tokens = {
 		...defaultMarkdownParser.tokens,
 		html_inline: { ignore: true },
@@ -296,6 +335,35 @@ export function createMarkdownTaskSupport(
 
 	const serializerNodes = {
 		...defaultMarkdownSerializer.nodes,
+
+		image(
+			state: Parameters<NonNullable<typeof defaultMarkdownSerializer.nodes.paragraph>>[0],
+			node: Parameters<NonNullable<typeof defaultMarkdownSerializer.nodes.paragraph>>[1]
+		): void {
+			const src = (node.attrs.src as string) ?? '';
+			const alt = ((node.attrs.alt as string) ?? '').replace(/["\\]/g, '\\$&');
+			const title = (node.attrs.title as string) ?? '';
+			const srcSet = (node.attrs.srcSet as string | null) ?? null;
+			const quality = (node.attrs.quality as number | null) ?? null;
+			const w = node.attrs.width as number | null;
+			const h = node.attrs.height as number | null;
+
+			if (w || h || srcSet || quality != null) {
+				// Emit HTML <img> so width/height survive round-trip
+				const titleAttr = title ? ` title="${title.replace(/"/g, '&quot;')}"` : '';
+				const srcSetAttr = srcSet ? ` srcset="${srcSet.replace(/"/g, '&quot;')}"` : '';
+				const qualityAttr = quality != null ? ` data-quality="${quality}"` : '';
+				const wAttr = w ? ` width="${w}"` : '';
+				const hAttr = h ? ` height="${h}"` : '';
+				state.write(
+					`<img src="${src}" alt="${alt}"${titleAttr}${srcSetAttr}${qualityAttr}${wAttr}${hAttr}>`
+				);
+			} else {
+				// Standard markdown syntax
+				const titleSuffix = title ? ` "${title}"` : '';
+				state.write(`![${alt}](${src}${titleSuffix})`);
+			}
+		},
 
 		paragraph(
 			state: Parameters<NonNullable<typeof baseParagraph>>[0],

@@ -88,6 +88,7 @@ class CodeMirrorBlockView implements NodeView {
 	currentLang: string;
 	editable: boolean;
 	menuOpen = false;
+	private initialMeasureRaf: number | null = null;
 
 	private syncingFromPM = false;
 	private syncingFromCM = false;
@@ -145,9 +146,23 @@ class CodeMirrorBlockView implements NodeView {
 		this.dom.appendChild(this.cmHost);
 
 		this.cm = this.createCodeMirror(node.textContent, this.currentLang, this.editable);
+		this.scheduleMeasure();
 
 		document.addEventListener('pointerdown', this.onDocumentPointerDown);
 		document.addEventListener('keydown', this.onDocumentKeyDown);
+	}
+
+	private scheduleMeasure(): void {
+		if (this.initialMeasureRaf !== null) {
+			cancelAnimationFrame(this.initialMeasureRaf);
+		}
+
+		this.initialMeasureRaf = requestAnimationFrame(() => {
+			this.initialMeasureRaf = requestAnimationFrame(() => {
+				this.initialMeasureRaf = null;
+				this.cm.requestMeasure();
+			});
+		});
 	}
 
 	private isEditable(): boolean {
@@ -204,7 +219,11 @@ class CodeMirrorBlockView implements NodeView {
 
 	private handleLabelClick = (): void => {
 		if (!this.editable) return;
-		this.menuOpen ? this.closeMenu() : this.openMenu();
+		if (this.menuOpen) {
+			this.closeMenu();
+		} else {
+			this.openMenu();
+		}
 	};
 
 	private handleLabelKeyDown = (event: KeyboardEvent): void => {
@@ -212,7 +231,11 @@ class CodeMirrorBlockView implements NodeView {
 
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
-			this.menuOpen ? this.closeMenu() : this.openMenu();
+			if (this.menuOpen) {
+				this.closeMenu();
+			} else {
+				this.openMenu();
+			}
 			return;
 		}
 
@@ -338,6 +361,7 @@ class CodeMirrorBlockView implements NodeView {
 				this.cm.dispatch({
 					changes: { from: 0, to: this.cm.state.doc.length, insert: nextText }
 				});
+				this.cm.requestMeasure();
 			} finally {
 				this.syncingFromPM = false;
 			}
@@ -364,6 +388,11 @@ class CodeMirrorBlockView implements NodeView {
 	}
 
 	destroy(): void {
+		if (this.initialMeasureRaf !== null) {
+			cancelAnimationFrame(this.initialMeasureRaf);
+			this.initialMeasureRaf = null;
+		}
+
 		document.removeEventListener('pointerdown', this.onDocumentPointerDown);
 		document.removeEventListener('keydown', this.onDocumentKeyDown);
 		this.cm.destroy();

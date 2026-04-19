@@ -1,8 +1,26 @@
 import { schema as baseMarkdownSchema } from 'prosemirror-markdown';
-import { Schema, type DOMOutputSpec, type Node as PMNode } from 'prosemirror-model';
+import { Fragment, Schema, type DOMOutputSpec, type Node as PMNode } from 'prosemirror-model';
 import { tableNodes } from 'prosemirror-tables';
 
 type AlignValue = 'left' | 'center' | 'right' | null;
+
+const IMAGE_PLACEHOLDER_SRC =
+	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+function isLocalImageId(value: string): boolean {
+	return /^\/?local-img-/.test(value);
+}
+
+function isUrlLike(value: string): boolean {
+	if (/^https?:\/\//i.test(value)) return true;
+	if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return true;
+	if (/^\/\//.test(value)) return true;
+	return false;
+}
+
+function normalizeCodeBlockTextContent(value: string): string {
+	return value.endsWith('\n') ? value.slice(0, -1) : value;
+}
 
 function taskListItemToDOM(node: PMNode): DOMOutputSpec {
 	const checked = node.attrs.checked;
@@ -237,18 +255,62 @@ export function createTaskListSchema(): Schema {
 		})
 		.update('image', {
 			...baseImage,
-			toDOM(node: PMNode): DOMOutputSpec {
-				return [
-					'img',
-					{
-						src: node.attrs.src ?? '',
-						alt: node.attrs.alt ?? '',
-						title: node.attrs.title ?? '',
-						class: 'pm-image',
-						draggable: 'true',
-						'data-id': node.attrs.src ?? ''
+			attrs: {
+				...(baseImage.attrs ?? {}),
+				previewSrc: { default: null },
+				srcSet: { default: null },
+				quality: { default: null },
+				width: { default: null },
+				height: { default: null }
+			},
+			parseDOM: [
+				{
+					tag: 'img[src]',
+					getAttrs(dom) {
+						if (!(dom instanceof HTMLElement)) return false;
+						const rawSrc = dom.getAttribute('src') ?? '';
+						// data-id holds the logical src (local-img-xxx or real URL)
+						// when the rendered HTML was produced by toDOM
+						const logicalSrc = dom.getAttribute('data-id') || rawSrc;
+						const w = dom.getAttribute('width');
+						const h = dom.getAttribute('height');
+						const srcSet = dom.getAttribute('srcset');
+						const qualityRaw = dom.getAttribute('data-quality');
+						const quality = qualityRaw == null ? null : Number(qualityRaw);
+						return {
+							src: logicalSrc,
+							alt: dom.getAttribute('alt') ?? '',
+							title: dom.getAttribute('title') ?? '',
+							srcSet,
+							quality: Number.isFinite(quality) ? quality : null,
+							width: w ? Number(w) : null,
+							height: h ? Number(h) : null,
+							previewSrc: null
+						};
 					}
-				];
+				}
+			],
+			toDOM(node: PMNode): DOMOutputSpec {
+				const logicalSrc = String(node.attrs.src ?? '');
+				const previewSrc = typeof node.attrs.previewSrc === 'string' ? node.attrs.previewSrc : '';
+				const isKeyBasedSrc =
+					logicalSrc.length > 0 && !isLocalImageId(logicalSrc) && !isUrlLike(logicalSrc);
+				const shouldUsePlaceholder = isKeyBasedSrc || isLocalImageId(logicalSrc);
+				const renderSrc = previewSrc || (shouldUsePlaceholder ? IMAGE_PLACEHOLDER_SRC : logicalSrc);
+
+				const attrs: Record<string, string> = {
+					src: renderSrc,
+					alt: node.attrs.alt ?? '',
+					title: node.attrs.title ?? '',
+					class: 'pm-image',
+					draggable: 'true',
+					'data-id': logicalSrc
+				};
+				if (node.attrs.srcSet) attrs.srcset = String(node.attrs.srcSet);
+				if (node.attrs.quality != null) attrs['data-quality'] = String(node.attrs.quality);
+				if (node.attrs.width) attrs.width = String(node.attrs.width);
+				if (node.attrs.height) attrs.height = String(node.attrs.height);
+				return ['img', attrs];
 			}
 		})
 		.update('code_block', {
@@ -261,6 +323,18 @@ export function createTaskListSchema(): Schema {
 				{
 					tag: 'pre',
 					preserveWhitespace: 'full',
+					getContent(dom, schema) {
+						if (!(dom instanceof HTMLElement)) return Fragment.empty;
+
+						const codeElement = dom.querySelector('code');
+						const textContent = normalizeCodeBlockTextContent(
+							codeElement?.textContent ?? dom.textContent ?? ''
+						);
+
+						return textContent.length > 0
+							? Fragment.from(schema.text(textContent))
+							: Fragment.empty;
+					},
 					getAttrs(dom) {
 						if (!(dom instanceof HTMLElement)) return false;
 
